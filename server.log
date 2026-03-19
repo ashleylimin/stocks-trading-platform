@@ -1,0 +1,42 @@
+INFO:     Started server process [70938]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:52576 - "GET /api/market/overview HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:54207 - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54210 - "GET /api/leaders HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54211 - "GET /api/pivot HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:54207 - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54210 - "GET /api/pivot HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:54207 - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:      - "GET /api/leaders HTTP/1.1" 200 OK
+  0%|          | 0/2 [00:00<?, ?it/s]                                     获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:57771 - "GET /api/market/overview HTTP/1.1" 200 OK
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:02<00:02,  2.99s/it]                                             获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:57920 - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57921 - "GET /api/leaders HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57923 - "GET /api/pivot HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:     127.0.0.1:57921 - "GET /api/market/overview HTTP/1.1" 200 OK
+  0%|          | 0/58 [00:00<?, ?it/s]                                      INFO:     127.0.0.1:57920 - "GET /api/leaders HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:      - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:      - "GET /api/leaders HTTP/1.1" 200 OK
+INFO:      - "GET /api/pivot HTTP/1.1" 200 OK
+INFO:      - "GET /api/pivot HTTP/1.1" 200 OK
+获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:      - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:      - "GET /api/leaders HTTP/1.1" 200 OK
+INFO:      - "GET /api/pivot HTTP/1.1" 200 OK
+  0%|          | 0/2 [00:00<?, ?it/s] 50%|█████     | 1/2 [00:00<00:00,  1.01it/s]                                             获取指数数据失败: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+INFO:      - "GET /api/market/overview HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [70938]
+/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/resource_tracker.py:396: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown: {'/mp-q9uzbox9'}
+  warnings.warn(

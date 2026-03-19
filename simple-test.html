@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>简单测试</title>
+</head>
+<body>
+    <h1>直接测试API</h1>
+    <button onclick="testAPI()">测试API</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '测试中...';
+            
+            try {
+                // 测试后端API
+                const response = await fetch('http://localhost:8000/api/market/overview');
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ API测试成功</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ API测试失败</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        // 自动测试
+        testAPI();
+    </script>
+</body>
+</html>

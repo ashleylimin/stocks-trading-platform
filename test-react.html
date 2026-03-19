@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>React Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>React应用状态测试</h1>
+    
+    <div id="status">
+        <div class="status loading">正在检查应用状态...</div>
+    </div>
+    
+    <script>
+        async function testApp() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // 测试React应用
+                const response = await fetch('http://localhost:5173');
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="status success">✅ React应用运行正常 (HTTP 200)</div>';
+                    
+                    // 测试后端API
+                    try {
+                        const apiResponse = await fetch('http://localhost:8000/api/market/overview');
+                        if (apiResponse.ok) {
+                            statusDiv.innerHTML += '<div class="status success">✅ 后端API运行正常</div>';
+                        } else {
+                            statusDiv.innerHTML += '<div class="status error">❌ 后端API错误: HTTP ' + apiResponse.status + '</div>';
+                        }
+                    } catch (apiError) {
+                        statusDiv.innerHTML += '<div class="status error">❌ 后端API连接失败: ' + apiError.message + '</div>';
+                    }
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ React应用错误: HTTP ' + response.status + '</div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="status error">❌ React应用连接失败: ' + error.message + '</div>';
+            }
+        }
+        
+        testApp();
+    </script>
+</body>
+</html>

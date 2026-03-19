@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>调试页面</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        .loading { background: #fff3cd; }
+    </style>
+</head>
+<body>
+    <h1>Livermore调试页面</h1>
+    
+    <div class="test loading" id="react-test">测试React应用...</div>
+    <div class="test loading" id="api-test">测试后端API...</div>
+    <div class="test loading" id="cors-test">测试CORS...</div>
+    
+    <script>
+        async function testReact() {
+            try {
+                const response = await fetch('http://localhost:5173');
+                document.getElementById('react-test').innerHTML = 
+                    `✅ React应用运行正常 (HTTP ${response.status})`;
+                document.getElementById('react-test').className = 'test success';
+            } catch (error) {
+                document.getElementById('react-test').innerHTML = 
+                    `❌ React应用错误: ${error.message}`;
+                document.getElementById('react-test').className = 'test error';
+            }
+        }
+        
+        async function testAPI() {
+            try {
+                const response = await fetch('http://localhost:8081/api/market/overview');
+                const data = await response.json();
+                document.getElementById('api-test').innerHTML = 
+                    `✅ 后端API运行正常: ${data.success ? '成功' : '失败'}`;
+                document.getElementById('api-test').className = 'test success';
+            } catch (error) {
+                document.getElementById('api-test').innerHTML = 
+                    `❌ 后端API错误: ${error.message}`;
+                document.getElementById('api-test').className = 'test error';
+            }
+        }
+        
+        async function testCORS() {
+            try {
+                const response = await fetch('http://localhost:8081/api/market/overview', {
+                    headers: { 'Origin': 'http://localhost:5173' }
+                });
+                const corsHeader = response.headers.get('access-control-allow-origin');
+                document.getElementById('cors-test').innerHTML = 
+                    `✅ CORS配置正常: ${corsHeader || '无CORS头'}`;
+                document.getElementById('cors-test').className = 'test success';
+            } catch (error) {
+                document.getElementById('cors-test').innerHTML = 
+                    `❌ CORS测试错误: ${error.message}`;
+                document.getElementById('cors-test').className = 'test error';
+            }
+        }
+        
+        // 运行所有测试
+        testReact();
+        testAPI();
+        testCORS();
+    </script>
+</body>
+</html>
