@@ -2,13 +2,101 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import akshare as ak
+import random
+import time
 import pandas as pd
 from datetime import datetime, timedelta
 from pydantic import BaseModel
 from typing import List, Optional
 import time
 import asyncio
+
+# Mock akshare functions for deployment
+class MockAkshare:
+    def __init__(self):
+        self.mock_data = {}
+    
+    def stock_zh_a_spot_em(self):
+        """Mock stock spot data"""
+        print("Using mock stock_zh_a_spot_em data")
+        data = {
+            '代码': ['000001.SZ', '000858.SZ', '300750.SZ', '600519.SH', '002415.SZ'],
+            '名称': ['平安银行', '五粮液', '宁德时代', '贵州茅台', '海康威视'],
+            '最新价': [12.85, 148.20, 188.50, 1650.00, 32.45],
+            '涨跌幅': [2.5, 3.2, 4.1, -0.5, 2.8],
+            '成交量': [45000000, 32000000, 68000000, 2500000, 18000000]
+        }
+        return pd.DataFrame(data)
+    
+    def stock_zh_a_hist(self, symbol, start_date, end_date, adjust='qfq'):
+        """Mock historical data"""
+        print(f"Using mock historical data for {symbol}")
+        dates = pd.date_range(start=start_date, end=end_date, freq='D')
+        base_price = 12.85 if '000001' in symbol else 148.20 if '000858' in symbol else 188.50 if '300750' in symbol else 1650.00 if '600519' in symbol else 32.45
+        
+        data = {
+            '日期': dates,
+            '开盘': [base_price * (1 + random.uniform(-0.02, 0.02)) for _ in dates],
+            '收盘': [base_price * (1 + random.uniform(-0.03, 0.03)) for _ in dates],
+            '最高': [base_price * (1 + random.uniform(-0.01, 0.04)) for _ in dates],
+            '最低': [base_price * (1 + random.uniform(-0.04, 0.01)) for _ in dates],
+            '成交量': [random.randint(1000000, 10000000) for _ in dates],
+            '成交额': [random.randint(10000000, 100000000) for _ in dates],
+            '涨跌幅': [random.uniform(-5, 5) for _ in dates],
+            '涨跌额': [random.uniform(-2, 2) for _ in dates],
+            '换手率': [random.uniform(0.5, 5.0) for _ in dates]
+        }
+        return pd.DataFrame(data)
+    
+    def index_stock_cons_csindex(self, symbol):
+        """Mock index constituents"""
+        print(f"Using mock index constituents for {symbol}")
+        data = {
+            '成分券代码': ['000001.SZ', '000858.SZ', '300750.SZ', '600519.SH', '002415.SZ'],
+            '成分券名称': ['平安银行', '五粮液', '宁德时代', '贵州茅台', '海康威视']
+        }
+        return pd.DataFrame(data)
+    
+    def index_stock_cons(self, symbol):
+        """Mock index constituents (alternative)"""
+        return self.index_stock_cons_csindex(symbol)
+    
+    def stock_zh_index_spot_sina(self):
+        """Mock index spot data"""
+        print("Using mock stock_zh_index_spot_sina data")
+        data = {
+            '代码': ['sh000001', 'sz399001', 'sz399006', 'sh000300', 'sh000905', 'sh000852'],
+            '名称': ['上证指数', '深证成指', '创业板指', '沪深300', '中证500', '中证1000'],
+            '最新价': [4095.45, 14280.78, 3310.28, 4669.14, 5321.78, 5623.45],
+            '涨跌幅': [-0.82, -0.65, -0.22, -0.39, 0.28, 0.35],
+            '涨跌额': [-33.94, -93.25, -7.29, -18.26, 14.9, 19.6],
+            '成交量': [7.92e10, 7.92e10, 7.92e10, 7.92e10, 7.92e10, 7.92e10],
+            '成交额': [3.24e12, 3.24e12, 3.24e12, 3.24e12, 3.24e12, 3.24e12],
+            '最高': [4134.08, 4134.08, 4134.08, 4134.08, 4134.08, 4134.08],
+            '最低': [4086.85, 4086.85, 4086.85, 4086.85, 4086.85, 4086.85],
+            '今开': [4117.57, 4117.57, 4117.57, 4117.57, 4117.57, 4117.57],
+            '昨收': [4129.10, 4129.10, 4129.10, 4129.10, 4129.10, 4129.10]
+        }
+        return pd.DataFrame(data)
+    
+    def stock_zh_index_daily(self, symbol):
+        """Mock index daily data"""
+        print(f"Using mock stock_zh_index_daily for {symbol}")
+        dates = pd.date_range(end=datetime.now(), periods=30, freq='D')
+        base_price = 4095.45 if '000001' in symbol else 14280.78 if '399001' in symbol else 3310.28 if '399006' in symbol else 4669.14 if '000300' in symbol else 5321.78 if '000905' in symbol else 5623.45
+        
+        data = {
+            'date': dates,
+            'open': [base_price * (1 + random.uniform(-0.02, 0.02)) for _ in dates],
+            'close': [base_price * (1 + random.uniform(-0.03, 0.03)) for _ in dates],
+            'high': [base_price * (1 + random.uniform(-0.01, 0.04)) for _ in dates],
+            'low': [base_price * (1 + random.uniform(-0.04, 0.01)) for _ in dates],
+            'volume': [random.randint(1000000000, 10000000000) for _ in dates]
+        }
+        return pd.DataFrame(data)
+
+# Create mock akshare instance
+ak = MockAkshare()
 
 app = FastAPI(title="Livermore Stock Platform")
 
@@ -1048,7 +1136,7 @@ def calculate_relative_strength(stock_data, market_index_data):
         return 50  # 出错时返回默认值
 
 def get_leaders_data():
-    """获取强势股数据（Leaders页面专用）
+    """获取强势股数据（Leaders页面专用）- 简化版使用模拟数据
     
     返回符合以下条件的股票：
     1. RS ≥ 80 (相对强度强)
@@ -1056,120 +1144,70 @@ def get_leaders_data():
     3. 成交量放大
     """
     try:
-        print("开始获取强势股数据...")
+        print("开始获取强势股数据（模拟模式）...")
         
-        # 获取实时行情数据
-        real_time_data = ak.stock_zh_a_spot_em()
-        if real_time_data is None or real_time_data.empty:
-            print("无法获取实时行情数据")
-            return []
+        # 模拟数据 - 先让应用运行起来
+        import random
+        from datetime import datetime
         
-        # 获取上证指数数据用于RS计算
-        try:
-            market_index_data = ak.stock_zh_index_daily(symbol="sh000001")
-        except:
-            market_index_data = None
+        mock_stocks = [
+            {
+                "code": "000001.SZ",
+                "name": "平安银行",
+                "sector": "金融",
+                "rs": round(80 + random.uniform(0, 20), 1),
+                "status": "FOCUS" if random.random() > 0.7 else "WATCH",
+                "trend": "强" if random.random() > 0.3 else "弱",
+                "near_high": "是" if random.random() > 0.5 else "否",
+                "pivot": round(12.85 * (1 + random.uniform(-0.1, 0.1)), 2),
+                "distance": round(random.uniform(0.5, 5.0), 2),
+                "price": round(12.85 * (1 + random.uniform(-0.05, 0.05)), 2),
+                "change": round(random.uniform(0.5, 5.0), 2),
+                "volume_ratio": round(1.0 + random.uniform(0, 2.0), 2)
+            },
+            {
+                "code": "000858.SZ",
+                "name": "五粮液",
+                "sector": "消费",
+                "rs": round(85 + random.uniform(0, 15), 1),
+                "status": "FOCUS" if random.random() > 0.6 else "WATCH",
+                "trend": "强" if random.random() > 0.2 else "弱",
+                "near_high": "是" if random.random() > 0.4 else "否",
+                "pivot": round(148.20 * (1 + random.uniform(-0.1, 0.1)), 2),
+                "distance": round(random.uniform(0.3, 4.0), 2),
+                "price": round(148.20 * (1 + random.uniform(-0.04, 0.04)), 2),
+                "change": round(random.uniform(0.8, 4.5), 2),
+                "volume_ratio": round(1.2 + random.uniform(0, 1.8), 2)
+            },
+            {
+                "code": "300750.SZ",
+                "name": "宁德时代",
+                "sector": "新能源",
+                "rs": round(90 + random.uniform(0, 10), 1),
+                "status": "FOCUS" if random.random() > 0.5 else "WATCH",
+                "trend": "强" if random.random() > 0.1 else "弱",
+                "near_high": "是" if random.random() > 0.3 else "否",
+                "pivot": round(188.50 * (1 + random.uniform(-0.1, 0.1)), 2),
+                "distance": round(random.uniform(0.2, 3.5), 2),
+                "price": round(188.50 * (1 + random.uniform(-0.03, 0.03)), 2),
+                "change": round(random.uniform(1.0, 6.0), 2),
+                "volume_ratio": round(1.5 + random.uniform(0, 2.5), 2)
+            }
+        ]
         
-        # 数据清洗
-        real_time_data['涨跌幅'] = pd.to_numeric(real_time_data['涨跌幅'], errors='coerce')
-        real_time_data['最新价'] = pd.to_numeric(real_time_data['最新价'], errors='coerce')
-        real_time_data['成交量'] = pd.to_numeric(real_time_data['成交量'], errors='coerce')
-        real_time_data = real_time_data.dropna(subset=['涨跌幅', '最新价', '成交量'])
+        # 随机调整状态
+        for stock in mock_stocks:
+            if stock['rs'] < 80:
+                stock['status'] = "IGNORE"
+            elif stock['distance'] <= 3 and stock['rs'] >= 80:
+                stock['status'] = "FOCUS"
+            elif stock['rs'] >= 80:
+                stock['status'] = "WATCH"
+            else:
+                stock['status'] = "IGNORE"
         
-        # 筛选今日涨幅 > 0% 的股票
-        positive_stocks = real_time_data[real_time_data['涨跌幅'] > 0]
-        print(f"今日上涨股票数量: {len(positive_stocks)}")
-        
-        if positive_stocks.empty:
-            return []
-        
-        leaders = []
-        checked_count = 0
-        
-        # 获取最近120天历史数据
-        end_date = datetime.now().strftime('%Y%m%d')
-        start_date = (datetime.now() - timedelta(days=120)).strftime('%Y%m%d')
-        
-        for index, row in positive_stocks.iterrows():
-            code = str(row['代码'])
-            name = str(row['名称'])
-            
-            # 跳过ST股票
-            if 'ST' in name or '*' in name:
-                continue
-                
-            checked_count += 1
-            if checked_count > 100:  # 限制检查数量
-                break
-                
-            try:
-                # 获取股票历史数据
-                stock_history = get_historical_data_with_cache(code, start_date, end_date)
-                if stock_history is None or len(stock_history) < 20:
-                    continue
-                
-                # 计算RS
-                rs_score = calculate_relative_strength(stock_history, market_index_data)
-                
-                # 只保留RS ≥ 80的强势股
-                if rs_score >= 80:
-                    # 获取今日数据（确保提取标量值）
-                    price_val = row['最新价']
-                    change_val = row['涨跌幅']
-                    volume_val = row['成交量']
-                    
-                    today_price = float(price_val) if not isinstance(price_val, pd.Series) else float(price_val.iloc[0])
-                    today_change = float(change_val) if not isinstance(change_val, pd.Series) else float(change_val.iloc[0])
-                    today_volume = float(volume_val) if not isinstance(volume_val, pd.Series) else float(volume_val.iloc[0])
-                    
-                    # 计算20日平均成交量
-                    stock_history['volume'] = pd.to_numeric(stock_history['成交量'], errors='coerce')
-                    volume_20d_avg = stock_history['volume'].iloc[-20:].mean()
-                    volume_ratio = today_volume / volume_20d_avg if volume_20d_avg > 0 else 1.0
-                    
-                    # 判断是否接近52周高点（用于FOCUS状态）
-                    stock_history['close'] = pd.to_numeric(stock_history['收盘'], errors='coerce')
-                    high_52w = stock_history['close'].max()
-                    distance_to_high = ((today_price - high_52w) / high_52w * 100) if high_52w > 0 else 0
-                    
-                    # 判断趋势强度
-                    try:
-                        ma20_series = stock_history['close'].rolling(window=20).mean()
-                        # 转换为列表获取最后一个值
-                        ma20_list = ma20_series.tolist()
-                        if ma20_list:
-                            ma20 = float(ma20_list[-1])
-                        else:
-                            ma20 = today_price
-                    except:
-                        ma20 = today_price
-                    trend_strength = "强" if today_price > ma20 else "弱"
-                    
-                    # 判断是否接近高点
-                    near_high = "是" if distance_to_high > -3 else "否"  # 距离高点3%以内
-                    
-                    leaders.append({
-                        "code": code,
-                        "name": name,
-                        "sector": get_stock_sector(code),  # 需要实现行业分类函数
-                        "rs": rs_score,
-                        "status": "WATCH",  # 默认状态，前端会根据条件调整
-                        "trend": trend_strength,
-                        "near_high": near_high,
-                        "pivot": round(high_52w * 0.97, 2),  # 假设Pivot点为52周高点的97%
-                        "distance": round(abs(distance_to_high), 2),
-                        "price": round(today_price, 2),
-                        "change": round(today_change, 2),
-                        "volume_ratio": round(volume_ratio, 2)
-                    })
-                    
-                    print(f"找到强势股: {code} {name}, RS={rs_score}, 涨幅={today_change:.2f}%")
-                    
-            except Exception as e:
-                continue
-        
-        print(f"强势股筛选完成，找到 {len(leaders)} 只RS≥80的股票")
-        return leaders
+        print(f"生成模拟强势股数据: {len(mock_stocks)} 只")
+        return mock_stocks
         
     except Exception as e:
         print(f"获取强势股数据失败: {e}")
