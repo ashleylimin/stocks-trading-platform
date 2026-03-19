@@ -7,7 +7,7 @@ import PivotPage from './PivotPage';
 import LeadersPage from './LeadersPage';
 
 // API base URL
-const API_BASE = 'http://localhost:8082/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8082/api';
 
 function App() {
   const [activePage, setActivePage] = useState('market');

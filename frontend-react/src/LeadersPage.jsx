@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:8082/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8082/api';
 
 // 状态配置 - 优化配色，体现刻度性
 const STATUS_CONFIG = {

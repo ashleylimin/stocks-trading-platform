@@ -15,7 +15,13 @@ app = FastAPI(title="Livermore Stock Platform")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "http://localhost:8080"],
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://localhost:5174", 
+        "http://localhost:3000", 
+        "http://localhost:8080",
+        "https://*.vercel.app",  # 允许所有Vercel部署
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -449,7 +455,15 @@ def select_tickers_by_conditions(
 
 @app.get("/")
 async def root():
-    return FileResponse("frontend/index.html")
+    return {"message": "Stock Trading Platform API", "status": "online"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+@app.get("/api/health")
+async def api_health_check():
+    return {"status": "healthy", "service": "stock-api", "timestamp": datetime.now().isoformat()}
 
 @app.get("/api/stocks/select")
 async def select_stocks(strategy: str = "default"):
