@@ -109,6 +109,9 @@ app.add_middleware(
         "http://localhost:3000", 
         "http://localhost:8080",
         "https://*.vercel.app",  # 允许所有Vercel部署
+        "https://stock-final-ten.vercel.app",  # 昨天的部署
+        "https://livermore-stocks-original-*.vercel.app",  # 今天的部署
+        "*",  # 临时允许所有来源，用于测试
     ],
     allow_credentials=True,
     allow_methods=["*"],
