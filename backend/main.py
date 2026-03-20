@@ -95,8 +95,19 @@ class MockAkshare:
         }
         return pd.DataFrame(data)
 
-# Create mock akshare instance
-ak = MockAkshare()
+# 尝试导入真实的akshare，如果失败则使用模拟数据
+try:
+    import akshare as real_ak
+    print("✅ 成功导入akshare，将使用真实数据")
+    ak = real_ak
+except ImportError as e:
+    print(f"⚠️ 无法导入akshare: {e}")
+    print("📊 使用模拟数据")
+    ak = MockAkshare()
+except Exception as e:
+    print(f"❌ akshare导入错误: {e}")
+    print("📊 使用模拟数据")
+    ak = MockAkshare()
 
 app = FastAPI(title="Livermore Stock Platform")
 
