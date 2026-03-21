@@ -7,7 +7,19 @@
       "use": "@vercel/static"
     },
     {
-      "src": "src/pages/index.html",
+      "src": "src/pages/market/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/pages/pivot/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/pages/leaders/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/pages/account/index.html",
       "use": "@vercel/static"
     },
     {
@@ -28,6 +40,22 @@
     }
   ],
   "routes": [
+    {
+      "src": "/market",
+      "dest": "/src/pages/market/index.html"
+    },
+    {
+      "src": "/pivot",
+      "dest": "/src/pages/pivot/index.html"
+    },
+    {
+      "src": "/leaders",
+      "dest": "/src/pages/leaders/index.html"
+    },
+    {
+      "src": "/account",
+      "dest": "/src/pages/account/index.html"
+    },
     {
       "src": "/assets/(.*)",
       "dest": "/assets/$1",

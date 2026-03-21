@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>止观 - Account</title>
+    <link rel="stylesheet" href="/src/css/styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-brand">
+                <img src="/assets/icons/logo-optimized.png" alt="止观" class="brand-logo">
+                <div class="brand-text">止观</div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <button class="menu-item" onclick="window.location.href='/market'">
+                    <svg class="menu-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 17.1667V2.16669M4 17.1667V13.4167M9.5 17.1667V7.79169" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Market</span>
+                </button>
+                <button class="menu-item" onclick="window.location.href='/pivot'">
+                    <svg class="menu-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 17L17 4M17 4L9.5 4M17 4V11.5M2 14H14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Pivot</span>
+                </button>
+                <button class="menu-item" onclick="window.location.href='/leaders'">
+                    <svg class="menu-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.33333 16V3M5.33333 3L2 6.25M5.33333 3L8.66667 6.25M13.6667 16V7.0625M13.6667 7.0625L10.3333 10.3125M13.6667 7.0625L17 10.3125" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Leaders</span>
+                </button>
+                <button class="menu-item active">
+                    <svg class="menu-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.73517 17.8333V9.89214M9.73517 9.89214L15.4706 2.83331M9.73517 9.89214L4 2.83331M15.0293 9.89214H4.44105M14.1469 13.4215H5.32341" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Account</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 顶部标题 -->
+            <div class="page-header">
+                <h1 class="page-title">ACCOUNT</h1>
+            </div>
+            
+            <!-- 核心内容区 -->
+            <div class="decision-container">
+                <div class="status-section">
+                    <p class="position-info">账户概览</p>
+                    <div class="loading-indicator">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                </div>
+                
+                <!-- 账户信息 -->
+                <div class="decision-basis">
+                    <div class="basis-title">持仓情况</div>
+                    <div class="basis-item">
+                        <span class="basis-label">总资产:</span>
+                        <span class="basis-value">¥1,234,567</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">可用资金:</span>
+                        <span class="basis-value">¥456,789</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">持仓市值:</span>
+                        <span class="basis-value">¥777,778</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">今日盈亏:</span>
+                        <span class="basis-value" style="color: #10b981;">+¥12,345</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">总盈亏:</span>
+                        <span class="basis-value" style="color: #10b981;">+¥89,012</span>
+                    </div>
+                </div>
+                
+                <!-- 交易记录 -->
+                <div class="decision-basis" style="margin-top: 16px;">
+                    <div class="basis-title">近期交易</div>
+                    <div class="basis-item">
+                        <span class="basis-label">2025-03-20 买入:</span>
+                        <span class="basis-value">宁德时代 100股</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">2025-03-19 卖出:</span>
+                        <span class="basis-value">贵州茅台 50股</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">2025-03-18 买入:</span>
+                        <span class="basis-value">招商银行 200股</span>
+                    </div>
+                </div>
+                
+                <!-- 风险控制 -->
+                <div class="decision-basis" style="margin-top: 16px; background: #fef3c7; border: 1px solid #f59e0b;">
+                    <div class="basis-title" style="color: #d97706;">风险控制</div>
+                    <div class="basis-item">
+                        <span class="basis-label">仓位比例:</span>
+                        <span class="basis-value">63%</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">最大回撤:</span>
+                        <span class="basis-value">-8.5%</span>
+                    </div>
+                    <div class="basis-item">
+                        <span class="basis-label">夏普比率:</span>
+                        <span class="basis-value">1.8</span>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; color: #666; margin-top: 20px; font-style: italic;">
+                    控制风险，保护资本
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 模拟加载数据
+        setTimeout(() => {
+            document.querySelector('.loading-indicator').style.display = 'none';
+            document.querySelector('.position-info').textContent = '账户信息已更新';
+        }, 1800);
+    </script>
+</body>
+</html>
