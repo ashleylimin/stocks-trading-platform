@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>简单API测试</title>
+    <script>
+        async function testFetch() {
+            const url = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview';
+            console.log('测试URL:', url);
+            
+            try {
+                // 方法1: 普通fetch
+                console.log('尝试方法1: 普通fetch...');
+                const response = await fetch(url);
+                console.log('响应状态:', response.status, response.ok);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ 方法1成功:', data.signal);
+                    document.getElementById('result').innerHTML = 
+                        `<h3>✅ Fetch成功</h3><p>信号: ${data.signal.trade_signal}</p>`;
+                    return;
+                }
+            } catch (error1) {
+                console.log('方法1失败:', error1.message);
+            }
+            
+            try {
+                // 方法2: 带no-cors的fetch
+                console.log('尝试方法2: no-cors fetch...');
+                const response = await fetch(url, { mode: 'no-cors' });
+                console.log('no-cors响应:', response.type, response.status);
+                document.getElementById('result').innerHTML = 
+                    `<h3>⚠️ No-CORS模式</h3><p>响应类型: ${response.type}</p>`;
+            } catch (error2) {
+                console.log('方法2失败:', error2.message);
+                
+                // 方法3: XMLHttpRequest
+                console.log('尝试方法3: XMLHttpRequest...');
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', url);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        console.log('✅ XHR成功:', data.signal);
+                        document.getElementById('result').innerHTML = 
+                            `<h3>✅ XHR成功</h3><p>信号: ${data.signal.trade_signal}</p>`;
+                    }
+                };
+                xhr.onerror = function() {
+                    console.log('XHR失败');
+                    document.getElementById('result').innerHTML = 
+                        '<h3>❌ 所有方法都失败</h3><p>可能是CORS问题</p>';
+                };
+                xhr.send();
+            }
+        }
+        
+        window.onload = testFetch;
+    </script>
+</head>
+<body>
+    <h1>API连接测试</h1>
+    <div id="result">测试中...</div>
+    <button onclick="testFetch()">重新测试</button>
+</body>
+</html>
