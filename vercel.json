@@ -32,6 +32,13 @@
       }
     },
     {
+      "src": "/src/(.*)",
+      "dest": "/src/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    },
+    {
       "src": "/(.*\\.(png|svg|jpg|jpeg|gif|ico|css|js))$",
       "dest": "/$1",
       "headers": {
