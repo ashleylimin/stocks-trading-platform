@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo测试</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; }
+        .test-container { max-width: 600px; margin: 0 auto; }
+        h1 { margin-bottom: 30px; }
+        .logo-test { margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
+        .logo-img { width: 60px; height: 60px; display: block; margin: 10px 0; border: 1px solid #ddd; }
+        .status { padding: 8px 12px; border-radius: 4px; font-weight: bold; }
+        .status-success { background: #d1fae5; color: #065f46; }
+        .status-error { background: #fee2e2; color: #991b1b; }
+        .test-result { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>止观Logo测试</h1>
+        
+        <div class="logo-test">
+            <h3>测试1: 直接图片链接</h3>
+            <p>路径: <code>/assets/icons/logo.png</code></p>
+            <img id="logo1" src="/assets/icons/logo.png" alt="止观Logo" class="logo-img" onerror="document.getElementById('status1').className='status status-error'; document.getElementById('status1').textContent='加载失败'">
+            <div class="test-result">
+                状态: <span id="status1" class="status status-success">加载中...</span>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>测试2: 完整URL</h3>
+            <p>URL: <code>https://justwait.today/assets/icons/logo.png</code></p>
+            <img id="logo2" src="https://justwait.today/assets/icons/logo.png" alt="止观Logo" class="logo-img" onerror="document.getElementById('status2').className='status status-error'; document.getElementById('status2').textContent='加载失败'">
+            <div class="test-result">
+                状态: <span id="status2" class="status status-success">加载中...</span>
+            </div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>测试3: 文件信息</h3>
+            <p>检查logo文件是否可以访问:</p>
+            <div id="fileInfo">检查中...</div>
+        </div>
+        
+        <div class="logo-test">
+            <h3>测试4: 应用页面中的logo</h3>
+            <p>模拟应用页面中的logo显示:</p>
+            <div style="background: white; border-right: 1px solid #f0f0f0; padding: 24px 16px; width: 200px; text-align: center;">
+                <img src="/assets/icons/logo.png" alt="止观" style="width: 60px; height: 60px; display: block; margin: 0 auto 12px auto;">
+                <div style="font-size: 16px; font-weight: 500; color: #666666; margin-top: 8px;">止观</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 测试文件可访问性
+        async function testFileAccess() {
+            try {
+                const response = await fetch('/assets/icons/logo.png');
+                const fileInfo = document.getElementById('fileInfo');
+                
+                if (response.ok) {
+                    const size = response.headers.get('content-length');
+                    const type = response.headers.get('content-type');
+                    
+                    fileInfo.innerHTML = `
+                        <div class="status status-success">✅ 文件可访问</div>
+                        <p>文件大小: ${size ? (size/1024).toFixed(1) + ' KB' : '未知'}</p>
+                        <p>文件类型: ${type || '未知'}</p>
+                        <p>HTTP状态: ${response.status}</p>
+                    `;
+                } else {
+                    fileInfo.innerHTML = `<div class="status status-error">❌ 文件不可访问 (HTTP ${response.status})</div>`;
+                }
+            } catch (error) {
+                document.getElementById('fileInfo').innerHTML = `<div class="status status-error">❌ 网络错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 图片加载成功处理
+        document.getElementById('logo1').onload = function() {
+            document.getElementById('status1').textContent = '✅ 加载成功';
+        };
+        
+        document.getElementById('logo2').onload = function() {
+            document.getElementById('status2').textContent = '✅ 加载成功';
+        };
+        
+        // 页面加载后测试
+        window.onload = function() {
+            testFileAccess();
+            
+            // 设置超时检查
+            setTimeout(() => {
+                if (document.getElementById('status1').textContent === '加载中...') {
+                    document.getElementById('status1').className = 'status status-error';
+                    document.getElementById('status1').textContent = '❌ 加载超时';
+                }
+                if (document.getElementById('status2').textContent === '加载中...') {
+                    document.getElementById('status2').className = 'status status-error';
+                    document.getElementById('status2').textContent = '❌ 加载超时';
+                }
+            }, 5000);
+        };
+    </script>
+</body>
+</html>
