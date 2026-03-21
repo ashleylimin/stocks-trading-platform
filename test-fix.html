@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试API连接</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .result { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>测试后端API连接</h1>
+    <button onclick="testAPI()">测试API连接</button>
+    
+    <div id="result" class="result"></div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>正在连接后端API...</p>';
+            
+            try {
+                const response = await fetch('https://stocks-trading-platform-production.up.railway.app/api/market/overview');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = `
+                    <h3>✅ API连接成功！</h3>
+                    <p><strong>交易信号:</strong> ${data.signal?.trade_signal || '未知'}</p>
+                    <p><strong>允许做多:</strong> ${data.signal?.allow_long ? '是' : '否'}</p>
+                    <p><strong>市场情绪:</strong> ${data.breadth?.market_sentiment || '未知'}</p>
+                    <p><strong>上涨比例:</strong> ${data.breadth?.up_percentage || '0'}%</p>
+                    <p><strong>详细数据:</strong></p>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ API连接失败</h3>
+                    <p><strong>错误信息:</strong> ${error.message}</p>
+                    <p>请检查：</p>
+                    <ol>
+                        <li>后端服务是否运行 (https://stocks-trading-platform-production.up.railway.app)</li>
+                        <li>网络连接是否正常</li>
+                        <li>CORS配置是否正确</li>
+                    </ol>
+                `;
+            }
+        }
+        
+        // 页面加载时自动测试
+        window.onload = testAPI;
+    </script>
+</body>
+</html>
