@@ -5,6 +5,22 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "src/pages/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/pages/test-decision.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/css/*",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "src/js/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
