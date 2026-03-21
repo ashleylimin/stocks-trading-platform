@@ -469,7 +469,7 @@
             </div>
                 
                 <!-- 行动按钮 -->
-                <button class="action-button action-red">禁止交易</button>
+                <button class="action-button action-red">今日禁止交易</button>
                 
                 <!-- 实际决策依据 -->
                 <div class="decision-basis">
@@ -512,7 +512,7 @@
             {
                 title: "🔴 禁止交易",
                 position: "0%",
-                buttonText: "禁止交易",
+                buttonText: "今日禁止交易",
                 buttonClass: "action-red",
                 statusClass: "status-red",
                 pageTitle: "JUST WAIT"
@@ -520,7 +520,7 @@
             {
                 title: "🟡 可以交易",
                 position: "≤30%",
-                buttonText: "允许交易",
+                buttonText: "今日可以交易",
                 buttonClass: "action-yellow",
                 statusClass: "status-yellow",
                 pageTitle: "ACT"
@@ -528,7 +528,7 @@
             {
                 title: "🟢 积极做多",
                 position: "≤100%",
-                buttonText: "积极做多",
+                buttonText: "今日积极做多",
                 buttonClass: "action-green",
                 statusClass: "status-green",
                 pageTitle: "ACT"
@@ -571,10 +571,10 @@
             console.log('UI更新完成，状态:', state.title);
         }
 
-        // 按钮点击切换状态（演示用）
+        // 按钮点击显示详细信息（不再切换状态）
         actionButton.addEventListener('click', function() {
-            currentStateIndex = (currentStateIndex + 1) % tradingStates.length;
-            updateUI(currentStateIndex);
+            // 不再切换状态，只显示当前状态的详细信息
+            alert(`当前交易状态：${tradingStates[currentStateIndex].title}\n建议仓位：${tradingStates[currentStateIndex].position}\n\n决策基于实时市场数据，不可手动更改。`);
         });
 
         // 显示加载状态
