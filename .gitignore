@@ -52,3 +52,4 @@ build/
 # Frontend build artifacts
 frontend-react/dist/
 frontend-react/node_modules/
+.vercel
