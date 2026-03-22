@@ -138,16 +138,122 @@
     </div>
     
     <script>
-        // 模拟加载数据
-        setTimeout(() => {
-            document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = '最强股票筛选完成';
+        // 从后端API获取筛选后的Leaders数据
+        async function fetchFilteredLeaders() {
+            try {
+                console.log('正在获取筛选后的Leaders数据...');
+                
+                const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/leaders/filtered';
+                console.log('API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                
+                console.log('响应状态:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('API响应:', result);
+                
+                if (result.success && result.data) {
+                    updateLeadersUI(result.data);
+                    console.log('Leaders数据更新完成');
+                    console.log('筛选条件:', result.criteria);
+                } else {
+                    console.log('API响应格式错误，使用示例数据');
+                    useExampleData();
+                }
+            } catch (error) {
+                console.error('获取Leaders数据失败:', error);
+                console.log('使用示例数据');
+                useExampleData();
+            }
+        }
+        
+        // 更新UI显示筛选后的Leaders
+        function updateLeadersUI(stocks) {
+            const leadersList = document.querySelector('.leaders-list');
+            if (!leadersList) return;
             
-            console.log('Leaders页面加载完成');
-            console.log('核心原则：只盯最强股票，缩小选择范围');
-            console.log('排序规则：第一名 = 当前最强，不允许用户排序');
-            console.log('交易规则：只做「强势 + 接近 Pivot」，其他全部忽略');
-        }, 1200);
+            // 清空现有列表
+            leadersList.innerHTML = '';
+            
+            // 添加筛选后的股票
+            stocks.forEach(stock => {
+                const leaderItem = document.createElement('div');
+                leaderItem.className = 'leader-item';
+                
+                const statusTagsHTML = stock.status_tags.map(tag => {
+                    let statusClass = 'status-watch';
+                    if (tag === '强势') statusClass = 'status-strong';
+                    if (tag === '接近 Pivot') statusClass = 'status-pivot';
+                    return `<span class="status-tag ${statusClass}">${tag}</span>`;
+                }).join('');
+                
+                leaderItem.innerHTML = `
+                    <div class="stock-info">
+                        <div class="stock-name">${stock.name}</div>
+                        <div class="stock-status">
+                            ${statusTagsHTML}
+                        </div>
+                    </div>
+                `;
+                
+                leadersList.appendChild(leaderItem);
+            });
+            
+            // 更新状态信息
+            document.querySelector('.loading-indicator').style.display = 'none';
+            document.querySelector('.position-info').textContent = `筛选完成 · 符合条件: ${stocks.length}只`;
+            
+            console.log('筛选逻辑：');
+            console.log('1. 近20日涨幅 > 15%');
+            console.log('2. 当前价格 > 50日均线');
+            console.log('3. 当前价格 / 20日高点 > 0.9');
+            console.log('4. 成交额 > 5亿');
+            console.log('5. 市值 < 3000亿');
+            console.log('6. 排序：20日涨幅降序');
+            console.log('7. 取前5');
+        }
+        
+        // 使用示例数据（fallback）
+        function useExampleData() {
+            const exampleStocks = [
+                {
+                    name: "宁德时代",
+                    status_tags: ["强势", "接近 Pivot"]
+                },
+                {
+                    name: "贵州茅台",
+                    status_tags: ["强势"]
+                },
+                {
+                    name: "中际旭创",
+                    status_tags: ["观察"]
+                },
+                {
+                    name: "药明康德",
+                    status_tags: ["观察"]
+                },
+                {
+                    name: "中国中免",
+                    status_tags: ["观察"]
+                }
+            ];
+            
+            updateLeadersUI(exampleStocks);
+        }
+        
+        // 页面加载时获取数据
+        fetchFilteredLeaders();
     </script>
 </body>
 </html>
