@@ -395,3 +395,57 @@ body {
         padding: 4px 0;
     }
 }
+
+/* Pivot页面样式 */
+.judgment-section {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.judgment-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.judgment-result {
+    font-size: 20px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.action-section {
+    text-align: center;
+}
+
+.action-title {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.action-command {
+    font-size: 24px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .judgment-text {
+        font-size: 16px;
+    }
+    
+    .judgment-result {
+        font-size: 18px;
+    }
+    
+    .action-title {
+        font-size: 14px;
+    }
+    
+    .action-command {
+        font-size: 20px;
+    }
+}

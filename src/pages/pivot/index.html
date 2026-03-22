@@ -43,17 +43,17 @@
             </div>
         </div>
         
-        <!-- 主内容区 -->
+        <!-- 主内容区 - 行为决策系统 -->
         <div class="main-content">
-            <!-- 顶部标题 -->
-            <div class="page-header">
-                <h1 class="page-title">PIVOT POINTS</h1>
-            </div>
             
-            <!-- 核心内容区 -->
+            <!-- 核心决策区 -->
             <div class="decision-container">
+                <!-- 标题 -->
+                <h1 class="page-title">PIVOT</h1>
+                
+                <!-- 状态区 -->
                 <div class="status-section">
-                    <p class="position-info">枢轴点分析</p>
+                    <p class="position-info">正在获取Pivot数据</p>
                     <div class="loading-indicator">
                         <div class="loading-dot"></div>
                         <div class="loading-dot"></div>
@@ -61,51 +61,109 @@
                     </div>
                 </div>
                 
-                <!-- 内容区域 -->
-                <div class="decision-basis">
-                    <div class="basis-title">枢轴点数据</div>
-                    <div class="basis-item">
-                        <span class="basis-label">支撑位 1:</span>
-                        <span class="basis-value">--</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">支撑位 2:</span>
-                        <span class="basis-value">--</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">枢轴点:</span>
-                        <span class="basis-value">--</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">阻力位 1:</span>
-                        <span class="basis-value">--</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">阻力位 2:</span>
-                        <span class="basis-value">--</span>
+                <!-- 判断语句 -->
+                <div class="judgment-section">
+                    <div class="judgment-text">今日是否存在可交易机会？</div>
+                    <div class="judgment-result">❌ 当前：没有有效 Pivot</div>
+                </div>
+                
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
+                <!-- 为什么 -->
+                <div class="reason-section">
+                    <div class="reason-title">为什么？</div>
+                    <div class="reason-points">
+                        • 没有形成清晰的平台结构<br>
+                        • 没有接近突破的位置<br>
+                        • 没有量能配合
                     </div>
                 </div>
                 
-                <div style="text-align: center; color: #666; margin-top: 20px; font-style: italic;">
-                    关键价格水平，决定买卖时机
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
+                <!-- 操作 -->
+                <div class="action-section">
+                    <div class="action-title">操作：</div>
+                    <div class="action-command">继续等待</div>
                 </div>
+                
             </div>
+            
         </div>
     </div>
     
     <script>
+        // Pivot页面三种状态
+        const pivotStates = [
+            {
+                // 状态1: 没有机会
+                positionInfo: 'Pivot分析完成',
+                judgmentText: '今日是否存在可交易机会？',
+                judgmentResult: '❌ 当前：没有有效 Pivot',
+                reasonTitle: '为什么？',
+                reasonPoints: [
+                    '没有形成清晰的平台结构',
+                    '没有接近突破的位置',
+                    '没有量能配合'
+                ],
+                actionTitle: '操作：',
+                actionCommand: '继续等待'
+            },
+            {
+                // 状态2: 观察机会
+                positionInfo: '发现观察机会',
+                judgmentText: '今日出现可观察机会',
+                judgmentResult: '',
+                reasonTitle: '标的：宁德时代',
+                reasonPoints: [
+                    '状态：接近突破',
+                    '距离 Pivot：-1.2%'
+                ],
+                actionTitle: '操作：',
+                actionCommand: '加入观察<br>暂不买入'
+            },
+            {
+                // 状态3: 交易机会
+                positionInfo: '发现交易机会',
+                judgmentText: '出现可交易机会',
+                judgmentResult: '',
+                reasonTitle: '标的：贵州茅台',
+                reasonPoints: [
+                    '状态：突破成立',
+                    '位置：Pivot 上方'
+                ],
+                actionTitle: '操作：',
+                actionCommand: '允许试仓（1/9）'
+            }
+        ];
+
         // 模拟加载数据
         setTimeout(() => {
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = '今日枢轴点分析';
             
-            // 模拟数据更新
-            const values = ['3245.12', '3210.45', '3280.67', '3315.89', '3350.23'];
-            const items = document.querySelectorAll('.basis-item .basis-value');
-            items.forEach((item, index) => {
-                item.textContent = values[index];
-            });
-        }, 2000);
+            // 默认显示状态1（没有机会）
+            const state = pivotStates[0];
+            
+            // 更新UI
+            document.querySelector('.position-info').textContent = state.positionInfo;
+            document.querySelector('.judgment-text').textContent = state.judgmentText;
+            document.querySelector('.judgment-result').textContent = state.judgmentResult;
+            document.querySelector('.reason-title').textContent = state.reasonTitle;
+            document.querySelector('.reason-points').innerHTML = state.reasonPoints.map(point => `• ${point}`).join('<br>');
+            document.querySelector('.action-title').textContent = state.actionTitle;
+            
+            // 处理操作命令（可能包含换行）
+            const commandParts = state.actionCommand.split('<br>');
+            if (commandParts.length > 1) {
+                document.querySelector('.action-command').innerHTML = commandParts.join('<br>');
+            } else {
+                document.querySelector('.action-command').textContent = state.actionCommand;
+            }
+            
+            console.log('Pivot页面加载完成，状态：没有有效机会');
+        }, 1500);
     </script>
 </body>
 </html>
