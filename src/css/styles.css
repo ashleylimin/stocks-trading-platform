@@ -350,14 +350,60 @@ body {
     background: #ffffff;
 }
 
+/* 移动端菜单切换按钮 */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-toggle-icon {
+    width: 24px;
+    height: 24px;
+    stroke: #333;
+}
+
+/* 移动端侧边栏状态 */
+.sidebar.mobile-visible {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background: #ffffff;
+    overflow-y: auto;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+    }
+    
     .sidebar {
         display: none;
     }
     
+    .sidebar.mobile-visible {
+        display: block;
+    }
+    
     .main-content {
         margin-left: 0;
+        padding-top: 20px;
     }
     
     .page-header {

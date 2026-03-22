@@ -249,3 +249,50 @@ function updateDecisionBasis(data) {
 
 // 页面加载时获取数据
 fetchMarketData();
+
+// 移动端菜单切换功能
+document.addEventListener('DOMContentLoaded', function() {
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-visible');
+            
+            // 切换菜单图标
+            const icon = menuToggle.querySelector('.menu-toggle-icon');
+            if (sidebar.classList.contains('mobile-visible')) {
+                // 显示关闭图标
+                icon.innerHTML = '<path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            } else {
+                // 显示汉堡菜单图标
+                icon.innerHTML = '<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            }
+        });
+        
+        // 点击侧边栏外部关闭菜单
+        document.addEventListener('click', function(event) {
+            if (sidebar.classList.contains('mobile-visible') && 
+                !sidebar.contains(event.target) && 
+                !menuToggle.contains(event.target)) {
+                sidebar.classList.remove('mobile-visible');
+                const icon = menuToggle.querySelector('.menu-toggle-icon');
+                icon.innerHTML = '<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+            }
+        });
+        
+        // 点击侧边栏菜单项后关闭菜单（移动端）
+        const menuItems = sidebar.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('mobile-visible');
+                    const icon = menuToggle.querySelector('.menu-toggle-icon');
+                    icon.innerHTML = '<path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+                }
+            });
+        });
+        
+        console.log('移动端菜单切换功能已启用');
+    }
+});
