@@ -12,7 +12,10 @@ const tradingStates = [
 • 还没有出现可以确认的突破
 
 今天的任务不是寻找机会，
-而是避免错误。`
+而是避免错误。`,
+        philosophyTitle: "不是所有上涨，都属于你",
+        philosophyText: "市场的机会很多，但属于你的很少。等待最确定的机会，避免不必要的风险。",
+        statusText: "等待明确信号"
     },
     {
         position: "≤30%",
@@ -26,7 +29,10 @@ const tradingStates = [
 • 但整体还不够一致
 
 可以开始观察，
-但还不到出手的时候。`
+但还不到出手的时候。`,
+        philosophyTitle: "观察但不行动",
+        philosophyText: "信号开始出现，但需要更多确认。保持耐心，等待一致性信号。",
+        statusText: "观察信号"
     },
     {
         position: "≤100%",
@@ -40,7 +46,10 @@ const tradingStates = [
 • 突破信号得到确认
 
 只做最强的，
-只在确认后出手。`
+只在确认后出手。`,
+        philosophyTitle: "只做最强的",
+        philosophyText: "市场方向明确，资金集中在少数标的。只在确认后出手，只做最强的标的。",
+        statusText: "确认出手"
     }
 ];
 
@@ -72,7 +81,29 @@ function updateUI(stateIndex) {
     actionButton.textContent = state.buttonText;
     actionButton.className = `action-button ${state.buttonClass}`;
     
+    // 更新交易哲学
+    updateTradingPhilosophy(state);
+    
     console.log('UI更新完成');
+}
+
+// 更新交易哲学函数
+function updateTradingPhilosophy(state) {
+    const philosophyTitle = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(1)');
+    const philosophyText = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(2)');
+    const statusElement = document.querySelector('.decision-basis .basis-item:nth-child(2) .basis-value');
+    
+    if (philosophyTitle) {
+        philosophyTitle.textContent = state.philosophyTitle;
+    }
+    
+    if (philosophyText) {
+        philosophyText.textContent = state.philosophyText;
+    }
+    
+    if (statusElement) {
+        statusElement.textContent = state.statusText;
+    }
 }
 
 // 按钮点击显示详细信息（不再切换状态）
