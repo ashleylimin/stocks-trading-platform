@@ -5,51 +5,45 @@ const tradingStates = [
         buttonText: "禁止交易（WAIT）",
         buttonClass: "action-red",
         pageTitle: "JUST WAIT",
-        decisionReason: `为什么今天不交易？
-
-• 市场没有形成明确方向
-• 资金没有集中在少数强势标的
-• 还没有出现可以确认的突破
-
-今天的任务不是寻找机会，
-而是避免错误。`,
-        philosophyTitle: "不是所有上涨，都属于你",
-        philosophyText: "市场的机会很多，但属于你的很少。等待最确定的机会，避免不必要的风险。",
-        statusText: "等待明确信号"
+        executionReason: {
+            title: "为什么今天不交易？",
+            bulletPoints: [
+                "市场没有形成一致方向",
+                "没有足够的强势股票", 
+                "没有确认的突破信号"
+            ],
+            command: "今天的任务只有一个：不交易"
+        }
     },
     {
         position: "≤30%",
         buttonText: "可以交易（READY）",
         buttonClass: "action-yellow",
         pageTitle: "ACT",
-        decisionReason: `为什么今天还不能交易？
-
-• 有部分信号开始出现
-• 个别强势标的开始走强
-• 但整体还不够一致
-
-可以开始观察，
-但还不到出手的时候。`,
-        philosophyTitle: "观察但不行动",
-        philosophyText: "信号开始出现，但需要更多确认。保持耐心，等待一致性信号。",
-        statusText: "观察信号"
+        executionReason: {
+            title: "为什么今天可以交易？",
+            bulletPoints: [
+                "市场开始出现明确方向",
+                "有1-2只强势股票走强",
+                "部分突破信号得到确认"
+            ],
+            command: "今天的任务：只做最强的1-2只股票"
+        }
     },
     {
         position: "≤100%",
         buttonText: "允许交易（CONFIRMED）",
         buttonClass: "action-green",
         pageTitle: "ACT",
-        decisionReason: `为什么今天可以交易？
-
-• 市场方向开始明确
-• 资金集中在少数强势标的
-• 突破信号得到确认
-
-只做最强的，
-只在确认后出手。`,
-        philosophyTitle: "只做最强的",
-        philosophyText: "市场方向明确，资金集中在少数标的。只在确认后出手，只做最强的标的。",
-        statusText: "确认出手"
+        executionReason: {
+            title: "为什么今天必须交易？",
+            bulletPoints: [
+                "市场方向非常明确",
+                "有≥2只强势股票确认突破",
+                "所有条件都已满足"
+            ],
+            command: "今天的任务：全力做多最强的股票"
+        }
     }
 ];
 
@@ -81,28 +75,28 @@ function updateUI(stateIndex) {
     actionButton.textContent = state.buttonText;
     actionButton.className = `action-button ${state.buttonClass}`;
     
-    // 更新交易哲学
-    updateTradingPhilosophy(state);
+    // 更新执行理由
+    updateExecutionReason(state);
     
     console.log('UI更新完成');
 }
 
-// 更新交易哲学函数
-function updateTradingPhilosophy(state) {
-    const philosophyTitle = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(1)');
-    const philosophyText = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(2)');
-    const statusElement = document.querySelector('.decision-basis .basis-item:nth-child(2) .basis-value');
+// 更新执行理由函数
+function updateExecutionReason(state) {
+    const reasonTitle = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(1)');
+    const bulletPoints = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(2)');
+    const command = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(3)');
     
-    if (philosophyTitle) {
-        philosophyTitle.textContent = state.philosophyTitle;
+    if (reasonTitle) {
+        reasonTitle.textContent = state.executionReason.title;
     }
     
-    if (philosophyText) {
-        philosophyText.textContent = state.philosophyText;
+    if (bulletPoints) {
+        bulletPoints.innerHTML = state.executionReason.bulletPoints.map(point => `• ${point}`).join('<br>');
     }
     
-    if (statusElement) {
-        statusElement.textContent = state.statusText;
+    if (command) {
+        command.innerHTML = state.executionReason.command.replace('<br>', '<br>');
     }
 }
 
@@ -110,7 +104,8 @@ function updateTradingPhilosophy(state) {
 actionButton.addEventListener('click', function() {
     // 不再切换状态，只显示当前状态的详细信息
     const state = tradingStates[currentStateIndex];
-    alert(`交易决策：${state.buttonText}\n建议仓位：${state.position}\n\n${state.decisionReason}\n\n决策基于实时市场数据，不可手动更改。`);
+    const reasonText = `${state.executionReason.title}\n\n${state.executionReason.bulletPoints.map(point => `• ${point}`).join('\n')}\n\n${state.executionReason.command}`;
+    alert(`交易决策：${state.buttonText}\n建议仓位：${state.position}\n\n${reasonText}\n\n决策基于实时市场数据，不可手动更改。`);
 });
 
 // 显示加载状态
