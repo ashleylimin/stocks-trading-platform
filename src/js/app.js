@@ -250,19 +250,36 @@ function updateDecisionBasis(data) {
     console.log('决策依据已更新');
 }
 
-// 更新日期信息
+// 更新日期信息 - 显示最后一个交易日
 function updateDateInfo() {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    let lastTradingDay = new Date(now);
+    
+    // 获取今天是星期几（0=周日，1=周一，...，6=周六）
+    const dayOfWeek = now.getDay();
+    
+    // 调整到最后一个交易日
+    if (dayOfWeek === 0) { // 周日
+        lastTradingDay.setDate(now.getDate() - 2); // 回退到周五
+    } else if (dayOfWeek === 6) { // 周六
+        lastTradingDay.setDate(now.getDate() - 1); // 回退到周五
+    } else if (dayOfWeek === 1) { // 周一
+        // 如果是周一，显示上周五
+        lastTradingDay.setDate(now.getDate() - 3);
+    }
+    // 其他工作日（周二到周五）显示当天
+    
+    const year = lastTradingDay.getFullYear();
+    const month = String(lastTradingDay.getMonth() + 1).padStart(2, '0');
+    const day = String(lastTradingDay.getDate()).padStart(2, '0');
     
     const dateString = `${year}-${month}-${day}`;
     const dateElement = document.querySelector('.date-info');
     
     if (dateElement) {
         dateElement.textContent = `今日判断（${dateString} 收盘）`;
-        console.log(`日期信息已更新: ${dateString}`);
+        console.log(`日期信息已更新: ${dateString} (最后交易日)`);
+        console.log(`今天是: ${now.toISOString().split('T')[0]}, 星期${['日', '一', '二', '三', '四', '五', '六'][dayOfWeek]}`);
     }
     
     // 模拟回撤避免数据（实际应该从后端获取）
