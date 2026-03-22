@@ -1,12 +1,53 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=/market">
-    <title>止观 - 重定向中...</title>
+    <title>止观 - 加载中</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f0f0f0;
+            text-align: center;
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .loading-link {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .loading-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        // 立即跳转，不等待
+        window.location.href = '/market';
+    </script>
 </head>
 <body>
-    <p>正在重定向到止观交易决策系统...</p>
-    <p>如果页面没有自动跳转，请 <a href="/market">点击这里</a>。</p>
+    <div class="loading-screen">
+        <div class="loading-text">正在跳转到止观交易决策系统...</div>
+        <div class="loading-text">如果跳转失败，请 <a href="/market" class="loading-link">点击这里</a></div>
+    </div>
 </body>
 </html>
