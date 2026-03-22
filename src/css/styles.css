@@ -467,7 +467,7 @@ body {
 }
 
 .leader-item {
-    padding: 16px 0;
+    padding: 20px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -479,24 +479,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 100%;
+    width: 100%;
 }
 
 .stock-name {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: #333;
+    flex: 1;
+    min-width: 0;
+    padding-right: 16px;
 }
 
 .stock-status {
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .status-tag {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
 }
 
 .status-strong {
@@ -541,13 +548,22 @@ body {
         font-size: 16px;
     }
     
+    .leader-item {
+        padding: 16px 0;
+    }
+    
     .stock-name {
-        font-size: 16px;
+        font-size: 17px;
+        padding-right: 12px;
+    }
+    
+    .stock-status {
+        gap: 6px;
     }
     
     .status-tag {
         font-size: 11px;
-        padding: 3px 6px;
+        padding: 4px 8px;
     }
     
     .rules-title {
