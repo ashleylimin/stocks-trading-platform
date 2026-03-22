@@ -1,22 +1,46 @@
-// 模拟三种交易状态
+// 三种交易状态
 const tradingStates = [
     {
         position: "0%",
-        buttonText: "今日禁止交易",
+        buttonText: "禁止交易（WAIT）",
         buttonClass: "action-red",
-        pageTitle: "JUST WAIT"
+        pageTitle: "JUST WAIT",
+        decisionReason: `为什么今天不交易？
+
+• 市场没有形成明确方向
+• 资金没有集中在少数强势标的
+• 还没有出现可以确认的突破
+
+今天的任务不是寻找机会，
+而是避免错误。`
     },
     {
         position: "≤30%",
-        buttonText: "今日可以交易",
+        buttonText: "可以交易（READY）",
         buttonClass: "action-yellow",
-        pageTitle: "ACT"
+        pageTitle: "ACT",
+        decisionReason: `为什么今天还不能交易？
+
+• 有部分信号开始出现
+• 个别强势标的开始走强
+• 但整体还不够一致
+
+可以开始观察，
+但还不到出手的时候。`
     },
     {
         position: "≤100%",
-        buttonText: "今日积极做多",
+        buttonText: "允许交易（CONFIRMED）",
         buttonClass: "action-green",
-        pageTitle: "ACT"
+        pageTitle: "ACT",
+        decisionReason: `为什么今天可以交易？
+
+• 市场方向开始明确
+• 资金集中在少数强势标的
+• 突破信号得到确认
+
+只做最强的，
+只在确认后出手。`
     }
 ];
 
@@ -54,7 +78,8 @@ function updateUI(stateIndex) {
 // 按钮点击显示详细信息（不再切换状态）
 actionButton.addEventListener('click', function() {
     // 不再切换状态，只显示当前状态的详细信息
-    alert(`交易决策：${tradingStates[currentStateIndex].buttonText}\n建议仓位：${tradingStates[currentStateIndex].position}\n\n决策基于实时市场数据，不可手动更改。`);
+    const state = tradingStates[currentStateIndex];
+    alert(`交易决策：${state.buttonText}\n建议仓位：${state.position}\n\n${state.decisionReason}\n\n决策基于实时市场数据，不可手动更改。`);
 });
 
 // 显示加载状态
