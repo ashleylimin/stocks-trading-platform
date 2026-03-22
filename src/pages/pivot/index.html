@@ -2,7 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>止观 - Pivot</title>
     <link rel="stylesheet" href="/src/css/styles.css">
 </head>
@@ -11,7 +13,7 @@
         <!-- 侧边栏 -->
         <div class="sidebar">
             <div class="sidebar-brand">
-                <img src="/assets/icons/logo-optimized.png" alt="止观" class="brand-logo">
+                 <img src="/assets/icons/logo-optimized.png" alt="止观" class="brand-logo" loading="lazy" width="40" height="40">
                 <div class="brand-text">止观</div>
             </div>
             
@@ -39,6 +41,14 @@
                         <path d="M9.73517 17.8333V9.89214M9.73517 9.89214L15.4706 2.83331M9.73517 9.89214L4 2.83331M15.0293 9.89214H4.44105M14.1469 13.4215H5.32341" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                     <span>Account</span>
+                </button>
+                
+                <!-- 反馈按钮 -->
+                <button class="menu-item feedback-button" onclick="showFeedback()">
+                    <svg class="menu-icon" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 17.5C14.1421 17.5 17.5 14.1421 17.5 10C17.5 5.85786 14.1421 2.5 10 2.5C5.85786 2.5 2.5 5.85786 2.5 10C2.5 11.422 2.915 12.75 3.634 13.865L2.5 17.5L6.135 16.366C7.25 17.085 8.578 17.5 10 17.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>反馈</span>
                 </button>
             </div>
         </div>
@@ -218,6 +228,27 @@
                 
                 console.log('移动端菜单切换功能已启用');
             }
+        }
+        
+        // 反馈功能
+        function showFeedback() {
+            const feedbackText = prompt('感谢使用止观系统！\n\n请告诉我们您的反馈或建议：\n\n1. 系统是否帮助您减少了不必要的交易？\n2. 您希望看到哪些改进？\n3. 其他建议？', '');
+            
+            if (feedbackText && feedbackText.trim()) {
+                alert('感谢您的反馈！\n\n您的意见对我们非常重要。\n\n反馈已记录，我们会持续改进系统。');
+                console.log('用户反馈:', feedbackText);
+                
+                // 这里可以添加将反馈发送到后端的代码
+                // sendFeedbackToBackend(feedbackText);
+            } else if (feedbackText !== null) {
+                alert('反馈内容不能为空。');
+            }
+        }
+        
+        // 添加反馈按钮事件监听
+        const feedbackButton = document.querySelector('.feedback-button');
+        if (feedbackButton) {
+            feedbackButton.addEventListener('click', showFeedback);
         }
     </script>
 </body>

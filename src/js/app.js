@@ -361,4 +361,25 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('移动端菜单切换功能已启用');
     }
+    
+    // 反馈功能
+    function showFeedback() {
+        const feedbackText = prompt('感谢使用止观系统！\n\n请告诉我们您的反馈或建议：\n\n1. 系统是否帮助您减少了不必要的交易？\n2. 您希望看到哪些改进？\n3. 其他建议？', '');
+        
+        if (feedbackText && feedbackText.trim()) {
+            alert('感谢您的反馈！\n\n您的意见对我们非常重要。\n\n反馈已记录，我们会持续改进系统。');
+            console.log('用户反馈:', feedbackText);
+            
+            // 这里可以添加将反馈发送到后端的代码
+            // sendFeedbackToBackend(feedbackText);
+        } else if (feedbackText !== null) {
+            alert('反馈内容不能为空。');
+        }
+    }
+    
+    // 添加反馈按钮事件监听
+    const feedbackButton = document.querySelector('.feedback-button');
+    if (feedbackButton) {
+        feedbackButton.addEventListener('click', showFeedback);
+    }
 });
