@@ -449,3 +449,112 @@ body {
         font-size: 20px;
     }
 }
+
+/* Leaders页面样式 */
+.subtitle-section {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.subtitle-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #666;
+}
+
+.leaders-list {
+    margin-bottom: 32px;
+}
+
+.leader-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.leader-item:last-child {
+    border-bottom: none;
+}
+
+.stock-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stock-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.stock-status {
+    display: flex;
+    gap: 8px;
+}
+
+.status-tag {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-strong {
+    background: #dc2626;
+    color: white;
+}
+
+.status-watch {
+    background: #f59e0b;
+    color: white;
+}
+
+.status-pivot {
+    background: #10b981;
+    color: white;
+}
+
+.rules-section {
+    text-align: center;
+}
+
+.rules-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.rules-content {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.8;
+}
+
+.rule-item {
+    margin-bottom: 4px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .subtitle-text {
+        font-size: 16px;
+    }
+    
+    .stock-name {
+        font-size: 16px;
+    }
+    
+    .status-tag {
+        font-size: 11px;
+        padding: 3px 6px;
+    }
+    
+    .rules-title {
+        font-size: 14px;
+    }
+    
+    .rules-content {
+        font-size: 12px;
+    }
+}

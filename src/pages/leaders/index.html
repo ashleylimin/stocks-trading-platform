@@ -43,17 +43,22 @@
             </div>
         </div>
         
-        <!-- 主内容区 -->
+        <!-- 主内容区 - 只盯最强股票 -->
         <div class="main-content">
-            <!-- 顶部标题 -->
-            <div class="page-header">
-                <h1 class="page-title">MARKET LEADERS</h1>
-            </div>
             
-            <!-- 核心内容区 -->
+            <!-- 核心决策区 -->
             <div class="decision-container">
+                <!-- 标题 -->
+                <h1 class="page-title">LEADERS</h1>
+                
+                <!-- 副标题 -->
+                <div class="subtitle-section">
+                    <div class="subtitle-text">只盯最强股票</div>
+                </div>
+                
+                <!-- 状态区 -->
                 <div class="status-section">
-                    <p class="position-info">领先股票分析</p>
+                    <p class="position-info">正在筛选最强股票</p>
                     <div class="loading-indicator">
                         <div class="loading-dot"></div>
                         <div class="loading-dot"></div>
@@ -61,52 +66,74 @@
                     </div>
                 </div>
                 
-                <!-- 领先股票列表 -->
-                <div class="decision-basis">
-                    <div class="basis-title">今日领先股票</div>
-                    <div class="basis-item">
-                        <span class="basis-label">1. 宁德时代:</span>
-                        <span class="basis-value">+5.2%</span>
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
+                <!-- 股票列表（最多5个） -->
+                <div class="leaders-list">
+                    <div class="leader-item">
+                        <div class="stock-info">
+                            <div class="stock-name">宁德时代</div>
+                            <div class="stock-status">
+                                <span class="status-tag status-strong">强势</span>
+                                <span class="status-tag status-pivot">接近 Pivot</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="basis-item">
-                        <span class="basis-label">2. 贵州茅台:</span>
-                        <span class="basis-value">+3.8%</span>
+                    
+                    <div class="leader-item">
+                        <div class="stock-info">
+                            <div class="stock-name">贵州茅台</div>
+                            <div class="stock-status">
+                                <span class="status-tag status-strong">强势</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="basis-item">
-                        <span class="basis-label">3. 招商银行:</span>
-                        <span class="basis-value">+2.9%</span>
+                    
+                    <div class="leader-item">
+                        <div class="stock-info">
+                            <div class="stock-name">中际旭创</div>
+                            <div class="stock-status">
+                                <span class="status-tag status-watch">观察</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="basis-item">
-                        <span class="basis-label">4. 中国平安:</span>
-                        <span class="basis-value">+2.1%</span>
+                    
+                    <div class="leader-item">
+                        <div class="stock-info">
+                            <div class="stock-name">药明康德</div>
+                            <div class="stock-status">
+                                <span class="status-tag status-watch">观察</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="basis-item">
-                        <span class="basis-label">5. 五粮液:</span>
-                        <span class="basis-value">+1.8%</span>
+                    
+                    <div class="leader-item">
+                        <div class="stock-info">
+                            <div class="stock-name">中国中免</div>
+                            <div class="stock-status">
+                                <span class="status-tag status-watch">观察</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- 强度指标 -->
-                <div class="decision-basis" style="margin-top: 16px;">
-                    <div class="basis-title">市场强度指标</div>
-                    <div class="basis-item">
-                        <span class="basis-label">相对强度:</span>
-                        <span class="basis-value">85.6</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">成交量比率:</span>
-                        <span class="basis-value">1.8x</span>
-                    </div>
-                    <div class="basis-item">
-                        <span class="basis-label">突破数量:</span>
-                        <span class="basis-value">12</span>
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
+                <!-- 页面底部规则 -->
+                <div class="rules-section">
+                    <div class="rules-title">规则：</div>
+                    <div class="rules-content">
+                        <div class="rule-item">只从这里选</div>
+                        <div class="rule-item">不在名单，不交易</div>
+                        <div class="rule-item">只做「强势 + 接近 Pivot」</div>
+                        <div class="rule-item">其他全部忽略</div>
                     </div>
                 </div>
                 
-                <div style="text-align: center; color: #666; margin-top: 20px; font-style: italic;">
-                    跟随强者，顺势而为
-                </div>
             </div>
+            
         </div>
     </div>
     
@@ -114,8 +141,13 @@
         // 模拟加载数据
         setTimeout(() => {
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = '今日市场领先者';
-        }, 1500);
+            document.querySelector('.position-info').textContent = '最强股票筛选完成';
+            
+            console.log('Leaders页面加载完成');
+            console.log('核心原则：只盯最强股票，缩小选择范围');
+            console.log('排序规则：第一名 = 当前最强，不允许用户排序');
+            console.log('交易规则：只做「强势 + 接近 Pivot」，其他全部忽略');
+        }, 1200);
     </script>
 </body>
 </html>
