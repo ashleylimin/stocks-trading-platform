@@ -114,6 +114,9 @@ console.log('页面初始化，显示加载状态');
 // 从后端获取实时数据（页面加载后立即执行）
 async function fetchMarketData() {
     try {
+        // 更新日期信息
+        updateDateInfo();
+        
         console.log('正在获取市场数据...');
         const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview';
         console.log('API URL:', apiUrl);
@@ -245,6 +248,29 @@ function updateDecisionBasis(data) {
     }
     
     console.log('决策依据已更新');
+}
+
+// 更新日期信息
+function updateDateInfo() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    
+    const dateString = `${year}-${month}-${day}`;
+    const dateElement = document.querySelector('.date-info');
+    
+    if (dateElement) {
+        dateElement.textContent = `今日判断（${dateString} 收盘）`;
+        console.log(`日期信息已更新: ${dateString}`);
+    }
+    
+    // 模拟回撤避免数据（实际应该从后端获取）
+    const drawdownElement = document.querySelector('.drawdown-info');
+    if (drawdownElement) {
+        // 这里可以添加逻辑从后端获取实际回撤数据
+        console.log('回撤统计显示中（测试数据）');
+    }
 }
 
 // 页面加载时获取数据

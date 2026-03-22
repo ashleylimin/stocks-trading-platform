@@ -188,6 +188,32 @@ body {
     color: #10b981;
 }
 
+/* 日期信息 */
+.date-info {
+    font-size: 15px;
+    font-weight: 500;
+    color: #86868b;
+    margin-bottom: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    text-align: center;
+    letter-spacing: -0.1px;
+}
+
+/* 回撤统计 */
+.drawdown-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: #34c759;
+    margin-bottom: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    text-align: center;
+    letter-spacing: -0.1px;
+    background: rgba(52, 199, 89, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
 .position-info {
     font-size: 17px;
     font-weight: 500;
