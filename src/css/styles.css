@@ -100,8 +100,8 @@ body {
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
+    min-height: 100vh;
+    overflow-y: auto;
 }
 
 /* 顶部标题 */
@@ -119,18 +119,18 @@ body {
     margin-bottom: 8px;
 }
 
-/* 核心决策区 - 垂直居中，适配高度 */
+/* 核心决策区 - 全屏适配 */
 .decision-container {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 0 40px;
-    max-width: 600px;
+    padding: 20px 40px 40px;
+    max-width: 800px;
     margin: 0 auto;
     width: 100%;
-    max-height: calc(100vh - 180px);
+    min-height: calc(100vh - 120px);
     overflow-y: auto;
 }
 
@@ -369,8 +369,9 @@ body {
     }
     
     .decision-container {
-        padding: 0 20px;
-        max-height: calc(100vh - 120px);
+        padding: 20px 20px 30px;
+        min-height: calc(100vh - 100px);
+        max-width: 100%;
     }
     
     .action-button {
