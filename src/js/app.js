@@ -410,4 +410,4 @@ document.addEventListener('DOMContentLoaded', function() {
     if (feedbackButton) {
         feedbackButton.addEventListener('click', showFeedback);
     }
-});
+});// Force redeploy Mon Mar 23 09:31:42 CST 2026
