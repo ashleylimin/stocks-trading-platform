@@ -78,36 +78,10 @@ function updateUI(stateIndex) {
     // 更新执行理由
     updateExecutionReason(state);
     
-    // 更新回撤避免统计
-    updateDrawdownStats(stateIndex);
-    
     console.log('UI更新完成');
 }
 
-// 更新回撤避免统计函数
-function updateDrawdownStats(stateIndex) {
-    const drawdownElement = document.querySelector('.drawdown-info');
-    if (!drawdownElement) return;
-    
-    // 基于系统哲学：这是一个帮你少交易的系统
-    // 统计过去一周的决策情况
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    
-    // 模拟数据：根据当前信号显示不同的统计
-    let drawdownText = '';
-    
-    if (stateIndex === 0) { // 禁止交易
-        drawdownText = '本周已避免约10%的回撤风险';
-    } else if (stateIndex === 1) { // 可以交易
-        drawdownText = '本周已避免约5%的回撤风险';
-    } else { // 积极做多
-        drawdownText = '本周已避免约2%的回撤风险';
-    }
-    
-    drawdownElement.textContent = drawdownText;
-    console.log('回撤统计已更新:', drawdownText);
-}
+
 
 // 更新执行理由函数
 function updateExecutionReason(state) {
