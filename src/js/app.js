@@ -281,33 +281,61 @@ function updateDecisionBasis(data) {
 // 更新日期信息 - 显示最后一个交易日
 function updateDateInfo() {
     const now = new Date();
-    let lastTradingDay = new Date(now);
-    
-    // 获取今天是星期几（0=周日，1=周一，...，6=周六）
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
     const dayOfWeek = now.getDay();
     
-    // 调整到最后一个交易日
-    if (dayOfWeek === 0) { // 周日
-        lastTradingDay.setDate(now.getDate() - 2); // 回退到周五
-    } else if (dayOfWeek === 6) { // 周六
-        lastTradingDay.setDate(now.getDate() - 1); // 回退到周五
-    } else if (dayOfWeek === 1) { // 周一
-        // 如果是周一，显示上周五
-        lastTradingDay.setDate(now.getDate() - 3);
-    }
-    // 其他工作日（周二到周五）显示当天
-    
-    const year = lastTradingDay.getFullYear();
-    const month = String(lastTradingDay.getMonth() + 1).padStart(2, '0');
-    const day = String(lastTradingDay.getDate()).padStart(2, '0');
-    
+    // 获取今天的日期
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
     const dateString = `${year}-${month}-${day}`;
-    const dateElement = document.querySelector('.date-info');
     
+    // 判断是否交易日（周一至周五）
+    const isTradingDay = dayOfWeek >= 1 && dayOfWeek <= 5;
+    
+    let statusText = '';
+    
+    if (!isTradingDay) {
+        // 非交易日（周末）
+        let lastTradingDay = new Date(now);
+        if (dayOfWeek === 0) { // 周日
+            lastTradingDay.setDate(now.getDate() - 2); // 回退到周五
+        } else if (dayOfWeek === 6) { // 周六
+            lastTradingDay.setDate(now.getDate() - 1); // 回退到周五
+        }
+        const lastYear = lastTradingDay.getFullYear();
+        const lastMonth = String(lastTradingDay.getMonth() + 1).padStart(2, '0');
+        const lastDay = String(lastTradingDay.getDate()).padStart(2, '0');
+        statusText = `今日判断（${lastYear}-${lastMonth}-${lastDay} 已收盘）`;
+    } else {
+        // 交易日（周一至周五）
+        const currentTime = currentHour * 100 + currentMinute;
+        
+        if (currentTime < 900) {
+            // 9:00前
+            statusText = `今日判断（${dateString} 等待开盘）`;
+        } else if (currentTime >= 900 && currentTime < 930) {
+            // 9:00-9:30 开盘前
+            statusText = `今日判断（${dateString} 等待开盘）`;
+        } else if ((currentTime >= 930 && currentTime < 1130) || 
+                   (currentTime >= 1300 && currentTime < 1500)) {
+            // 交易时间 9:30-11:30, 13:00-15:00
+            statusText = `今日判断（${dateString}）`;
+        } else if (currentTime >= 1130 && currentTime < 1300) {
+            // 午休时间 11:30-13:00
+            statusText = `今日判断（${dateString} 午间休市）`;
+        } else {
+            // 15:00后 已收盘
+            statusText = `今日判断（${dateString} 已收盘）`;
+        }
+    }
+    
+    const dateElement = document.querySelector('.date-info');
     if (dateElement) {
-        dateElement.textContent = `今日判断（${dateString} 收盘）`;
-        console.log(`日期信息已更新: ${dateString} (最后交易日)`);
-        console.log(`今天是: ${now.toISOString().split('T')[0]}, 星期${['日', '一', '二', '三', '四', '五', '六'][dayOfWeek]}`);
+        dateElement.textContent = statusText;
+        console.log(`日期信息已更新: ${statusText}`);
+        console.log(`当前时间: ${currentHour}:${currentMinute}, 星期${['日', '一', '二', '三', '四', '五', '六'][dayOfWeek]}`);
     }
     
     // 更新回撤避免统计（在updateUI函数中处理）
