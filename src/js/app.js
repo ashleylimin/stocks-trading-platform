@@ -143,6 +143,7 @@ async function fetchMarketData() {
         if (result.success && result.signal) {
             const signal = result.signal.trade_signal;
             console.log('交易信号:', signal);
+            console.log('完整signal对象:', result.signal);
             
             // 根据后端信号决定状态
             console.log('后端信号:', signal);
@@ -157,8 +158,11 @@ async function fetchMarketData() {
                 console.log('设置为状态 2: 积极交易');
             } else {
                 console.log('未知信号，使用默认状态');
+                console.log('未知信号值:', signal);
                 currentStateIndex = 0; // 默认禁止交易
             }
+            
+            console.log('最终状态索引:', currentStateIndex);
             
             // 更新决策依据
             updateDecisionBasis(result);
@@ -390,3 +394,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 // Debug Tue Mar 24 14:55:42 CST 2026
+// More debug Tue Mar 24 15:01:18 CST 2026
