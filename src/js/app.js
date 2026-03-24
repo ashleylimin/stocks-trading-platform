@@ -145,12 +145,16 @@ async function fetchMarketData() {
             console.log('交易信号:', signal);
             
             // 根据后端信号决定状态
+            console.log('后端信号:', signal);
             if (signal === "禁止交易") {
                 currentStateIndex = 0;
+                console.log('设置为状态 0: 禁止交易');
             } else if (signal === "允许交易" || signal === "可以交易") {
                 currentStateIndex = 1;
+                console.log('设置为状态 1: 可以交易');
             } else if (signal === "积极交易" || signal === "积极做多") {
                 currentStateIndex = 2;
+                console.log('设置为状态 2: 积极交易');
             } else {
                 console.log('未知信号，使用默认状态');
                 currentStateIndex = 0; // 默认禁止交易
@@ -385,3 +389,4 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackButton.addEventListener('click', showFeedback);
     }
 });
+// Debug Tue Mar 24 14:55:42 CST 2026
