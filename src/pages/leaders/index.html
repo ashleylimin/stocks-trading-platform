@@ -210,10 +210,9 @@
                 const leaderItem = document.createElement('div');
                 leaderItem.className = 'leader-item';
                 
-                // 模拟计算bias20（暂时使用随机数据，后续从后端获取真实ma20）
-                // bias20 = ((currentPrice - ma20) / ma20) * 100
-                const currentPrice = stock.current_price || 100; // 使用API返回的current_price或默认值
-                const ma20 = currentPrice * (1 - Math.random() * 0.1); // 模拟ma20，比当前价格低0-10%
+                // 使用后端API返回的真实数据
+                const currentPrice = stock.current_price || 100;
+                const ma20 = stock.ma20 || currentPrice * 0.95; // 使用API返回的ma20或默认值
                 const bias20 = ((currentPrice - ma20) / ma20) * 100;
                 
                 // 判断是否乖离过大（>= 15%）
@@ -222,7 +221,20 @@
                     biasExceedCount++;
                 }
                 
-                // 生成状态标签HTML（应用乖离防御塔逻辑）
+                // 使用后端API返回的真实MA5和near_high数据
+                const ma5 = stock.ma5 || currentPrice * 0.98; // 使用API返回的ma5或默认值
+                const nearHigh = stock.near_high || false; // 使用API返回的near_high或默认值
+                const priceToHighRatio = stock.price_to_high_ratio || 0.95;
+                
+                // 判断Pivot状态
+                let pivotStatus = '';
+                if (currentPrice >= ma5 && (nearHigh || priceToHighRatio > 0.95)) {
+                    pivotStatus = 'Near Pivot';
+                } else if (currentPrice < ma5) {
+                    pivotStatus = 'Pivot Failure';
+                }
+                
+                // 生成状态标签HTML（应用乖离防御塔和Pivot判断逻辑）
                 let statusTagsHTML = '';
                 if (isBiasExceed) {
                     // 乖离过大：强制替换为深灰色背景的[乖离过大]标签
@@ -236,11 +248,27 @@
                     leaderItem.style.opacity = '0.6';
                     leaderItem.style.cursor = 'not-allowed';
                 } else {
-                    // 正常状态：显示原有标签
-                    statusTagsHTML = stock.status_tags.map(tag => {
+                    // 正常状态：根据Pivot判断和原有标签生成状态
+                    const originalTags = stock.status_tags || [];
+                    let finalTags = [...originalTags];
+                    
+                    // 添加Pivot状态标签
+                    if (pivotStatus === 'Near Pivot') {
+                        // 如果已经有"接近 Pivot"标签，保持它，否则添加
+                        if (!originalTags.includes('接近 Pivot')) {
+                            finalTags.push('接近 Pivot');
+                        }
+                    } else if (pivotStatus === 'Pivot Failure') {
+                        // 添加Pivot Failure标签（新标签）
+                        finalTags.push('Pivot Failure');
+                    }
+                    
+                    // 生成HTML
+                    statusTagsHTML = finalTags.map(tag => {
                         let statusClass = 'status-watch';
                         if (tag === '强势') statusClass = 'status-strong';
                         if (tag === '接近 Pivot') statusClass = 'status-pivot';
+                        if (tag === 'Pivot Failure') statusClass = 'status-failure';
                         return `<span class="status-tag ${statusClass}">${tag}</span>`;
                     }).join('');
                 }

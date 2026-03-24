@@ -661,6 +661,12 @@ body {
     border: 1px solid #636366;
 }
 
+.status-failure {
+    background: linear-gradient(135deg, #ff3b30, #ff453a);
+    color: white;
+    border: 1px solid #d70015;
+}
+
 .rules-section {
     text-align: center;
 }

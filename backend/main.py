@@ -1450,7 +1450,10 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.95,
                 "turnover": 12.8,
                 "market_cap": 856.3,
-                "status_tags": ["强势", "接近 Pivot"]
+                "status_tags": ["强势", "接近 Pivot"],
+                "ma5": 185.20,  # 添加MA5数据
+                "ma20": 175.80,  # 添加MA20数据
+                "near_high": True  # 添加near_high数据
             },
             {
                 "code": "000858.SZ",
@@ -1461,7 +1464,10 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.92,
                 "turnover": 8.5,
                 "market_cap": 575.4,
-                "status_tags": ["强势"]
+                "status_tags": ["强势"],
+                "ma5": 145.50,
+                "ma20": 140.30,
+                "near_high": True
             },
             {
                 "code": "002415.SZ",
@@ -1472,7 +1478,10 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.91,
                 "turnover": 6.2,
                 "market_cap": 304.2,
-                "status_tags": ["观察"]
+                "status_tags": ["观察"],
+                "ma5": 31.80,
+                "ma20": 30.50,
+                "near_high": False
             },
             {
                 "code": "000001.SZ",
@@ -1483,7 +1492,10 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.93,
                 "turnover": 5.8,
                 "market_cap": 248.7,
-                "status_tags": ["观察"]
+                "status_tags": ["观察"],
+                "ma5": 12.60,
+                "ma20": 12.10,
+                "near_high": True
             },
             {
                 "code": "600519.SH",
@@ -1494,7 +1506,10 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.90,
                 "turnover": 4.1,
                 "market_cap": 2074.5,
-                "status_tags": ["观察"]
+                "status_tags": ["观察"],
+                "ma5": 1620.00,
+                "ma20": 1580.00,
+                "near_high": False
             }
         ]
         
