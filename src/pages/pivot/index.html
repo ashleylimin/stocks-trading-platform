@@ -67,6 +67,11 @@
                 <!-- 标题 -->
                 <h1 class="page-title">PIVOT</h1>
                 
+                <!-- 日期信息 -->
+                <div class="date-info">
+                    正在获取市场数据...
+                </div>
+                
                 <!-- 状态区 -->
                 <div class="status-section">
                     <p class="position-info">正在获取Pivot数据</p>
@@ -76,6 +81,9 @@
                         <div class="loading-dot"></div>
                     </div>
                 </div>
+                
+                <!-- 行动按钮 -->
+                <button class="action-button action-red">禁止交易（WAIT）</button>
                 
                 <!-- 判断语句 -->
                 <div class="judgment-section">
@@ -230,6 +238,235 @@
             }
         }
         
+        // 三种交易状态（与Market页面保持一致）
+        const tradingStates = [
+            {
+                position: "0%",
+                buttonText: "禁止交易（WAIT）",
+                buttonClass: "action-red",
+                pageTitle: "JUST WAIT",
+                executionReason: {
+                    title: "为什么今天不交易？",
+                    bulletPoints: [
+                        "市场没有形成一致方向",
+                        "没有足够的强势股票", 
+                        "没有确认的突破信号"
+                    ],
+                    command: "今天的任务只有一个：不交易"
+                },
+                pivotJudgment: "❌ 当前：没有有效 Pivot",
+                pivotReason: "• 没有形成清晰的平台结构<br>• 没有接近突破的位置<br>• 没有量能配合"
+            },
+            {
+                position: "≤30%",
+                buttonText: "可以交易（READY）",
+                buttonClass: "action-yellow",
+                pageTitle: "ACT",
+                executionReason: {
+                    title: "为什么今天可以交易？",
+                    bulletPoints: [
+                        "市场开始出现明确方向",
+                        "有1-2只强势股票走强",
+                        "部分突破信号得到确认"
+                    ],
+                    command: "今天的任务：只做最强的1-2只股票"
+                },
+                pivotJudgment: "⚠️ 当前：存在潜在 Pivot",
+                pivotReason: "• 开始形成平台结构<br>• 部分股票接近突破位置<br>• 需要等待确认信号"
+            },
+            {
+                position: "≤100%",
+                buttonText: "允许交易（CONFIRMED）",
+                buttonClass: "action-green",
+                pageTitle: "ACT",
+                executionReason: {
+                    title: "为什么今天必须交易？",
+                    bulletPoints: [
+                        "市场方向非常明确",
+                        "有≥2只强势股票确认突破",
+                        "所有条件都已满足"
+                    ],
+                    command: "今天的任务：全力做多最强的股票"
+                },
+                pivotJudgment: "✅ 当前：确认有效 Pivot",
+                pivotReason: "• 清晰的平台结构已形成<br>• 明确的突破位置确认<br>• 量能配合良好"
+            }
+        ];
+
+        // 获取DOM元素
+        const pageTitle = document.querySelector('.page-title');
+        const positionInfo = document.querySelector('.position-info');
+        const judgmentResult = document.querySelector('.judgment-result');
+        const reasonPoints = document.querySelector('.reason-points');
+        const dateInfo = document.querySelector('.date-info');
+        const actionButton = document.querySelector('.action-button');
+
+        // 初始化状态
+        let currentStateIndex = 0;
+
+        // 更新日期信息函数（与Market页面相同）
+        function updateDateInfo() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const dayOfWeek = now.getDay();
+            
+            // 获取今天的日期
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateString = `${year}-${month}-${day}`;
+            
+            // 判断是否交易日（周一至周五）
+            const isTradingDay = dayOfWeek >= 1 && dayOfWeek <= 5;
+            
+            let statusText = '';
+            
+            if (!isTradingDay) {
+                // 非交易日（周末）
+                let lastTradingDay = new Date(now);
+                if (dayOfWeek === 0) { // 周日
+                    lastTradingDay.setDate(now.getDate() - 2); // 回退到周五
+                } else if (dayOfWeek === 6) { // 周六
+                    lastTradingDay.setDate(now.getDate() - 1); // 回退到周五
+                }
+                const lastYear = lastTradingDay.getFullYear();
+                const lastMonth = String(lastTradingDay.getMonth() + 1).padStart(2, '0');
+                const lastDay = String(lastTradingDay.getDate()).padStart(2, '0');
+                statusText = `今日判断（${lastYear}-${lastMonth}-${lastDay} 已收盘）`;
+            } else {
+                // 交易日（周一至周五）
+                const currentTime = currentHour * 100 + currentMinute;
+                
+                if (currentTime < 900) {
+                    // 9:00前
+                    statusText = `今日判断（${dateString} 等待开盘）`;
+                } else if (currentTime >= 900 && currentTime < 930) {
+                    // 9:00-9:30 开盘前
+                    statusText = `今日判断（${dateString} 等待开盘）`;
+                } else if ((currentTime >= 930 && currentTime < 1130) || 
+                           (currentTime >= 1300 && currentTime < 1500)) {
+                    // 交易时间 9:30-11:30, 13:00-15:00
+                    statusText = `今日判断（${dateString}）`;
+                } else if (currentTime >= 1130 && currentTime < 1300) {
+                    // 午休时间 11:30-13:00
+                    statusText = `今日判断（${dateString} 午间休市）`;
+                } else {
+                    // 15:00后 已收盘
+                    statusText = `今日判断（${dateString} 已收盘）`;
+                }
+            }
+            
+            if (dateInfo) {
+                dateInfo.textContent = statusText;
+                console.log(`Pivot日期信息已更新: ${statusText}`);
+            }
+        }
+
+        // 更新UI函数
+        function updateUI(stateIndex) {
+            const state = tradingStates[stateIndex];
+            
+            // 更新页面标题
+            if (pageTitle) {
+                pageTitle.textContent = state.pageTitle;
+            }
+            
+            // 更新仓位信息
+            if (positionInfo) {
+                positionInfo.textContent = `建议仓位：${state.position}`;
+            }
+            
+            // 更新Pivot判断
+            if (judgmentResult) {
+                judgmentResult.textContent = state.pivotJudgment;
+            }
+            
+            // 更新原因
+            if (reasonPoints) {
+                reasonPoints.innerHTML = state.pivotReason;
+            }
+            
+            // 更新行动按钮
+            if (actionButton) {
+                actionButton.textContent = state.buttonText;
+                actionButton.className = `action-button ${state.buttonClass}`;
+            }
+            
+            // 隐藏加载指示器
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+            
+            console.log('Pivot页面UI更新完成，状态索引:', stateIndex);
+        }
+
+        // 从后端获取实时数据
+        async function fetchMarketData() {
+            try {
+                // 更新日期信息
+                updateDateInfo();
+                
+                console.log('正在获取市场数据...');
+                const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview';
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                console.log('API响应:', result);
+                
+                if (result.success && result.signal) {
+                    const signal = result.signal.trade_signal;
+                    console.log('交易信号:', signal);
+                    
+                    // 根据后端信号决定状态
+                    if (signal === "禁止交易") {
+                        currentStateIndex = 0;
+                    } else if (signal === "允许交易" || signal === "可以交易") {
+                        currentStateIndex = 1;
+                    } else if (signal === "积极交易" || signal === "积极做多") {
+                        currentStateIndex = 2;
+                    } else {
+                        console.log('未知信号，使用默认状态');
+                        currentStateIndex = 0;
+                    }
+                    
+                    updateUI(currentStateIndex);
+                    console.log('Pivot页面已根据市场信号更新');
+                } else {
+                    console.log('API响应格式错误，使用默认状态');
+                    updateUI(currentStateIndex);
+                }
+            } catch (error) {
+                console.error('获取市场数据失败:', error);
+                console.log('使用默认状态');
+                updateUI(currentStateIndex);
+            }
+        }
+
+        // 行动按钮点击事件
+        if (actionButton) {
+            actionButton.addEventListener('click', function() {
+                const state = tradingStates[currentStateIndex];
+                const reasonText = `${state.executionReason.title}\n\n${state.executionReason.bulletPoints.map(point => `• ${point}`).join('\n')}\n\n${state.executionReason.command}`;
+                alert(`交易决策：${state.buttonText}\n建议仓位：${state.position}\n\n${reasonText}\n\n决策基于实时市场数据，不可手动更改。`);
+            });
+        }
+
+        // 页面加载时获取数据
+        fetchMarketData();
+
         // 反馈功能
         function showFeedback() {
             const feedbackText = prompt('感谢使用止观系统！\n\n请告诉我们您的反馈或建议：\n\n1. 系统是否帮助您减少了不必要的交易？\n2. 您希望看到哪些改进？\n3. 其他建议？', '');
