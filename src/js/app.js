@@ -147,9 +147,9 @@ async function fetchMarketData() {
             // 根据后端信号决定状态
             if (signal === "禁止交易") {
                 currentStateIndex = 0;
-            } else if (signal === "可以交易") {
+            } else if (signal === "允许交易" || signal === "可以交易") {
                 currentStateIndex = 1;
-            } else if (signal === "积极做多") {
+            } else if (signal === "积极交易" || signal === "积极做多") {
                 currentStateIndex = 2;
             } else {
                 console.log('未知信号，使用默认状态');
@@ -189,8 +189,8 @@ async function fetchMarketData() {
             if (xhrResult.success && xhrResult.signal) {
                 const signal = xhrResult.signal.trade_signal;
                 if (signal === "禁止交易") currentStateIndex = 0;
-                else if (signal === "可以交易") currentStateIndex = 1;
-                else if (signal === "积极做多") currentStateIndex = 2;
+                else if (signal === "允许交易" || signal === "可以交易") currentStateIndex = 1;
+                else if (signal === "积极交易" || signal === "积极做多") currentStateIndex = 2;
                 
                 // 更新决策依据
                 updateDecisionBasis(xhrResult);
