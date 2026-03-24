@@ -85,9 +85,9 @@ function updateUI(stateIndex) {
 
 // 更新执行理由函数
 function updateExecutionReason(state) {
-    const reasonTitle = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(1)');
-    const bulletPoints = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(2)');
-    const command = document.querySelector('.decision-basis .basis-item:nth-child(1) div:nth-child(3)');
+    const reasonTitle = document.querySelector('.decision-basis .basis-item div:nth-child(1)');
+    const bulletPoints = document.querySelector('.decision-basis .basis-item div:nth-child(2)');
+    const command = document.querySelector('.decision-basis .basis-item div:nth-child(3)');
     
     if (reasonTitle) {
         reasonTitle.textContent = state.executionReason.title;
