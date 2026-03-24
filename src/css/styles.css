@@ -655,6 +655,12 @@ body {
     color: white;
 }
 
+.status-bias-exceed {
+    background: linear-gradient(135deg, #8e8e93, #aeaeb2);
+    color: white;
+    border: 1px solid #636366;
+}
+
 .rules-section {
     text-align: center;
 }

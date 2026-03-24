@@ -202,33 +202,74 @@
             // 清空现有列表
             leadersList.innerHTML = '';
             
-            // 添加筛选后的股票
+            // 统计乖离过大的股票数量
+            let biasExceedCount = 0;
+            
+            // 添加筛选后的股票（集成乖离防御塔逻辑）
             stocks.forEach(stock => {
                 const leaderItem = document.createElement('div');
                 leaderItem.className = 'leader-item';
                 
-                const statusTagsHTML = stock.status_tags.map(tag => {
-                    let statusClass = 'status-watch';
-                    if (tag === '强势') statusClass = 'status-strong';
-                    if (tag === '接近 Pivot') statusClass = 'status-pivot';
-                    return `<span class="status-tag ${statusClass}">${tag}</span>`;
-                }).join('');
+                // 模拟计算bias20（暂时使用随机数据，后续从后端获取真实ma20）
+                // bias20 = ((currentPrice - ma20) / ma20) * 100
+                const currentPrice = stock.current_price || 100; // 使用API返回的current_price或默认值
+                const ma20 = currentPrice * (1 - Math.random() * 0.1); // 模拟ma20，比当前价格低0-10%
+                const bias20 = ((currentPrice - ma20) / ma20) * 100;
+                
+                // 判断是否乖离过大（>= 15%）
+                const isBiasExceed = bias20 >= 15;
+                if (isBiasExceed) {
+                    biasExceedCount++;
+                }
+                
+                // 生成状态标签HTML（应用乖离防御塔逻辑）
+                let statusTagsHTML = '';
+                if (isBiasExceed) {
+                    // 乖离过大：强制替换为深灰色背景的[乖离过大]标签
+                    statusTagsHTML = '<span class="status-tag status-bias-exceed">乖离过大</span>';
+                    
+                    // 添加悬浮提示
+                    leaderItem.title = "当前偏离均线重心太高（橡皮筋崩紧），禁止追高，守护 1/9 试错机会。";
+                    
+                    // 应用交互拦截样式
+                    leaderItem.style.pointerEvents = 'none';
+                    leaderItem.style.opacity = '0.6';
+                    leaderItem.style.cursor = 'not-allowed';
+                } else {
+                    // 正常状态：显示原有标签
+                    statusTagsHTML = stock.status_tags.map(tag => {
+                        let statusClass = 'status-watch';
+                        if (tag === '强势') statusClass = 'status-strong';
+                        if (tag === '接近 Pivot') statusClass = 'status-pivot';
+                        return `<span class="status-tag ${statusClass}">${tag}</span>`;
+                    }).join('');
+                }
+                
+                // 添加bias20信息到股票名称（调试用）
+                const biasInfo = isBiasExceed ? 
+                    ` (bias20: ${bias20.toFixed(1)}% ⚠️)` : 
+                    ` (bias20: ${bias20.toFixed(1)}%)`;
                 
                 leaderItem.innerHTML = `
                     <div class="stock-info">
-                        <div class="stock-name">${stock.name}</div>
+                        <div class="stock-name">${stock.name}${biasInfo}</div>
                         <div class="stock-status">
                             ${statusTagsHTML}
                         </div>
                     </div>
                 `;
                 
+                // 添加数据属性以便后续更新
+                leaderItem.dataset.bias20 = bias20.toFixed(1);
+                leaderItem.dataset.currentPrice = currentPrice;
+                leaderItem.dataset.ma20 = ma20.toFixed(2);
+                
                 leadersList.appendChild(leaderItem);
             });
             
             // 更新状态信息
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = `筛选完成 · 符合条件: ${stocks.length}只`;
+            document.querySelector('.position-info').textContent = `筛选完成 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
             
             console.log('筛选逻辑：');
             console.log('1. 近20日涨幅 > 15%');
@@ -238,6 +279,94 @@
             console.log('5. 市值 < 3000亿');
             console.log('6. 排序：20日涨幅降序');
             console.log('7. 取前5');
+            console.log('8. 乖离防御塔：bias20 >= 15% 时标记为[乖离过大]并禁用交互');
+            
+            // 启动定期检查bias20变化（模拟实时更新）
+            startBiasMonitoring();
+        }
+        
+        // 启动bias20监控（模拟实时更新）
+        function startBiasMonitoring() {
+            console.log('启动乖离防御塔监控...');
+            
+            // 每30秒检查一次bias20变化（模拟实时更新）
+            setInterval(() => {
+                const leaderItems = document.querySelectorAll('.leader-item');
+                leaderItems.forEach(item => {
+                    const bias20 = parseFloat(item.dataset.bias20);
+                    const currentPrice = parseFloat(item.dataset.currentPrice);
+                    
+                    // 模拟价格波动（实际应从后端获取实时数据）
+                    const priceChange = (Math.random() - 0.5) * 0.02; // ±1%波动
+                    const newPrice = currentPrice * (1 + priceChange);
+                    
+                    // 模拟ma20变化（比价格变化慢）
+                    const ma20 = parseFloat(item.dataset.ma20);
+                    const ma20Change = priceChange * 0.5; // ma20变化是价格变化的一半
+                    const newMa20 = ma20 * (1 + ma20Change);
+                    
+                    // 计算新的bias20
+                    const newBias20 = ((newPrice - newMa20) / newMa20) * 100;
+                    
+                    // 更新数据属性
+                    item.dataset.bias20 = newBias20.toFixed(1);
+                    item.dataset.currentPrice = newPrice.toFixed(2);
+                    item.dataset.ma20 = newMa20.toFixed(2);
+                    
+                    // 检查是否需要更新状态
+                    const wasBiasExceed = bias20 >= 15;
+                    const isBiasExceed = newBias20 >= 15;
+                    
+                    if (wasBiasExceed !== isBiasExceed) {
+                        console.log(`检测到bias20变化: ${bias20.toFixed(1)}% -> ${newBias20.toFixed(1)}%，更新状态...`);
+                        updateBiasStatus(item, newBias20, newPrice, newMa20);
+                    }
+                });
+            }, 30000); // 30秒检查一次
+            
+            console.log('乖离防御塔监控已启动，每30秒检查一次bias20变化');
+        }
+        
+        // 更新bias20状态
+        function updateBiasStatus(item, bias20, currentPrice, ma20) {
+            const isBiasExceed = bias20 >= 15;
+            const stockName = item.querySelector('.stock-name').textContent.split(' (')[0]; // 移除bias信息
+            
+            // 更新股票名称显示
+            const biasInfo = isBiasExceed ? 
+                ` (bias20: ${bias20.toFixed(1)}% ⚠️)` : 
+                ` (bias20: ${bias20.toFixed(1)}%)`;
+            item.querySelector('.stock-name').textContent = stockName + biasInfo;
+            
+            // 更新状态标签
+            const stockStatus = item.querySelector('.stock-status');
+            if (isBiasExceed) {
+                // 乖离过大：强制替换为深灰色背景的[乖离过大]标签
+                stockStatus.innerHTML = '<span class="status-tag status-bias-exceed">乖离过大</span>';
+                
+                // 添加悬浮提示
+                item.title = "当前偏离均线重心太高（橡皮筋崩紧），禁止追高，守护 1/9 试错机会。";
+                
+                // 应用交互拦截样式
+                item.style.pointerEvents = 'none';
+                item.style.opacity = '0.6';
+                item.style.cursor = 'not-allowed';
+                
+                console.log(`🚨 ${stockName}: bias20=${bias20.toFixed(1)}% >= 15%，标记为[乖离过大]`);
+            } else {
+                // 恢复正常状态（这里需要从原始数据获取原有标签，暂时显示"正常"）
+                stockStatus.innerHTML = '<span class="status-tag status-strong">强势</span>';
+                
+                // 移除悬浮提示
+                item.title = '';
+                
+                // 恢复交互权限
+                item.style.pointerEvents = '';
+                item.style.opacity = '';
+                item.style.cursor = '';
+                
+                console.log(`✅ ${stockName}: bias20=${bias20.toFixed(1)}% < 15%，恢复正常状态`);
+            }
         }
         
         // 使用示例数据（fallback）
@@ -245,24 +374,43 @@
             const exampleStocks = [
                 {
                     name: "宁德时代",
+                    current_price: 188.5,
                     status_tags: ["强势", "接近 Pivot"]
                 },
                 {
+                    name: "五粮液",
+                    current_price: 148.2,
+                    status_tags: ["强势"]
+                },
+                {
+                    name: "海康威视",
+                    current_price: 32.45,
+                    status_tags: ["观察"]
+                },
+                {
                     name: "贵州茅台",
+                    current_price: 1650.0,
                     status_tags: ["强势"]
                 },
                 {
                     name: "中际旭创",
+                    current_price: 45.8,
                     status_tags: ["观察"]
                 },
                 {
                     name: "药明康德",
+                    current_price: 28.6,
                     status_tags: ["观察"]
                 },
                 {
                     name: "中国中免",
+                    current_price: 85.3,
                     status_tags: ["观察"]
                 }
+            ];
+            
+            updateLeadersUI(exampleStocks);
+        }
             ];
             
             updateLeadersUI(exampleStocks);
