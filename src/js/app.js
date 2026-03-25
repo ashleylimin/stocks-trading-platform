@@ -1,3 +1,40 @@
+// 交易哲学格言（加载时随机显示）
+const tradingPhilosophyQuotes = [
+    "价格包含一切",
+    "市场不解释，只给结果",
+    "没有信号，就是信号",
+    "等待，是交易的一部分",
+    "不是所有上涨，都属于你",
+    "机会出现之前，什么都不做",
+    "行动必须基于确认，而不是预期",
+    "强者恒强，弱者更弱",
+    "错误不可避免，失控可以避免",
+    "先活下来，再谈盈利"
+];
+
+// 显示随机交易哲学格言
+function showRandomPhilosophyQuote() {
+    const decisionBasis = document.querySelector('.decision-basis');
+    if (!decisionBasis) return;
+    
+    // 随机选择一条格言
+    const randomIndex = Math.floor(Math.random() * tradingPhilosophyQuotes.length);
+    const quote = tradingPhilosophyQuotes[randomIndex];
+    
+    // 更新显示
+    const basisTitle = decisionBasis.querySelector('.basis-title');
+    const reasonTitle = decisionBasis.querySelector('.basis-item div:nth-child(1)');
+    const bulletPoints = decisionBasis.querySelector('.basis-item div:nth-child(2)');
+    const command = decisionBasis.querySelector('.basis-item div:nth-child(3)');
+    
+    if (basisTitle) basisTitle.textContent = '交易哲学';
+    if (reasonTitle) reasonTitle.textContent = '正在获取市场数据...';
+    if (bulletPoints) bulletPoints.innerHTML = quote;
+    if (command) command.innerHTML = '止观 · 交易系统';
+    
+    console.log('显示交易哲学格言:', quote);
+}
+
 // 三种交易状态
 const tradingStates = [
     {
@@ -85,13 +122,16 @@ function updateUI(stateIndex) {
 
 // 更新执行理由函数
 function updateExecutionReason(state) {
-    const reasonTitle = document.querySelector('.decision-basis .basis-item div:nth-child(1)');
-    const bulletPoints = document.querySelector('.decision-basis .basis-item div:nth-child(2)');
-    const command = document.querySelector('.decision-basis .basis-item div:nth-child(3)');
+    const decisionBasis = document.querySelector('.decision-basis');
+    if (!decisionBasis) return;
     
-    if (reasonTitle) {
-        reasonTitle.textContent = state.executionReason.title;
-    }
+    const basisTitle = decisionBasis.querySelector('.basis-title');
+    const reasonTitle = decisionBasis.querySelector('.basis-item div:nth-child(1)');
+    const bulletPoints = decisionBasis.querySelector('.basis-item div:nth-child(2)');
+    const command = decisionBasis.querySelector('.basis-item div:nth-child(3)');
+    
+    if (basisTitle) basisTitle.textContent = '执行理由';
+    if (reasonTitle) reasonTitle.textContent = state.executionReason.title;
     
     if (bulletPoints) {
         bulletPoints.innerHTML = state.executionReason.bulletPoints.map(point => `• ${point}`).join('<br>');
@@ -99,6 +139,17 @@ function updateExecutionReason(state) {
     
     if (command) {
         command.innerHTML = state.executionReason.command.replace('<br>', '<br>');
+        // 根据状态设置颜色
+        if (state.buttonClass === 'action-red') {
+            command.style.color = '#dc2626';
+            command.style.borderTopColor = '#dc2626';
+        } else if (state.buttonClass === 'action-yellow') {
+            command.style.color = '#d97706';
+            command.style.borderTopColor = '#d97706';
+        } else if (state.buttonClass === 'action-green') {
+            command.style.color = '#059669';
+            command.style.borderTopColor = '#059669';
+        }
     }
 }
 
@@ -112,6 +163,9 @@ actionButton.addEventListener('click', function() {
 
 // 显示加载状态
 console.log('页面初始化，显示加载状态');
+
+// 显示随机交易哲学格言
+showRandomPhilosophyQuote();
 
 // 从后端获取实时数据（页面加载后立即执行）
 async function fetchMarketData() {

@@ -87,8 +87,8 @@
                 
                 <!-- 判断语句 -->
                 <div class="judgment-section">
-                    <div class="judgment-text">今日是否存在可交易机会？</div>
-                    <div class="judgment-result">❌ 当前：没有有效 Pivot</div>
+                    <div class="judgment-text">正在获取市场数据...</div>
+                    <div class="judgment-result" style="color: #666; font-style: italic;">价格包含一切</div>
                 </div>
                 
                 <!-- 分隔线 -->
@@ -96,11 +96,9 @@
                 
                 <!-- 为什么 -->
                 <div class="reason-section">
-                    <div class="reason-title">为什么？</div>
-                    <div class="reason-points">
-                        • 没有形成清晰的平台结构<br>
-                        • 没有接近突破的位置<br>
-                        • 没有量能配合
+                    <div class="reason-title">交易哲学</div>
+                    <div class="reason-points" style="color: #666; font-style: italic; text-align: center;">
+                        市场不解释，只给结果
                     </div>
                 </div>
                 
@@ -109,8 +107,8 @@
                 
                 <!-- 操作 -->
                 <div class="action-section">
-                    <div class="action-title">操作：</div>
-                    <div class="action-command">继续等待</div>
+                    <div class="action-title">系统：</div>
+                    <div class="action-command" style="color: #8e8e93;">止观 · 交易系统</div>
                 </div>
                 
             </div>
@@ -238,6 +236,43 @@
             }
         }
         
+        // 交易哲学格言（加载时随机显示）
+        const tradingPhilosophyQuotes = [
+            "价格包含一切",
+            "市场不解释，只给结果",
+            "没有信号，就是信号",
+            "等待，是交易的一部分",
+            "不是所有上涨，都属于你",
+            "机会出现之前，什么都不做",
+            "行动必须基于确认，而不是预期",
+            "强者恒强，弱者更弱",
+            "错误不可避免，失控可以避免",
+            "先活下来，再谈盈利"
+        ];
+
+        // 显示随机交易哲学格言
+        function showRandomPhilosophyQuote() {
+            // 随机选择一条格言
+            const randomIndex = Math.floor(Math.random() * tradingPhilosophyQuotes.length);
+            const quote = tradingPhilosophyQuotes[randomIndex];
+            
+            // 随机选择另一条格言（确保不同）
+            let secondQuote;
+            do {
+                const secondIndex = Math.floor(Math.random() * tradingPhilosophyQuotes.length);
+                secondQuote = tradingPhilosophyQuotes[secondIndex];
+            } while (secondQuote === quote && tradingPhilosophyQuotes.length > 1);
+            
+            // 更新显示
+            const judgmentResult = document.querySelector('.judgment-result');
+            const reasonPoints = document.querySelector('.reason-points');
+            
+            if (judgmentResult) judgmentResult.textContent = quote;
+            if (reasonPoints) reasonPoints.innerHTML = secondQuote;
+            
+            console.log('Pivot页面显示交易哲学格言:', quote, '|', secondQuote);
+        }
+
         // 三种交易状态（与Market页面保持一致）
         const tradingStates = [
             {
@@ -464,6 +499,9 @@
             });
         }
 
+        // 页面加载时显示交易哲学格言
+        showRandomPhilosophyQuote();
+        
         // 页面加载时获取数据
         fetchMarketData();
 
