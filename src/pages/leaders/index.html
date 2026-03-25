@@ -85,15 +85,12 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-                <!-- 股票列表（最多5个） -->
-                <div class="leaders-list">
-                    <div class="leader-item">
-                        <div class="stock-info">
-                            <div class="stock-name">宁德时代</div>
-                            <div class="stock-status">
-                                <span class="status-tag status-strong">强势</span>
-                                <span class="status-tag status-pivot">接近 Pivot</span>
-                            </div>
+                <!-- 免责声明 -->
+                <div class="disclaimer-section">
+                    <p class="disclaimer-text">策略还在优化中、仅供参考</p>
+                </div>
+                
+            </div>
                         </div>
                     </div>
                     
@@ -290,15 +287,15 @@
                     }).join('');
                 }
                 
-                // 计算涨跌幅显示
-                const gain20d = stock.gain_20d || 0;
+                // 计算当天涨跌幅显示
+                const dailyChange = stock.daily_change || 0;
                 let changeClass = 'neutral';
                 let changeSymbol = '';
                 
-                if (gain20d > 0) {
+                if (dailyChange > 0) {
                     changeClass = 'positive';
                     changeSymbol = '+';
-                } else if (gain20d < 0) {
+                } else if (dailyChange < 0) {
                     changeClass = 'negative';
                 }
                 
@@ -311,7 +308,7 @@
                         <div class="stock-code">${stockCode}</div>
                     </div>
                     <div class="stock-change ${changeClass}">
-                        ${changeSymbol}${gain20d.toFixed(1)}%
+                        ${changeSymbol}${dailyChange.toFixed(1)}%
                     </div>
                     <div class="stock-status">
                         ${statusTagsHTML}
@@ -435,6 +432,7 @@
                     code: "300502.SZ",
                     current_price: 45.80,
                     gain_20d: 25.3,
+                    daily_change: 3.2,
                     status_tags: ["强势", "接近 Pivot"],
                     ma5: 44.5,
                     ma10: 43.84,
@@ -450,6 +448,7 @@
                     code: "002475.SZ",
                     current_price: 32.15,
                     gain_20d: 19.5,
+                    daily_change: -1.5,
                     status_tags: ["强势", "接近 Pivot"],
                     ma5: 31.6,
                     ma10: 31.18,
@@ -465,6 +464,7 @@
                     code: "002241.SZ",
                     current_price: 24.85,
                     gain_20d: 17.6,
+                    daily_change: 0.8,
                     status_tags: ["观察"],
                     ma5: 24.4,
                     ma10: 24.13,
@@ -480,6 +480,7 @@
                     code: "300014.SZ",
                     current_price: 52.45,
                     gain_20d: 19.8,
+                    daily_change: 2.1,
                     status_tags: ["观察"],
                     ma5: 51.8,
                     ma10: 51.14,
@@ -495,6 +496,7 @@
                     code: "002812.SZ",
                     current_price: 68.20,
                     gain_20d: 16.5,
+                    daily_change: -0.3,
                     status_tags: ["观察"],
                     ma5: 67.5,
                     ma10: 66.99,

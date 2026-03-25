@@ -1631,12 +1631,14 @@ async def get_filtered_leaders():
             turnover_rate = max(3.5, min(12.0, base_rate))
             stock["turnover_rate"] = round(turnover_rate, 2)
         
-        # 为示例股票添加新的Pivot结构字段（模拟数据）
+        # 为示例股票添加新的字段（模拟数据）
         for stock in example_stocks:
             # 模拟price_to_250d_high_ratio：当前价距离250日高点的比例
             stock["price_to_250d_high_ratio"] = round(random.uniform(0.85, 0.98), 2)
             # 模拟is_60d_new_high：是否是60日新高
             stock["is_60d_new_high"] = random.choice([True, False])
+            # 模拟daily_change：当天涨跌幅（-5% 到 +5%）
+            stock["daily_change"] = round(random.uniform(-3.0, 5.0), 2)
         
         # 应用筛选条件（根据新的活水龙头筛选器配置 - 严格版）
         for stock in example_stocks:
