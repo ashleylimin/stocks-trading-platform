@@ -1568,7 +1568,7 @@ async def get_filtered_leaders():
                 "near_high": True
             },
             {
-                "code": "300750.SZ",
+                "code": "300502.SZ",
                 "name": "新易盛",
                 "current_price": 45.80,
                 "gain_20d": 25.3,
@@ -1668,14 +1668,19 @@ async def get_filtered_leaders():
         ]
         
         # 应用筛选条件（在示例数据中模拟）
+        print(f"总共 {len(example_stocks)} 只股票进行筛选")
         for stock in example_stocks:
-            if (stock["above_ma_50"] and  # 趋势护城河：必须在50日线支撑上方
-                stock["price_to_high_ratio"] > 0.9 and  # 蓄势位：股价必须在前20日高点的90%以上
-                stock["turnover"] > 10 and  # 资金门槛：日成交额必须 > 10亿
-                stock["market_cap"] > 100 and  # 市值门槛：至少100亿以上
-                stock["gain_20d"] < 30):  # 压制疯马：20日涨幅如果超过30%，说明已经飞了
-                
+            condition1 = stock["above_ma_50"]
+            condition2 = stock["price_to_high_ratio"] > 0.9
+            condition3 = stock["turnover"] > 10
+            condition4 = stock["market_cap"] > 100
+            condition5 = stock["gain_20d"] < 30
+            
+            if condition1 and condition2 and condition3 and condition4 and condition5:
                 filtered_stocks.append(stock)
+                print(f"✓ {stock['name']} 通过筛选: above_ma_50={condition1}, price_to_high={stock['price_to_high_ratio']}, turnover={stock['turnover']}, market_cap={stock['market_cap']}, gain_20d={stock['gain_20d']}")
+            else:
+                print(f"✗ {stock['name']} 未通过: above_ma_50={condition1}, price_to_high={stock['price_to_high_ratio']}, turnover={stock['turnover']}, market_cap={stock['market_cap']}, gain_20d={stock['gain_20d']}")
         
         # 核心排序：按成交额从大到小排，新易盛这种大中军会立刻置顶
         filtered_stocks.sort(key=lambda x: x["turnover"], reverse=True)
