@@ -9,25 +9,25 @@ const tradingStates = [
             title: "为什么今天不交易？",
             bulletPoints: [
                 "市场没有形成一致方向",
-                "没有足够的强势股票", 
-                "没有确认的突破信号"
+                "没有确认的强势突破",
+                "条件尚未满足"
             ],
-            command: "今天的任务只有一个：不交易"
+            command: "今天的任务：<br>不交易，保持耐心"
         }
     },
     {
         position: "≤30%",
-        buttonText: "可以交易（READY）",
+        buttonText: "准备阶段（READY）",
         buttonClass: "action-yellow",
         pageTitle: "ACT",
         executionReason: {
-            title: "为什么今天可以交易？",
+            title: "为什么暂时不交易？",
             bulletPoints: [
-                "市场开始出现明确方向",
-                "有1-2只强势股票走强",
-                "部分突破信号得到确认"
+                "市场开始分化",
+                "有潜在强势股票出现",
+                "但尚未确认突破"
             ],
-            command: "今天的任务：只做最强的1-2只股票"
+            command: "今天的任务：<br>只观察，不出手"
         }
     },
     {
@@ -36,13 +36,13 @@ const tradingStates = [
         buttonClass: "action-green",
         pageTitle: "ACT",
         executionReason: {
-            title: "为什么今天必须交易？",
+            title: "为什么今天允许交易？",
             bulletPoints: [
-                "市场方向非常明确",
-                "有≥2只强势股票确认突破",
-                "所有条件都已满足"
+                "市场方向开始明确",
+                "出现确认突破的强势股票",
+                "系统条件已满足"
             ],
-            command: "今天的任务：全力做多最强的股票"
+            command: "今天的任务：<br>只做确认后的最强股票"
         }
     }
 ];
