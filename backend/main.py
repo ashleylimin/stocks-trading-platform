@@ -1423,12 +1423,13 @@ async def get_filtered_leaders():
     获取筛选后的Leaders股票（中军筛选逻辑）
     筛选逻辑：
     1. 趋势护城河：当前价格 > 50日均线
-    2. 蓄势位：股价在前20日高点的 90% 及以上（拒绝深坑股）
-    3. 资金门槛：日成交额 > 10亿（过滤流动性差的杂毛）
-    4. 市值门槛：至少100亿以上（确保不是小票妖股）
-    5. 压制疯马：20日涨幅 < 30%（防止追高已飞股票）
-    6. 核心排序：按成交额从大到小排（大中军置顶）
-    7. 扩大视野：取前15名（留给肉眼"图形审美"空间）
+    2. 短期强势：当前价格 > 10日均线（确保短期趋势向上）
+    3. 蓄势位：股价在前20日高点的 90% 及以上（拒绝深坑股）
+    4. 资金门槛：日成交额 > 10亿（过滤流动性差的杂毛）
+    5. 市值门槛：至少100亿以上（确保不是小票妖股）
+    6. 压制疯马：20日涨幅 < 30%（防止追高已飞股票）
+    7. 核心排序：按成交额从大到小排（大中军置顶）
+    8. 扩大视野：取前15名（留给肉眼"图形审美"空间）
     """
     try:
         # 使用模拟数据（实际部署时使用真实akshare数据）
@@ -1452,6 +1453,7 @@ async def get_filtered_leaders():
                 "market_cap": 856.3,
                 "status_tags": ["强势", "接近 Pivot"],
                 "ma5": 185.20,  # 添加MA5数据
+                "ma10": 182.50,  # 添加MA10数据
                 "ma20": 175.80,  # 添加MA20数据
                 "near_high": True  # 添加near_high数据
             },
@@ -1466,6 +1468,7 @@ async def get_filtered_leaders():
                 "market_cap": 575.4,
                 "status_tags": ["强势"],
                 "ma5": 145.50,
+                "ma10": 143.80,
                 "ma20": 140.30,
                 "near_high": True
             },
@@ -1478,9 +1481,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.91,
                 "turnover": 6.2,
                 "market_cap": 304.2,
-                "status_tags": ["观察"],
-                "ma5": 31.80,
-                "ma20": 30.50,
+                "status_tags": ["观察"],"ma5": 31.8,
+                "ma10": 31.41,
+                "ma20": 30.5,
                 "near_high": False
             },
             {
@@ -1492,9 +1495,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.93,
                 "turnover": 5.8,
                 "market_cap": 248.7,
-                "status_tags": ["观察"],
-                "ma5": 12.60,
-                "ma20": 12.10,
+                "status_tags": ["观察"],"ma5": 12.6,
+                "ma10": 12.45,
+                "ma20": 12.1,
                 "near_high": True
             },
             {
@@ -1506,9 +1509,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.90,
                 "turnover": 12.5,
                 "market_cap": 2074.5,
-                "status_tags": ["观察"],
-                "ma5": 1620.00,
-                "ma20": 1580.00,
+                "status_tags": ["观察"],"ma5": 1620.0,
+                "ma10": 1608.00,
+                "ma20": 1580.0,
                 "near_high": False
             },
             {
@@ -1520,9 +1523,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.94,
                 "turnover": 28.6,
                 "market_cap": 7150.3,
-                "status_tags": ["强势", "接近 Pivot"],
-                "ma5": 240.20,
-                "ma20": 230.50,
+                "status_tags": ["强势", "接近 Pivot"],"ma5": 240.2,
+                "ma10": 237.29,
+                "ma20": 230.5,
                 "near_high": True
             },
             {
@@ -1534,9 +1537,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.92,
                 "turnover": 45.8,
                 "market_cap": 2500.6,
-                "status_tags": ["强势"],
-                "ma5": 18.60,
-                "ma20": 17.80,
+                "status_tags": ["强势"],"ma5": 18.6,
+                "ma10": 18.36,
+                "ma20": 17.8,
                 "near_high": True
             },
             {
@@ -1548,9 +1551,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.93,
                 "turnover": 12.3,
                 "market_cap": 4780.2,
-                "status_tags": ["观察"],
-                "ma5": 67.80,
-                "ma20": 65.40,
+                "status_tags": ["观察"],"ma5": 67.8,
+                "ma10": 67.08,
+                "ma20": 65.4,
                 "near_high": False
             },
             {
@@ -1562,9 +1565,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.95,
                 "turnover": 18.7,
                 "market_cap": 2280.9,
-                "status_tags": ["强势", "接近 Pivot"],
-                "ma5": 31.60,
-                "ma20": 30.20,
+                "status_tags": ["强势", "接近 Pivot"],"ma5": 31.6,
+                "ma10": 31.18,
+                "ma20": 30.2,
                 "near_high": True
             },
             {
@@ -1576,9 +1579,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.96,
                 "turnover": 32.5,
                 "market_cap": 580.6,
-                "status_tags": ["强势", "接近 Pivot"],
-                "ma5": 44.50,
-                "ma20": 42.30,
+                "status_tags": ["强势", "接近 Pivot"],"ma5": 44.5,
+                "ma10": 43.84,
+                "ma20": 42.3,
                 "near_high": True
             },
             {
@@ -1590,9 +1593,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.91,
                 "turnover": 14.2,
                 "market_cap": 850.3,
-                "status_tags": ["观察"],
-                "ma5": 24.40,
-                "ma20": 23.50,
+                "status_tags": ["观察"],"ma5": 24.4,
+                "ma10": 24.13,
+                "ma20": 23.5,
                 "near_high": False
             },
             {
@@ -1604,8 +1607,8 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.92,
                 "turnover": 22.8,
                 "market_cap": 1850.7,
-                "status_tags": ["观察"],
-                "ma5": 4.78,
+                "status_tags": ["观察"],"ma5": 4.78,
+                "ma10": 4.74,
                 "ma20": 4.65,
                 "near_high": True
             },
@@ -1618,9 +1621,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.94,
                 "turnover": 16.8,
                 "market_cap": 1360.4,
-                "status_tags": ["强势"],
-                "ma5": 57.60,
-                "ma20": 55.20,
+                "status_tags": ["强势"],"ma5": 57.6,
+                "ma10": 56.88,
+                "ma20": 55.2,
                 "near_high": True
             },
             {
@@ -1632,9 +1635,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.93,
                 "turnover": 13.5,
                 "market_cap": 1060.8,
-                "status_tags": ["观察"],
-                "ma5": 51.80,
-                "ma20": 49.60,
+                "status_tags": ["观察"],"ma5": 51.8,
+                "ma10": 51.14,
+                "ma20": 49.6,
                 "near_high": False
             },
             {
@@ -1646,9 +1649,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.92,
                 "turnover": 11.2,
                 "market_cap": 680.5,
-                "status_tags": ["观察"],
-                "ma5": 67.50,
-                "ma20": 65.80,
+                "status_tags": ["观察"],"ma5": 67.5,
+                "ma10": 66.99,
+                "ma20": 65.8,
                 "near_high": True
             },
             {
@@ -1660,9 +1663,9 @@ async def get_filtered_leaders():
                 "price_to_high_ratio": 0.95,
                 "turnover": 10.2,
                 "market_cap": 1980.6,
-                "status_tags": ["观察"],
-                "ma5": 74.60,
-                "ma20": 72.40,
+                "status_tags": ["观察"],"ma5": 74.6,
+                "ma10": 73.94,
+                "ma20": 72.4,
                 "near_high": False
             }
         ]
@@ -1670,6 +1673,7 @@ async def get_filtered_leaders():
         # 应用筛选条件（在示例数据中模拟）
         for stock in example_stocks:
             if (stock["above_ma_50"] and  # 趋势护城河：必须在50日线支撑上方
+                stock["current_price"] > stock.get("ma10", 0) and  # 短期强势：当前价格 > 10日均线
                 stock["price_to_high_ratio"] >= 0.9 and  # 蓄势位：股价必须在前20日高点的90%及以上
                 stock["turnover"] > 10 and  # 资金门槛：日成交额必须 > 10亿
                 stock["market_cap"] > 100 and  # 市值门槛：至少100亿以上
@@ -1759,6 +1763,7 @@ async def get_filtered_leaders():
             "data": top_15,
             "criteria": {
                 "above_ma_50": True,  # 趋势护城河
+                "current_price_above_ma10": True,  # 短期强势：当前价格 > 10日均线
                 "price_to_high_min": 0.9,  # 蓄势位（>= 0.9）
                 "turnover_min": 10,  # 资金门槛：10亿
                 "market_cap_min": 100,  # 市值门槛：100亿
