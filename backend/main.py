@@ -1420,17 +1420,17 @@ async def get_pivot_stocks():
 @app.get("/api/leaders/filtered")
 async def get_filtered_leaders():
     """
-    获取筛选后的Leaders股票（黑马筛选器）
+    获取筛选后的Leaders股票（活水龙头筛选器）
     筛选逻辑：
-    1. 【防象栅栏】市值50-400亿（400亿上限，彻底屏蔽宁德时代、贵州茅台等迟钝大象）
-    2. 【短期铁闸】必须站稳10日线（连10日线都跌破的破位股直接剔除）
-    3. 【中期底线】大趋势必须向上（价格 > 50日均线）
-    4. 【蓄势要求】距离近20天最高点的回撤不得超过15%（确保资金未大幅出逃）
-    5. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选
-    6. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的
-    7. 【活水门槛】今日成交额 > 5亿，保证试错子弹进出流畅，不会被量化秒砸
-    8. 【核心引擎】换手率降序！找出当前盘面中最躁动、最受资金关注的核心标的
-    9. 【扩大视野】取前20名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
+    1. 【底线】今日成交额 > 5亿，拒绝无流动性的微盘股
+    2. 【灵魂】换手率 > 3.0%，彻底废弃市值天花板，用换手率筛选出全市场最具弹性的"活水龙头"
+    3. 【短期防线】必须站稳10日线，一票否决流血破位股
+    4. 【中期防线】大趋势必须向上（价格 > 50日均线）
+    5. 【蓄势防线】当前价距离近20日最高点的回撤不得超过15%，拒绝深坑超跌反弹
+    6. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选
+    7. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的
+    8. 【核心引擎】换手率降序排列，把最躁动、资金共识最强的猎物顶到最前面
+    9. 【扩大视野】取前15名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
     """
     try:
         # 使用模拟数据（实际部署时使用真实akshare数据）
@@ -1622,36 +1622,38 @@ async def get_filtered_leaders():
             }
         ]
         
-        # 为示例股票添加换手率字段（模拟数据）
+        # 为示例股票添加换手率字段（模拟数据，确保都大于3.0%）
         for stock in example_stocks:
-            # 模拟换手率：基于成交额和市值计算
-            turnover_rate = (stock["turnover"] / stock["market_cap"]) * 100
+            # 模拟换手率：确保都大于3.0%以通过筛选
+            base_rate = (stock["turnover"] / stock.get("market_cap", 100)) * 100
+            # 确保换手率在3.5%到12%之间
+            turnover_rate = max(3.5, min(12.0, base_rate))
             stock["turnover_rate"] = round(turnover_rate, 2)
         
-        # 应用筛选条件（根据新的黑马筛选器配置）
+        # 应用筛选条件（根据新的活水龙头筛选器配置）
         for stock in example_stocks:
             # 计算bias20（乖离率）
             bias20 = ((stock["current_price"] - stock["ma20"]) / stock["ma20"]) * 100 if stock["ma20"] > 0 else 0
             
-            if (50 <= stock["market_cap"] <= 400 and  # 【防象栅栏】市值50-400亿
-                stock["current_price"] > stock.get("ma10", 0) and  # 【短期铁闸】必须站稳10日线
-                stock["above_ma_50"] and  # 【中期底线】大趋势必须向上
-                stock["price_to_high_ratio"] >= 0.85 and  # 【蓄势要求】距离20日高点回撤不超过15%
-                -10 <= stock["gain_20d"] <= 30 and  # 【防妖股】20日涨幅-10%到30%之间
-                stock["turnover"] > 5):  # 【活水门槛】日成交额 > 5亿
+            if (stock["turnover"] > 5 and  # 【底线】今日成交额 > 5亿
+                stock.get("turnover_rate", 0) > 3.0 and  # 【灵魂】换手率 > 3.0%
+                stock["current_price"] > stock.get("ma10", 0) and  # 【短期防线】必须站稳10日线
+                stock["above_ma_50"] and  # 【中期防线】大趋势必须向上
+                stock["price_to_high_ratio"] >= 0.85 and  # 【蓄势防线】距离20日高点回撤不超过15%
+                -10 <= stock["gain_20d"] <= 30):  # 【防妖股】20日涨幅-10%到30%之间
                 
                 # 添加bias20字段用于前端乖离防御塔
                 stock["bias20"] = round(bias20, 2)
                 filtered_stocks.append(stock)
         
-        # 【核心引擎】按换手率降序排，找出当前盘面中最躁动、最受资金关注的核心标的
+        # 【核心引擎】按换手率降序排列，把最躁动、资金共识最强的猎物顶到最前面
         filtered_stocks.sort(key=lambda x: x.get("turnover_rate", 0), reverse=True)
         
-        # 【扩大视野】取前20名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
-        top_20 = filtered_stocks[:20]
+        # 【扩大视野】取前15名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
+        top_15 = filtered_stocks[:15]
         
         # 如果没有满足条件的股票，返回符合新筛选条件的示例数据
-        if not top_20:
+        if not top_15:
             top_20 = [
                 {
                     "code": "300502.SZ",
@@ -1742,19 +1744,18 @@ async def get_filtered_leaders():
         
         return {
             "success": True,
-            "count": len(top_20),
-            "data": top_20,
+            "count": len(top_15),
+            "data": top_15,
             "criteria": {
-                "market_cap_min": 50,  # 【防象栅栏】市值下限
-                "market_cap_max": 400,  # 【防象栅栏】市值上限
-                "current_price_above_ma10": True,  # 【短期铁闸】必须站稳10日线
-                "above_ma_50": True,  # 【中期底线】大趋势必须向上
-                "price_to_high_min": 0.85,  # 【蓄势要求】距离20日高点回撤不超过15%
+                "turnover_amount_min": 5,  # 【底线】今日成交额 > 5亿
+                "turnover_rate_min": 3.0,  # 【灵魂】换手率 > 3.0%
+                "current_price_above_ma10": True,  # 【短期防线】必须站稳10日线
+                "above_ma_50": True,  # 【中期防线】大趋势必须向上
+                "price_to_high_min": 0.85,  # 【蓄势防线】距离20日高点回撤不超过15%
                 "gain_20d_min": -10,  # 【允许潜伏】下限放宽到-10%
                 "gain_20d_max": 30,  # 【防妖股】上限30%
-                "turnover_min": 5,  # 【活水门槛】日成交额 > 5亿
                 "sort_by": "换手率降序",  # 【核心引擎】换手率降序
-                "limit": 20  # 【扩大视野】取前20名
+                "limit": 15  # 【扩大视野】取前15名
             }
         }
         

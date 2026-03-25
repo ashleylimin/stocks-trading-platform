@@ -139,11 +139,11 @@
                 
                 <!-- 页面底部规则 -->
                 <div class="rules-section">
-                    <div class="rules-title">黑马筛选器规则：</div>
+                    <div class="rules-title">活水龙头筛选器规则：</div>
                     <div class="rules-content">
-                        <div class="rule-item">【防象栅栏】只选50-400亿市值</div>
-                        <div class="rule-item">【短期铁闸】必须站稳10日线</div>
-                        <div class="rule-item">【蓄势要求】回撤不超过15%</div>
+                        <div class="rule-item">【灵魂】换手率 > 3.0%</div>
+                        <div class="rule-item">【底线】成交额 > 5亿</div>
+                        <div class="rule-item">【防线】站稳10日线 + 50日线</div>
                         <div class="rule-item">【乖离防御】bias20≥15%禁止交易</div>
                     </div>
                 </div>
@@ -297,18 +297,18 @@
             
             // 更新状态信息
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = `黑马筛选 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
+            document.querySelector('.position-info').textContent = `活水龙头筛选 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
             
-            console.log('筛选逻辑（黑马筛选器）：');
-            console.log('1. 【防象栅栏】市值50-400亿（400亿上限，彻底屏蔽宁德时代、贵州茅台等迟钝大象）');
-            console.log('2. 【短期铁闸】必须站稳10日线（连10日线都跌破的破位股直接剔除）');
-            console.log('3. 【中期底线】大趋势必须向上（价格 > 50日均线）');
-            console.log('4. 【蓄势要求】距离近20天最高点的回撤不得超过15%（确保资金未大幅出逃）');
-            console.log('5. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选');
-            console.log('6. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的');
-            console.log('7. 【活水门槛】今日成交额 > 5亿，保证试错子弹进出流畅，不会被量化秒砸');
-            console.log('8. 【核心引擎】换手率降序！找出当前盘面中最躁动、最受资金关注的核心标的');
-            console.log('9. 【扩大视野】取前20名，交由用户的肉眼进行最终的"图形整齐度"审美过滤');
+            console.log('筛选逻辑（活水龙头筛选器）：');
+            console.log('1. 【底线】今日成交额 > 5亿，拒绝无流动性的微盘股');
+            console.log('2. 【灵魂】换手率 > 3.0%，彻底废弃市值天花板，用换手率筛选出全市场最具弹性的"活水龙头"');
+            console.log('3. 【短期防线】必须站稳10日线，一票否决流血破位股');
+            console.log('4. 【中期防线】大趋势必须向上（价格 > 50日均线）');
+            console.log('5. 【蓄势防线】当前价距离近20日最高点的回撤不得超过15%，拒绝深坑超跌反弹');
+            console.log('6. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选');
+            console.log('7. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的');
+            console.log('8. 【核心引擎】换手率降序排列，把最躁动、资金共识最强的猎物顶到最前面');
+            console.log('9. 【扩大视野】取前15名，交由用户的肉眼进行最终的"图形整齐度"审美过滤');
             console.log('10.【乖离防御塔】bias20 >= 15% 时标记为[乖离过大]并禁用交互');
             
             // 启动定期检查bias20变化（模拟实时更新）
