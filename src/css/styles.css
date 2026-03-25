@@ -599,13 +599,17 @@ body {
     padding: 0 24px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     border: 1px solid rgba(0, 0, 0, 0.05);
-    max-width: 360px;
+    max-width: 480px;
     width: 100%;
 }
 
 .leader-item {
     padding: 20px 0;
     border-bottom: 1px solid #f2f2f7;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 20px;
+    align-items: center;
 }
 
 .leader-item:last-child {
@@ -614,27 +618,54 @@ body {
 
 .stock-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 100%;
-    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
 }
 
 .stock-name {
     font-size: 19px;
     font-weight: 600;
     color: #1d1d1f;
-    flex: 1;
-    min-width: 0;
-    padding-right: 16px;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
     letter-spacing: -0.3px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stock-code {
+    font-size: 14px;
+    color: #8e8e93;
+    font-weight: 500;
+}
+
+.stock-change {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: right;
+    min-width: 80px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.stock-change.positive {
+    color: #34c759;
+}
+
+.stock-change.negative {
+    color: #ff3b30;
+}
+
+.stock-change.neutral {
+    color: #8e8e93;
 }
 
 .stock-status {
     display: flex;
     gap: 8px;
     flex-shrink: 0;
+    justify-content: flex-end;
 }
 
 .status-tag {
@@ -958,6 +989,24 @@ body {
         max-width: 100%;
         padding: 20px;
         border-radius: 14px;
+    }
+    
+    .leader-item {
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+    }
+    
+    .stock-change {
+        font-size: 16px;
+        min-width: 70px;
+    }
+    
+    .stock-name {
+        font-size: 17px;
+    }
+    
+    .stock-code {
+        font-size: 13px;
     }
     
     .position-input {
