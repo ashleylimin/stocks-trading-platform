@@ -15,22 +15,68 @@ const tradingPhilosophyQuotes = [
 // 显示随机交易哲学格言
 function showRandomPhilosophyQuote() {
     const decisionBasis = document.querySelector('.decision-basis');
-    if (!decisionBasis) return;
+    if (!decisionBasis) {
+        console.log('未找到.decision-basis元素');
+        return;
+    }
     
     // 随机选择一条格言
     const randomIndex = Math.floor(Math.random() * tradingPhilosophyQuotes.length);
     const quote = tradingPhilosophyQuotes[randomIndex];
     
+    // 使用更可靠的选择器
+    const basisItem = decisionBasis.querySelector('.basis-item');
+    if (!basisItem) {
+        console.log('未找到.basis-item元素');
+        return;
+    }
+    
+    // 获取basis-item内的所有div元素
+    const divs = basisItem.querySelectorAll('div');
+    console.log('找到的div数量:', divs.length);
+    
     // 更新显示
     const basisTitle = decisionBasis.querySelector('.basis-title');
-    const reasonTitle = decisionBasis.querySelector('.basis-item div:nth-child(1)');
-    const bulletPoints = decisionBasis.querySelector('.basis-item div:nth-child(2)');
-    const command = decisionBasis.querySelector('.basis-item div:nth-child(3)');
+    if (basisTitle) {
+        basisTitle.textContent = '交易哲学';
+        console.log('更新标题: 交易哲学');
+    }
     
-    if (basisTitle) basisTitle.textContent = '交易哲学';
-    if (reasonTitle) reasonTitle.textContent = '正在获取市场数据...';
-    if (bulletPoints) bulletPoints.innerHTML = quote;
-    if (command) command.innerHTML = '止观 · 交易系统';
+    // 第一个div应该是"正在获取市场数据..."
+    if (divs.length > 0) {
+        divs[0].textContent = '正在获取市场数据...';
+        divs[0].style.marginBottom = '12px';
+        divs[0].style.fontWeight = '600';
+        divs[0].style.color = '#333';
+        divs[0].style.fontSize = '18px';
+        console.log('更新第一个div: 正在获取市场数据...');
+    }
+    
+    // 第二个div应该是交易哲学格言
+    if (divs.length > 1) {
+        divs[1].innerHTML = quote;
+        divs[1].style.fontSize = '16px';
+        divs[1].style.color = '#666';
+        divs[1].style.lineHeight = '1.6';
+        divs[1].style.marginBottom = '16px';
+        divs[1].style.fontStyle = 'italic';
+        divs[1].style.textAlign = 'center';
+        divs[1].style.width = '100%';
+        console.log('更新第二个div:', quote);
+    }
+    
+    // 第三个div应该是"止观 · 交易系统"
+    if (divs.length > 2) {
+        divs[2].innerHTML = '止观 · 交易系统';
+        divs[2].style.fontWeight = '700';
+        divs[2].style.color = '#8e8e93';
+        divs[2].style.fontSize = '16px';
+        divs[2].style.borderTop = '2px solid #f0f0f0';
+        divs[2].style.paddingTop = '12px';
+        divs[2].style.width = '100%';
+        divs[2].style.textAlign = 'center';
+        console.log('更新第三个div: 止观 · 交易系统');
+    }
     
     console.log('显示交易哲学格言:', quote);
 }
@@ -164,10 +210,19 @@ actionButton.addEventListener('click', function() {
 // 显示加载状态
 console.log('页面初始化，显示加载状态');
 
-// 显示随机交易哲学格言
-showRandomPhilosophyQuote();
-
-// 从后端获取实时数据（页面加载后立即执行）
+// 等待DOM完全加载后显示随机交易哲学格言
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM已完全加载，显示交易哲学格言');
+        showRandomPhilosophyQuote();
+        fetchMarketData();
+    });
+} else {
+    // DOM已经加载完成
+    console.log('DOM已加载完成，显示交易哲学格言');
+    showRandomPhilosophyQuote();
+    fetchMarketData();
+}
 async function fetchMarketData() {
     try {
         // 更新日期信息
@@ -377,11 +432,17 @@ function updateDateInfo() {
     // 更新回撤避免统计（在updateUI函数中处理）
 }
 
-// 页面加载时获取数据
-fetchMarketData();
-
-// 移动端菜单切换功能
+// 页面初始化 - 在DOM加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM已完全加载，开始页面初始化');
+    
+    // 显示随机交易哲学格言
+    showRandomPhilosophyQuote();
+    
+    // 获取市场数据
+    fetchMarketData();
+    
+    // 移动端菜单切换功能
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.querySelector('.sidebar');
     

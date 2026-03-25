@@ -499,11 +499,19 @@
             });
         }
 
-        // 页面加载时显示交易哲学格言
-        showRandomPhilosophyQuote();
-        
-        // 页面加载时获取数据
-        fetchMarketData();
+        // 页面初始化 - 在DOM加载完成后执行
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Pivot页面: DOM已完全加载，开始初始化');
+                showRandomPhilosophyQuote();
+                fetchMarketData();
+            });
+        } else {
+            // DOM已经加载完成
+            console.log('Pivot页面: DOM已加载完成，开始初始化');
+            showRandomPhilosophyQuote();
+            fetchMarketData();
+        }
 
         // 反馈功能
         function showFeedback() {
