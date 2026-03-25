@@ -74,7 +74,7 @@
                 
                 <!-- 状态区 -->
                 <div class="status-section">
-                    <p class="position-info">正在筛选最强股票</p>
+                    <p class="position-info">活水龙头筛选 · 加载中...</p>
                     <div class="loading-indicator">
                         <div class="loading-dot"></div>
                         <div class="loading-dot"></div>
@@ -137,16 +137,7 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-                <!-- 页面底部规则 -->
-                <div class="rules-section">
-                    <div class="rules-title">活水龙头筛选器规则：</div>
-                    <div class="rules-content">
-                        <div class="rule-item">【灵魂】换手率 > 3.0%</div>
-                        <div class="rule-item">【底线】成交额 > 5亿</div>
-                        <div class="rule-item">【防线】站稳10日线 + 50日线</div>
-                        <div class="rule-item">【乖离防御】bias20≥15%禁止交易</div>
-                    </div>
-                </div>
+
                 
             </div>
             
@@ -162,14 +153,20 @@
                 const apiUrl = '/api/leaders/filtered?t=' + Date.now();
                 console.log('API URL:', apiUrl);
                 
+                // 设置超时
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+                
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     mode: 'cors',
                     headers: {
                         'Accept': 'application/json',
-                    }
+                    },
+                    signal: controller.signal
                 });
                 
+                clearTimeout(timeoutId);
                 console.log('响应状态:', response.status, response.statusText);
                 
                 if (!response.ok) {
@@ -189,6 +186,18 @@
                 }
             } catch (error) {
                 console.error('获取Leaders数据失败:', error);
+                console.log('错误详情:', error.message);
+                
+                // 更新状态显示错误
+                const positionInfo = document.querySelector('.position-info');
+                if (positionInfo) {
+                    if (error.name === 'AbortError') {
+                        positionInfo.textContent = '活水龙头筛选 · 请求超时，使用示例数据';
+                    } else {
+                        positionInfo.textContent = '活水龙头筛选 · 连接失败，使用示例数据';
+                    }
+                }
+                
                 console.log('使用示例数据');
                 useExampleData();
             }
@@ -457,10 +466,6 @@
                     price_to_high_ratio: 0.92,
                     bias20: 3.65
                 }
-            ];
-            
-            updateLeadersUI(exampleStocks);
-        }
             ];
             
             updateLeadersUI(exampleStocks);
