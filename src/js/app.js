@@ -42,16 +42,7 @@ function showRandomPhilosophyQuote() {
         console.log('更新标题: 交易哲学');
     }
     
-    // 第一个div应该是"正在获取市场数据..."
-    if (divs.length > 0) {
-        divs[0].textContent = '正在获取市场数据...';
-        divs[0].style.marginBottom = '12px';
-        divs[0].style.fontWeight = '600';
-        divs[0].style.color = '#333';
-        divs[0].style.fontSize = '18px';
-        console.log('更新第一个div: 正在获取市场数据...');
-    }
-    
+
     // 第二个div应该是交易哲学格言
     if (divs.length > 1) {
         divs[1].innerHTML = quote;
@@ -75,7 +66,7 @@ function showRandomPhilosophyQuote() {
         divs[2].style.paddingTop = '12px';
         divs[2].style.width = '100%';
         divs[2].style.textAlign = 'center';
-        console.log('更新第三个div: 止观 · 交易系统');
+        console.log('更新第三个div: justwait.today');
     }
     
     console.log('显示交易哲学格言:', quote);
