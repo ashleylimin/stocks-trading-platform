@@ -297,16 +297,16 @@
             
             // 更新状态信息
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = `筛选完成 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
+            document.querySelector('.position-info').textContent = `中军筛选 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
             
             console.log('筛选逻辑：');
-            console.log('1. 近20日涨幅 > 15%');
-            console.log('2. 当前价格 > 50日均线');
-            console.log('3. 当前价格 / 20日高点 > 0.9');
-            console.log('4. 成交额 > 5亿');
-            console.log('5. 市值 < 3000亿');
-            console.log('6. 排序：20日涨幅降序');
-            console.log('7. 取前5');
+            console.log('1. 趋势护城河：当前价格 > 50日均线');
+            console.log('2. 蓄势位：股价在前20日高点的 90% 以上（拒绝深坑股）');
+            console.log('3. 资金门槛：日成交额 > 10亿（过滤流动性差的杂毛）');
+            console.log('4. 市值门槛：至少100亿以上（确保不是小票妖股）');
+            console.log('5. 压制疯马：20日涨幅 < 30%（防止追高已飞股票）');
+            console.log('6. 核心排序：按成交额从大到小排（大中军置顶）');
+            console.log('7. 扩大视野：取前15名（留给肉眼"图形审美"空间）');
             console.log('8. 乖离防御塔：bias20 >= 15% 时标记为[乖离过大]并禁用交互');
             
             // 启动定期检查bias20变化（模拟实时更新）
