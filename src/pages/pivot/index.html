@@ -444,7 +444,7 @@
                 updateDateInfo();
                 
                 console.log('正在获取市场数据...');
-                const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview';
+                const apiUrl = '/api/market/overview';
                 
                 const response = await fetch(apiUrl, {
                     method: 'GET',

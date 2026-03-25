@@ -159,7 +159,7 @@
             try {
                 console.log('正在获取筛选后的Leaders数据...');
                 
-                const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/leaders/filtered?t=' + Date.now();
+                const apiUrl = '/api/leaders/filtered?t=' + Date.now();
                 console.log('API URL:', apiUrl);
                 
                 const response = await fetch(apiUrl, {

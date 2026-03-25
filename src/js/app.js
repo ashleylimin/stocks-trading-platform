@@ -259,7 +259,7 @@ async function fetchMarketData() {
         }
         
         console.log('正在获取市场数据...');
-        const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview?t=' + Date.now();
+        const apiUrl = '/api/market/overview?t=' + Date.now();
         console.log('API URL:', apiUrl);
         
         const response = await fetch(apiUrl, {
@@ -292,7 +292,7 @@ async function fetchMarketData() {
             console.log('尝试使用XMLHttpRequest...');
             const xhrResult = await new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', 'https://stocks-trading-platform-production.up.railway.app/api/market/overview');
+                xhr.open('GET', '/api/market/overview');
                 xhr.onload = () => {
                     if (xhr.status === 200) {
                         resolve(JSON.parse(xhr.responseText));

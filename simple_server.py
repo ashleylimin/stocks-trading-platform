@@ -6,6 +6,29 @@ class CustomHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         print(f"Request path: {self.path}")
         
+        # 处理API代理
+        if self.path.startswith('/api/'):
+            # 代理到后端API
+            import urllib.request
+            backend_url = f'http://localhost:8001{self.path}'
+            print(f"Proxying to backend: {backend_url}")
+            
+            try:
+                req = urllib.request.Request(backend_url)
+                req.add_header('Accept', 'application/json')
+                with urllib.request.urlopen(req) as response:
+                    data = response.read()
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(data)
+                return
+            except Exception as e:
+                print(f"Proxy error: {e}")
+                self.send_error(502, f"Backend error: {e}")
+                return
+        
         # 处理路由
         routes = {
             '/': 'src/pages/market/index.html',
