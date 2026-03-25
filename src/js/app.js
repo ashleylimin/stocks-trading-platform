@@ -12,6 +12,37 @@ const tradingPhilosophyQuotes = [
     "先活下来，再谈盈利"
 ];
 
+// API缓存对象
+const apiCache = {
+    marketData: null,
+    leadersData: null,
+    lastFetchTime: 0,
+    cacheDuration: 60000, // 1分钟缓存
+    
+    // 检查缓存是否有效
+    isCacheValid: function() {
+        return this.marketData && (Date.now() - this.lastFetchTime) < this.cacheDuration;
+    },
+    
+    // 获取缓存数据
+    getMarketData: function() {
+        return this.isCacheValid() ? this.marketData : null;
+    },
+    
+    // 设置缓存数据
+    setMarketData: function(data) {
+        this.marketData = data;
+        this.lastFetchTime = Date.now();
+    },
+    
+    // 清除缓存
+    clearCache: function() {
+        this.marketData = null;
+        this.leadersData = null;
+        this.lastFetchTime = 0;
+    }
+};
+
 // 显示随机交易哲学格言
 function showRandomPhilosophyQuote() {
     const decisionBasis = document.querySelector('.decision-basis');
@@ -219,8 +250,16 @@ async function fetchMarketData() {
         // 更新日期信息
         updateDateInfo();
         
+        // 检查缓存
+        const cachedData = apiCache.getMarketData();
+        if (cachedData) {
+            console.log('使用缓存的市场数据');
+            processMarketData(cachedData);
+            return;
+        }
+        
         console.log('正在获取市场数据...');
-        const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview';
+        const apiUrl = 'https://stocks-trading-platform-production.up.railway.app/api/market/overview?t=' + Date.now();
         console.log('API URL:', apiUrl);
         
         const response = await fetch(apiUrl, {
@@ -240,38 +279,10 @@ async function fetchMarketData() {
         const result = await response.json();
         console.log('API响应:', result);
         
-        if (result.success && result.signal) {
-            const signal = result.signal.trade_signal;
-            console.log('交易信号:', signal);
-            console.log('完整signal对象:', result.signal);
-            
-            // 根据后端信号决定状态
-            console.log('后端信号:', signal);
-            if (signal === "禁止交易") {
-                currentStateIndex = 0;
-                console.log('设置为状态 0: 禁止交易');
-            } else if (signal === "允许交易" || signal === "可以交易") {
-                currentStateIndex = 1;
-                console.log('设置为状态 1: 可以交易');
-            } else if (signal === "积极交易" || signal === "积极做多") {
-                currentStateIndex = 2;
-                console.log('设置为状态 2: 积极交易');
-            } else {
-                console.log('未知信号，使用默认状态');
-                console.log('未知信号值:', signal);
-                currentStateIndex = 0; // 默认禁止交易
-            }
-            
-            console.log('最终状态索引:', currentStateIndex);
-            
-            // 更新决策依据
-            updateDecisionBasis(result);
-            
-            updateUI(currentStateIndex);
-            console.log('UI已更新，状态索引:', currentStateIndex);
-        } else {
-            console.log('API响应格式错误，使用演示数据');
-        }
+        // 缓存数据
+        apiCache.setMarketData(result);
+        
+        processMarketData(result);
     } catch (error) {
         console.error('获取数据失败:', error);
         console.log('错误详情:', error.message);
@@ -294,18 +305,12 @@ async function fetchMarketData() {
             });
             
             console.log('XHR成功:', xhrResult);
-            if (xhrResult.success && xhrResult.signal) {
-                const signal = xhrResult.signal.trade_signal;
-                if (signal === "禁止交易") currentStateIndex = 0;
-                else if (signal === "允许交易" || signal === "可以交易") currentStateIndex = 1;
-                else if (signal === "积极交易" || signal === "积极做多") currentStateIndex = 2;
-                
-                // 更新决策依据
-                updateDecisionBasis(xhrResult);
-                
-                updateUI(currentStateIndex);
-                return;
-            }
+            
+            // 缓存XHR获取的数据
+            apiCache.setMarketData(xhrResult);
+            
+            processMarketData(xhrResult);
+            console.log('XHR fallback成功，状态索引:', currentStateIndex);
         } catch (xhrError) {
             console.error('XHR也失败:', xhrError);
         }
@@ -499,5 +504,42 @@ document.addEventListener('DOMContentLoaded', function() {
         feedbackButton.addEventListener('click', showFeedback);
     }
 });
+
+// 处理市场数据
+function processMarketData(result) {
+    if (result.success && result.signal) {
+        const signal = result.signal.trade_signal;
+        console.log('交易信号:', signal);
+        console.log('完整signal对象:', result.signal);
+        
+        // 根据后端信号决定状态
+        console.log('后端信号:', signal);
+        if (signal === "禁止交易") {
+            currentStateIndex = 0;
+            console.log('设置为状态 0: 禁止交易');
+        } else if (signal === "允许交易" || signal === "可以交易") {
+            currentStateIndex = 1;
+            console.log('设置为状态 1: 可以交易');
+        } else if (signal === "积极交易" || signal === "积极做多") {
+            currentStateIndex = 2;
+            console.log('设置为状态 2: 积极交易');
+        } else {
+            console.log('未知信号，使用默认状态');
+            console.log('未知信号值:', signal);
+            currentStateIndex = 0; // 默认禁止交易
+        }
+        
+        console.log('最终状态索引:', currentStateIndex);
+        
+        // 更新决策依据
+        updateDecisionBasis(result);
+        
+        updateUI(currentStateIndex);
+        console.log('UI已更新，状态索引:', currentStateIndex);
+    } else {
+        console.log('API响应格式错误，使用演示数据');
+    }
+}
+
 // Debug Tue Mar 24 14:55:42 CST 2026
 // More debug Tue Mar 24 15:01:18 CST 2026

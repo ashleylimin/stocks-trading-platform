@@ -1420,16 +1420,17 @@ async def get_pivot_stocks():
 @app.get("/api/leaders/filtered")
 async def get_filtered_leaders():
     """
-    获取筛选后的Leaders股票（中军筛选逻辑）
+    获取筛选后的Leaders股票（黑马筛选器）
     筛选逻辑：
-    1. 趋势护城河：当前价格 > 50日均线
-    2. 短期强势：当前价格 > 10日均线（确保短期趋势向上）
-    3. 蓄势位：股价在前20日高点的 90% 及以上（拒绝深坑股）
-    4. 资金门槛：日成交额 > 10亿（过滤流动性差的杂毛）
-    5. 市值门槛：至少100亿以上（确保不是小票妖股）
-    6. 压制疯马：20日涨幅 < 30%（防止追高已飞股票）
-    7. 核心排序：按成交额从大到小排（大中军置顶）
-    8. 扩大视野：取前15名（留给肉眼"图形审美"空间）
+    1. 【防象栅栏】市值50-400亿（400亿上限，彻底屏蔽宁德时代、贵州茅台等迟钝大象）
+    2. 【短期铁闸】必须站稳10日线（连10日线都跌破的破位股直接剔除）
+    3. 【中期底线】大趋势必须向上（价格 > 50日均线）
+    4. 【蓄势要求】距离近20天最高点的回撤不得超过15%（确保资金未大幅出逃）
+    5. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选
+    6. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的
+    7. 【活水门槛】今日成交额 > 5亿，保证试错子弹进出流畅，不会被量化秒砸
+    8. 【核心引擎】换手率降序！找出当前盘面中最躁动、最受资金关注的核心标的
+    9. 【扩大视野】取前20名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
     """
     try:
         # 使用模拟数据（实际部署时使用真实akshare数据）
@@ -1443,118 +1444,19 @@ async def get_filtered_leaders():
         # 模拟筛选逻辑 - 使用示例数据避免类型问题
         example_stocks = [
             {
-                "code": "300750.SZ",
-                "name": "宁德时代",
-                "current_price": 188.50,
-                "gain_20d": 18.5,
+                "code": "300502.SZ",
+                "name": "新易盛",
+                "current_price": 45.80,
+                "gain_20d": 25.3,
                 "above_ma_50": True,
-                "price_to_high_ratio": 0.95,
-                "turnover": 12.8,
-                "market_cap": 856.3,
+                "price_to_high_ratio": 0.96,
+                "turnover": 32.5,
+                "market_cap": 380.6,
                 "status_tags": ["强势", "接近 Pivot"],
-                "ma5": 185.20,  # 添加MA5数据
-                "ma10": 182.50,  # 添加MA10数据
-                "ma20": 175.80,  # 添加MA20数据
-                "near_high": True  # 添加near_high数据
-            },
-            {
-                "code": "000858.SZ",
-                "name": "五粮液",
-                "current_price": 148.20,
-                "gain_20d": 16.2,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.92,
-                "turnover": 8.5,
-                "market_cap": 575.4,
-                "status_tags": ["强势"],
-                "ma5": 145.50,
-                "ma10": 143.80,
-                "ma20": 140.30,
+                "ma5": 44.5,
+                "ma10": 43.84,
+                "ma20": 42.3,
                 "near_high": True
-            },
-            {
-                "code": "002415.SZ",
-                "name": "海康威视",
-                "current_price": 32.45,
-                "gain_20d": 15.8,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.91,
-                "turnover": 6.2,
-                "market_cap": 304.2,
-                "status_tags": ["观察"],"ma5": 31.8,
-                "ma10": 31.41,
-                "ma20": 30.5,
-                "near_high": False
-            },
-            {
-                "code": "000001.SZ",
-                "name": "平安银行",
-                "current_price": 12.85,
-                "gain_20d": 15.3,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.93,
-                "turnover": 5.8,
-                "market_cap": 248.7,
-                "status_tags": ["观察"],"ma5": 12.6,
-                "ma10": 12.45,
-                "ma20": 12.1,
-                "near_high": True
-            },
-            {
-                "code": "600519.SH",
-                "name": "贵州茅台",
-                "current_price": 1650.00,
-                "gain_20d": 15.1,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.90,
-                "turnover": 12.5,
-                "market_cap": 2074.5,
-                "status_tags": ["观察"],"ma5": 1620.0,
-                "ma10": 1608.00,
-                "ma20": 1580.0,
-                "near_high": False
-            },
-            {
-                "code": "002594.SZ",
-                "name": "比亚迪",
-                "current_price": 245.80,
-                "gain_20d": 22.5,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.94,
-                "turnover": 28.6,
-                "market_cap": 7150.3,
-                "status_tags": ["强势", "接近 Pivot"],"ma5": 240.2,
-                "ma10": 237.29,
-                "ma20": 230.5,
-                "near_high": True
-            },
-            {
-                "code": "300059.SZ",
-                "name": "东方财富",
-                "current_price": 18.95,
-                "gain_20d": 18.2,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.92,
-                "turnover": 45.8,
-                "market_cap": 2500.6,
-                "status_tags": ["强势"],"ma5": 18.6,
-                "ma10": 18.36,
-                "ma20": 17.8,
-                "near_high": True
-            },
-            {
-                "code": "000333.SZ",
-                "name": "美的集团",
-                "current_price": 68.45,
-                "gain_20d": 16.8,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.93,
-                "turnover": 12.3,
-                "market_cap": 4780.2,
-                "status_tags": ["观察"],"ma5": 67.8,
-                "ma10": 67.08,
-                "ma20": 65.4,
-                "near_high": False
             },
             {
                 "code": "002475.SZ",
@@ -1564,24 +1466,11 @@ async def get_filtered_leaders():
                 "above_ma_50": True,
                 "price_to_high_ratio": 0.95,
                 "turnover": 18.7,
-                "market_cap": 2280.9,
-                "status_tags": ["强势", "接近 Pivot"],"ma5": 31.6,
+                "market_cap": 320.9,
+                "status_tags": ["强势", "接近 Pivot"],
+                "ma5": 31.6,
                 "ma10": 31.18,
                 "ma20": 30.2,
-                "near_high": True
-            },
-            {
-                "code": "300502.SZ",
-                "name": "新易盛",
-                "current_price": 45.80,
-                "gain_20d": 25.3,
-                "above_ma_50": True,
-                "price_to_high_ratio": 0.96,
-                "turnover": 32.5,
-                "market_cap": 580.6,
-                "status_tags": ["强势", "接近 Pivot"],"ma5": 44.5,
-                "ma10": 43.84,
-                "ma20": 42.3,
                 "near_high": True
             },
             {
@@ -1592,11 +1481,72 @@ async def get_filtered_leaders():
                 "above_ma_50": True,
                 "price_to_high_ratio": 0.91,
                 "turnover": 14.2,
-                "market_cap": 850.3,
-                "status_tags": ["观察"],"ma5": 24.4,
+                "market_cap": 280.3,
+                "status_tags": ["观察"],
+                "ma5": 24.4,
                 "ma10": 24.13,
                 "ma20": 23.5,
                 "near_high": False
+            },
+            {
+                "code": "300014.SZ",
+                "name": "亿纬锂能",
+                "current_price": 52.45,
+                "gain_20d": 19.8,
+                "above_ma_50": True,
+                "price_to_high_ratio": 0.93,
+                "turnover": 13.5,
+                "market_cap": 320.8,
+                "status_tags": ["观察"],
+                "ma5": 51.8,
+                "ma10": 51.14,
+                "ma20": 49.6,
+                "near_high": False
+            },
+            {
+                "code": "002812.SZ",
+                "name": "恩捷股份",
+                "current_price": 68.20,
+                "gain_20d": 16.5,
+                "above_ma_50": True,
+                "price_to_high_ratio": 0.92,
+                "turnover": 11.2,
+                "market_cap": 280.5,
+                "status_tags": ["观察"],
+                "ma5": 67.5,
+                "ma10": 66.99,
+                "ma20": 65.8,
+                "near_high": True
+            },
+            {
+                "code": "300124.SZ",
+                "name": "汇川技术",
+                "current_price": 75.80,
+                "gain_20d": 18.9,
+                "above_ma_50": True,
+                "price_to_high_ratio": 0.95,
+                "turnover": 10.2,
+                "market_cap": 380.6,
+                "status_tags": ["观察"],
+                "ma5": 74.6,
+                "ma10": 73.94,
+                "ma20": 72.4,
+                "near_high": False
+            },
+            {
+                "code": "002230.SZ",
+                "name": "科大讯飞",
+                "current_price": 58.90,
+                "gain_20d": 21.3,
+                "above_ma_50": True,
+                "price_to_high_ratio": 0.94,
+                "turnover": 16.8,
+                "market_cap": 360.4,
+                "status_tags": ["强势"],
+                "ma5": 57.6,
+                "ma10": 56.88,
+                "ma20": 55.2,
+                "near_high": True
             },
             {
                 "code": "000725.SZ",
@@ -1606,12 +1556,14 @@ async def get_filtered_leaders():
                 "above_ma_50": True,
                 "price_to_high_ratio": 0.92,
                 "turnover": 22.8,
-                "market_cap": 1850.7,
-                "status_tags": ["观察"],"ma5": 4.78,
+                "market_cap": 185.7,
+                "status_tags": ["观察"],
+                "ma5": 4.78,
                 "ma10": 4.74,
                 "ma20": 4.65,
                 "near_high": True
             },
+
             {
                 "code": "002230.SZ",
                 "name": "科大讯飞",
@@ -1670,106 +1622,139 @@ async def get_filtered_leaders():
             }
         ]
         
-        # 应用筛选条件（在示例数据中模拟）
+        # 为示例股票添加换手率字段（模拟数据）
         for stock in example_stocks:
-            if (stock["above_ma_50"] and  # 趋势护城河：必须在50日线支撑上方
-                stock["current_price"] > stock.get("ma10", 0) and  # 短期强势：当前价格 > 10日均线
-                stock["price_to_high_ratio"] >= 0.9 and  # 蓄势位：股价必须在前20日高点的90%及以上
-                stock["turnover"] > 10 and  # 资金门槛：日成交额必须 > 10亿
-                stock["market_cap"] > 100 and  # 市值门槛：至少100亿以上
-                stock["gain_20d"] < 30):  # 压制疯马：20日涨幅如果超过30%，说明已经飞了
+            # 模拟换手率：基于成交额和市值计算
+            turnover_rate = (stock["turnover"] / stock["market_cap"]) * 100
+            stock["turnover_rate"] = round(turnover_rate, 2)
+        
+        # 应用筛选条件（根据新的黑马筛选器配置）
+        for stock in example_stocks:
+            # 计算bias20（乖离率）
+            bias20 = ((stock["current_price"] - stock["ma20"]) / stock["ma20"]) * 100 if stock["ma20"] > 0 else 0
+            
+            if (50 <= stock["market_cap"] <= 400 and  # 【防象栅栏】市值50-400亿
+                stock["current_price"] > stock.get("ma10", 0) and  # 【短期铁闸】必须站稳10日线
+                stock["above_ma_50"] and  # 【中期底线】大趋势必须向上
+                stock["price_to_high_ratio"] >= 0.85 and  # 【蓄势要求】距离20日高点回撤不超过15%
+                -10 <= stock["gain_20d"] <= 30 and  # 【防妖股】20日涨幅-10%到30%之间
+                stock["turnover"] > 5):  # 【活水门槛】日成交额 > 5亿
                 
+                # 添加bias20字段用于前端乖离防御塔
+                stock["bias20"] = round(bias20, 2)
                 filtered_stocks.append(stock)
         
-        # 核心排序：按成交额从大到小排，新易盛这种大中军会立刻置顶
-        filtered_stocks.sort(key=lambda x: x["turnover"], reverse=True)
+        # 【核心引擎】按换手率降序排，找出当前盘面中最躁动、最受资金关注的核心标的
+        filtered_stocks.sort(key=lambda x: x.get("turnover_rate", 0), reverse=True)
         
-        # 扩大视野：取前15名，留给肉眼"图形审美"的空间
-        top_15 = filtered_stocks[:15]
+        # 【扩大视野】取前20名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
+        top_20 = filtered_stocks[:20]
         
-        # 如果没有满足条件的股票，返回示例数据
-        if not top_15:
-            top_15 = [
+        # 如果没有满足条件的股票，返回符合新筛选条件的示例数据
+        if not top_20:
+            top_20 = [
                 {
-                    "code": "300750.SZ",
-                    "name": "宁德时代",
-                    "current_price": 188.50,
-                    "gain_20d": 18.5,
+                    "code": "300502.SZ",
+                    "name": "新易盛",
+                    "current_price": 45.80,
+                    "gain_20d": 25.3,
+                    "above_ma_50": True,
+                    "price_to_high_ratio": 0.96,
+                    "turnover": 32.5,
+                    "market_cap": 380.6,  # 符合50-400亿范围
+                    "status_tags": ["强势", "接近 Pivot"],
+                    "ma5": 44.5,
+                    "ma10": 43.84,
+                    "ma20": 42.3,
+                    "near_high": True,
+                    "turnover_rate": 8.54,  # 换手率
+                    "bias20": 8.27  # 乖离率
+                },
+                {
+                    "code": "002475.SZ",
+                    "name": "立讯精密",
+                    "current_price": 32.15,
+                    "gain_20d": 19.5,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.95,
-                    "turnover": 12.8,
-                    "market_cap": 856.3,
+                    "turnover": 18.7,
+                    "market_cap": 320.9,  # 符合50-400亿范围
                     "status_tags": ["强势", "接近 Pivot"],
-                    "ma_50": 182.30,
-                    "high_20d": 198.42
+                    "ma5": 31.6,
+                    "ma10": 31.18,
+                    "ma20": 30.2,
+                    "near_high": True,
+                    "turnover_rate": 5.83,
+                    "bias20": 6.46
                 },
                 {
-                    "code": "000858.SZ",
-                    "name": "五粮液",
-                    "current_price": 148.20,
-                    "gain_20d": 16.2,
-                    "above_ma_50": True,
-                    "price_to_high_ratio": 0.92,
-                "turnover": 15.2,
-                    "market_cap": 575.4,
-                    "status_tags": ["强势"],
-                    "ma_50": 142.80,
-                    "high_20d": 161.09
-                },
-                {
-                    "code": "002415.SZ",
-                    "name": "海康威视",
-                    "current_price": 32.45,
-                    "gain_20d": 15.8,
+                    "code": "002241.SZ",
+                    "name": "歌尔股份",
+                    "current_price": 24.85,
+                    "gain_20d": 17.6,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.91,
-                "turnover": 11.8,
-                    "market_cap": 304.2,
+                    "turnover": 14.2,
+                    "market_cap": 280.3,  # 符合50-400亿范围
                     "status_tags": ["观察"],
-                    "ma_50": 31.20,
-                    "high_20d": 35.66
+                    "ma5": 24.4,
+                    "ma10": 24.13,
+                    "ma20": 23.5,
+                    "near_high": False,
+                    "turnover_rate": 5.07,
+                    "bias20": 5.74
                 },
                 {
-                    "code": "000001.SZ",
-                    "name": "平安银行",
-                    "current_price": 12.85,
-                    "gain_20d": 15.3,
+                    "code": "300014.SZ",
+                    "name": "亿纬锂能",
+                    "current_price": 52.45,
+                    "gain_20d": 19.8,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.93,
-                "turnover": 10.5,
-                    "market_cap": 248.7,
+                    "turnover": 13.5,
+                    "market_cap": 320.8,  # 符合50-400亿范围
                     "status_tags": ["观察"],
-                    "ma_50": 12.40,
-                    "high_20d": 13.82
+                    "ma5": 51.8,
+                    "ma10": 51.14,
+                    "ma20": 49.6,
+                    "near_high": False,
+                    "turnover_rate": 4.21,
+                    "bias20": 5.75
                 },
                 {
-                    "code": "600519.SH",
-                    "name": "贵州茅台",
-                    "current_price": 1650.00,
-                    "gain_20d": 15.1,
+                    "code": "002812.SZ",
+                    "name": "恩捷股份",
+                    "current_price": 68.20,
+                    "gain_20d": 16.5,
                     "above_ma_50": True,
-                    "price_to_high_ratio": 0.90,
-                "turnover": 12.5,
-                    "market_cap": 2074.5,
+                    "price_to_high_ratio": 0.92,
+                    "turnover": 11.2,
+                    "market_cap": 280.5,  # 符合50-400亿范围
                     "status_tags": ["观察"],
-                    "ma_50": 1620.50,
-                    "high_20d": 1833.33
+                    "ma5": 67.5,
+                    "ma10": 66.99,
+                    "ma20": 65.8,
+                    "near_high": True,
+                    "turnover_rate": 4.00,
+                    "bias20": 3.65
                 }
             ]
         
         return {
             "success": True,
-            "count": len(top_15),
-            "data": top_15,
+            "count": len(top_20),
+            "data": top_20,
             "criteria": {
-                "above_ma_50": True,  # 趋势护城河
-                "current_price_above_ma10": True,  # 短期强势：当前价格 > 10日均线
-                "price_to_high_min": 0.9,  # 蓄势位（>= 0.9）
-                "turnover_min": 10,  # 资金门槛：10亿
-                "market_cap_min": 100,  # 市值门槛：100亿
-                "gain_20d_max": 30,  # 压制疯马：30%
-                "sort_by": "成交额降序",  # 核心排序
-                "limit": 15  # 扩大视野
+                "market_cap_min": 50,  # 【防象栅栏】市值下限
+                "market_cap_max": 400,  # 【防象栅栏】市值上限
+                "current_price_above_ma10": True,  # 【短期铁闸】必须站稳10日线
+                "above_ma_50": True,  # 【中期底线】大趋势必须向上
+                "price_to_high_min": 0.85,  # 【蓄势要求】距离20日高点回撤不超过15%
+                "gain_20d_min": -10,  # 【允许潜伏】下限放宽到-10%
+                "gain_20d_max": 30,  # 【防妖股】上限30%
+                "turnover_min": 5,  # 【活水门槛】日成交额 > 5亿
+                "sort_by": "换手率降序",  # 【核心引擎】换手率降序
+                "limit": 20  # 【扩大视野】取前20名
             }
         }
         
