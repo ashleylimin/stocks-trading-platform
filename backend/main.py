@@ -1645,6 +1645,13 @@ async def get_filtered_leaders():
             # 计算bias20（乖离率）
             bias20 = ((stock["current_price"] - stock["ma20"]) / stock["ma20"]) * 100 if stock["ma20"] > 0 else 0
             
+            # 添加daily_change字段（当天涨跌幅）
+            stock["daily_change"] = round(random.uniform(-3.0, 5.0), 2)
+            
+            # 添加严格Pivot结构字段
+            stock["price_to_250d_high_ratio"] = random.uniform(0.85, 0.98)
+            stock["is_60d_new_high"] = random.choice([True, False])
+            
             if (stock["turnover"] > 5 and  # 【底线】今日成交额 > 5亿
                 stock.get("turnover_rate", 0) > 3.0 and  # 【灵魂】换手率 > 3.0%
                 stock["current_price"] > stock.get("ma10", 0) and  # 【短期防线】必须站稳10日线
@@ -1671,8 +1678,11 @@ async def get_filtered_leaders():
                     "name": "新易盛",
                     "current_price": 45.80,
                     "gain_20d": 25.3,
+                    "daily_change": 2.8,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.96,
+                    "price_to_250d_high_ratio": 0.92,
+                    "is_60d_new_high": True,
                     "turnover": 32.5,
                     "market_cap": 380.6,  # 符合50-400亿范围
                     "status_tags": ["强势", "接近 Pivot"],
@@ -1688,8 +1698,11 @@ async def get_filtered_leaders():
                     "name": "立讯精密",
                     "current_price": 32.15,
                     "gain_20d": 19.5,
+                    "daily_change": 1.5,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.95,
+                    "price_to_250d_high_ratio": 0.91,
+                    "is_60d_new_high": False,
                     "turnover": 18.7,
                     "market_cap": 320.9,  # 符合50-400亿范围
                     "status_tags": ["强势", "接近 Pivot"],
@@ -1705,8 +1718,11 @@ async def get_filtered_leaders():
                     "name": "歌尔股份",
                     "current_price": 24.85,
                     "gain_20d": 17.6,
+                    "daily_change": -0.8,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.91,
+                    "price_to_250d_high_ratio": 0.87,
+                    "is_60d_new_high": False,
                     "turnover": 14.2,
                     "market_cap": 280.3,  # 符合50-400亿范围
                     "status_tags": ["观察"],
@@ -1722,8 +1738,11 @@ async def get_filtered_leaders():
                     "name": "亿纬锂能",
                     "current_price": 52.45,
                     "gain_20d": 19.8,
+                    "daily_change": 3.2,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.93,
+                    "price_to_250d_high_ratio": 0.89,
+                    "is_60d_new_high": True,
                     "turnover": 13.5,
                     "market_cap": 320.8,  # 符合50-400亿范围
                     "status_tags": ["观察"],
@@ -1739,8 +1758,11 @@ async def get_filtered_leaders():
                     "name": "恩捷股份",
                     "current_price": 68.20,
                     "gain_20d": 16.5,
+                    "daily_change": 0.5,
                     "above_ma_50": True,
                     "price_to_high_ratio": 0.92,
+                    "price_to_250d_high_ratio": 0.88,
+                    "is_60d_new_high": True,
                     "turnover": 11.2,
                     "market_cap": 280.5,  # 符合50-400亿范围
                     "status_tags": ["观察"],

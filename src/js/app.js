@@ -47,7 +47,7 @@ const apiCache = {
 function showRandomPhilosophyQuote() {
     const decisionBasis = document.querySelector('.decision-basis');
     if (!decisionBasis) {
-        console.log('未找到.decision-basis元素');
+
         return;
     }
     
@@ -58,19 +58,19 @@ function showRandomPhilosophyQuote() {
     // 使用更可靠的选择器
     const basisItem = decisionBasis.querySelector('.basis-item');
     if (!basisItem) {
-        console.log('未找到.basis-item元素');
+
         return;
     }
     
     // 获取basis-item内的所有div元素
     const divs = basisItem.querySelectorAll('div');
-    console.log('找到的div数量:', divs.length);
+
     
     // 更新显示
     const basisTitle = decisionBasis.querySelector('.basis-title');
     if (basisTitle) {
         basisTitle.textContent = '交易哲学';
-        console.log('更新标题: 交易哲学');
+
     }
     
 
@@ -84,7 +84,7 @@ function showRandomPhilosophyQuote() {
         divs[1].style.fontStyle = 'italic';
         divs[1].style.textAlign = 'center';
         divs[1].style.width = '100%';
-        console.log('更新第二个div:', quote);
+
     }
     
     // 第三个div应该是"止观 · 交易系统"
@@ -97,10 +97,10 @@ function showRandomPhilosophyQuote() {
         divs[2].style.paddingTop = '12px';
         divs[2].style.width = '100%';
         divs[2].style.textAlign = 'center';
-        console.log('更新第三个div: justwait.today');
+
     }
     
-    console.log('显示交易哲学格言:', quote);
+
 }
 
 // 三种交易状态
@@ -183,7 +183,7 @@ function updateUI(stateIndex) {
     // 更新执行理由
     updateExecutionReason(state);
     
-    console.log('UI更新完成');
+
 }
 
 
@@ -230,18 +230,18 @@ actionButton.addEventListener('click', function() {
 });
 
 // 显示加载状态
-console.log('页面初始化，显示加载状态');
+
 
 // 等待DOM完全加载后显示随机交易哲学格言
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM已完全加载，显示交易哲学格言');
+
         showRandomPhilosophyQuote();
         fetchMarketData();
     });
 } else {
     // DOM已经加载完成
-    console.log('DOM已加载完成，显示交易哲学格言');
+
     showRandomPhilosophyQuote();
     fetchMarketData();
 }
@@ -253,14 +253,13 @@ async function fetchMarketData() {
         // 检查缓存
         const cachedData = apiCache.getMarketData();
         if (cachedData) {
-            console.log('使用缓存的市场数据');
+
             processMarketData(cachedData);
             return;
         }
         
-        console.log('正在获取市场数据...');
+
         const apiUrl = '/api/market/overview?t=' + Date.now();
-        console.log('API URL:', apiUrl);
         
         const response = await fetch(apiUrl, {
             method: 'GET',
@@ -270,14 +269,14 @@ async function fetchMarketData() {
             }
         });
         
-        console.log('响应状态:', response.status, response.statusText);
+
         
         if (!response.ok) {
             throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
         }
         
         const result = await response.json();
-        console.log('API响应:', result);
+
         
         // 缓存数据
         apiCache.setMarketData(result);
@@ -285,11 +284,11 @@ async function fetchMarketData() {
         processMarketData(result);
     } catch (error) {
         console.error('获取数据失败:', error);
-        console.log('错误详情:', error.message);
+
         
         // 尝试使用XMLHttpRequest作为fallback
         try {
-            console.log('尝试使用XMLHttpRequest...');
+
             const xhrResult = await new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', '/api/market/overview');
@@ -304,18 +303,18 @@ async function fetchMarketData() {
                 xhr.send();
             });
             
-            console.log('XHR成功:', xhrResult);
+
             
             // 缓存XHR获取的数据
             apiCache.setMarketData(xhrResult);
             
             processMarketData(xhrResult);
-            console.log('XHR fallback成功，状态索引:', currentStateIndex);
+
         } catch (xhrError) {
             console.error('XHR也失败:', xhrError);
         }
         
-        console.log('使用演示数据');
+
     }
 }
 
@@ -362,7 +361,7 @@ function updateDecisionBasis(data) {
         sectorsElement.className = signal.condition3_sectors ? "basis-value basis-true" : "basis-value basis-false";
     }
     
-    console.log('决策依据已更新');
+
 }
 
 // 更新日期信息 - 显示最后一个交易日
@@ -421,8 +420,7 @@ function updateDateInfo() {
     const dateElement = document.querySelector('.date-info');
     if (dateElement) {
         dateElement.textContent = statusText;
-        console.log(`日期信息已更新: ${statusText}`);
-        console.log(`当前时间: ${currentHour}:${currentMinute}, 星期${['日', '一', '二', '三', '四', '五', '六'][dayOfWeek]}`);
+
     }
     
     // 更新回撤避免统计（在updateUI函数中处理）
@@ -430,7 +428,7 @@ function updateDateInfo() {
 
 // 页面初始化 - 在DOM加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM已完全加载，开始页面初始化');
+
     
     // 显示随机交易哲学格言
     showRandomPhilosophyQuote();
@@ -480,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        console.log('移动端菜单切换功能已启用');
+
     }
     
     // 反馈功能
@@ -489,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (feedbackText && feedbackText.trim()) {
             alert('感谢您的反馈！\n\n您的意见对我们非常重要。\n\n反馈已记录，我们会持续改进系统。');
-            console.log('用户反馈:', feedbackText);
+
             
             // 这里可以添加将反馈发送到后端的代码
             // sendFeedbackToBackend(feedbackText);
@@ -509,35 +507,30 @@ document.addEventListener('DOMContentLoaded', function() {
 function processMarketData(result) {
     if (result.success && result.signal) {
         const signal = result.signal.trade_signal;
-        console.log('交易信号:', signal);
-        console.log('完整signal对象:', result.signal);
-        
         // 根据后端信号决定状态
-        console.log('后端信号:', signal);
         if (signal === "禁止交易") {
             currentStateIndex = 0;
-            console.log('设置为状态 0: 禁止交易');
+
         } else if (signal === "允许交易" || signal === "可以交易") {
             currentStateIndex = 1;
-            console.log('设置为状态 1: 可以交易');
+
         } else if (signal === "积极交易" || signal === "积极做多") {
             currentStateIndex = 2;
-            console.log('设置为状态 2: 积极交易');
+
         } else {
-            console.log('未知信号，使用默认状态');
-            console.log('未知信号值:', signal);
+
             currentStateIndex = 0; // 默认禁止交易
         }
         
-        console.log('最终状态索引:', currentStateIndex);
+
         
         // 更新决策依据
         updateDecisionBasis(result);
         
         updateUI(currentStateIndex);
-        console.log('UI已更新，状态索引:', currentStateIndex);
+
     } else {
-        console.log('API响应格式错误，使用演示数据');
+
     }
 }
 
