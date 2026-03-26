@@ -152,11 +152,6 @@ const tradingStates = [
     }
 ];
 
-// 获取DOM元素
-const pageTitle = document.querySelector('.page-title');
-const positionInfo = document.querySelector('.position-info');
-const actionButton = document.querySelector('.action-button');
-
 // 初始化状态
 let currentStateIndex = 0;
 
@@ -164,11 +159,13 @@ let currentStateIndex = 0;
 function updateUI(stateIndex) {
     const state = tradingStates[stateIndex];
     
-    // 更新页面标题
-    pageTitle.textContent = state.pageTitle;
+    // 获取DOM元素（在函数内部获取，确保DOM已加载）
+    const pageTitle = document.querySelector('.page-title');
+    const positionInfo = document.querySelector('.position-info');
+    const actionButton = document.querySelector('.action-button');
     
-    // 更新仓位信息
-    positionInfo.textContent = `建议仓位：${state.position}`;
+    if (pageTitle) pageTitle.textContent = state.pageTitle;
+    if (positionInfo) positionInfo.textContent = `建议仓位：${state.position}`;
     
     // 隐藏加载指示器
     const loadingIndicator = document.querySelector('.loading-indicator');
@@ -176,9 +173,10 @@ function updateUI(stateIndex) {
         loadingIndicator.style.display = 'none';
     }
     
-    // 更新按钮
-    actionButton.textContent = state.buttonText;
-    actionButton.className = `action-button ${state.buttonClass}`;
+    if (actionButton) {
+        actionButton.textContent = state.buttonText;
+        actionButton.className = `action-button ${state.buttonClass}`;
+    }
     
     // 更新执行理由
     updateExecutionReason(state);
