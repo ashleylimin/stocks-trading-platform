@@ -194,9 +194,71 @@ function processMarketData(result) {
     }
 }
 
+// 更新日期信息 - 显示最后一个交易日
+function updateDateInfo() {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const dayOfWeek = now.getDay();
+    
+    // 获取今天的日期
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    // 判断是否交易日（周一至周五）
+    const isTradingDay = dayOfWeek >= 1 && dayOfWeek <= 5;
+    
+    let statusText = '';
+    
+    if (!isTradingDay) {
+        // 非交易日（周末）
+        let lastTradingDay = new Date(now);
+        if (dayOfWeek === 0) { // 周日
+            lastTradingDay.setDate(now.getDate() - 2); // 回退到周五
+        } else if (dayOfWeek === 6) { // 周六
+            lastTradingDay.setDate(now.getDate() - 1); // 回退到周五
+        }
+        const lastYear = lastTradingDay.getFullYear();
+        const lastMonth = String(lastTradingDay.getMonth() + 1).padStart(2, '0');
+        const lastDay = String(lastTradingDay.getDate()).padStart(2, '0');
+        statusText = `今日判断（${lastYear}-${lastMonth}-${lastDay} 已收盘）`;
+    } else {
+        // 交易日（周一至周五）
+        const currentTime = currentHour * 100 + currentMinute;
+        
+        if (currentTime < 900) {
+            // 9:00前
+            statusText = `今日判断（${dateString} 等待开盘）`;
+        } else if (currentTime >= 900 && currentTime < 930) {
+            // 9:00-9:30 开盘前
+            statusText = `今日判断（${dateString} 等待开盘）`;
+        } else if ((currentTime >= 930 && currentTime < 1130) || 
+                   (currentTime >= 1300 && currentTime < 1500)) {
+            // 交易时间 9:30-11:30, 13:00-15:00
+            statusText = `今日判断（${dateString}）`;
+        } else if (currentTime >= 1130 && currentTime < 1300) {
+            // 午休时间 11:30-13:00
+            statusText = `今日判断（${dateString} 午间休市）`;
+        } else {
+            // 15:00后 已收盘
+            statusText = `今日判断（${dateString} 已收盘）`;
+        }
+    }
+    
+    const dateElement = document.querySelector('.date-info');
+    if (dateElement) {
+        dateElement.textContent = statusText;
+    }
+}
+
 // 获取市场数据
 async function fetchMarketData() {
     try {
+        // 先更新日期信息
+        updateDateInfo();
+        
         const apiUrl = '/api/market/overview?t=' + Date.now();
         const response = await fetch(apiUrl);
         
