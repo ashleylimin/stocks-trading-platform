@@ -157,6 +157,7 @@ let currentStateIndex = 0;
 
 // 更新UI函数
 function updateUI(stateIndex) {
+    console.log('止观系统: 更新UI，状态索引', stateIndex);
     const state = tradingStates[stateIndex];
     
     // 获取DOM元素（在函数内部获取，确保DOM已加载）
@@ -164,16 +165,24 @@ function updateUI(stateIndex) {
     const positionInfo = document.querySelector('.position-info');
     const actionButton = document.querySelector('.action-button');
     
+    console.log('止观系统: 找到元素', {
+        pageTitle: !!pageTitle,
+        positionInfo: !!positionInfo,
+        actionButton: !!actionButton
+    });
+    
     if (pageTitle) pageTitle.textContent = state.pageTitle;
     if (positionInfo) positionInfo.textContent = `建议仓位：${state.position}`;
     
     // 隐藏加载指示器
     const loadingIndicator = document.querySelector('.loading-indicator');
     if (loadingIndicator) {
+        console.log('止观系统: 隐藏loading指示器');
         loadingIndicator.style.display = 'none';
     }
     
     if (actionButton) {
+        console.log('止观系统: 更新按钮', state.buttonText, state.buttonClass);
         actionButton.textContent = state.buttonText;
         actionButton.className = `action-button ${state.buttonClass}`;
     }
@@ -181,6 +190,7 @@ function updateUI(stateIndex) {
     // 更新执行理由
     updateExecutionReason(state);
     
+    console.log('止观系统: UI更新完成');
 
 }
 
@@ -245,18 +255,19 @@ if (document.readyState === 'loading') {
 }
 async function fetchMarketData() {
     try {
+        console.log('止观系统: 开始获取市场数据');
         // 更新日期信息
         updateDateInfo();
         
         // 检查缓存
         const cachedData = apiCache.getMarketData();
         if (cachedData) {
-
+            console.log('止观系统: 使用缓存数据');
             processMarketData(cachedData);
             return;
         }
         
-
+        console.log('止观系统: 从API获取数据');
         const apiUrl = '/api/market/overview?t=' + Date.now();
         
         const response = await fetch(apiUrl, {
@@ -267,25 +278,25 @@ async function fetchMarketData() {
             }
         });
         
-
+        console.log('止观系统: API响应状态', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
         }
         
         const result = await response.json();
-
+        console.log('止观系统: API数据获取成功', result.success);
         
         // 缓存数据
         apiCache.setMarketData(result);
         
         processMarketData(result);
     } catch (error) {
-
+        console.log('止观系统: fetch失败，尝试XHR', error.message);
         
         // 尝试使用XMLHttpRequest作为fallback
         try {
-
+            console.log('止观系统: 开始XHR请求');
             const xhrResult = await new Promise((resolve, reject) => {
                 const xhr = new XMLHttpRequest();
                 xhr.open('GET', '/api/market/overview');
@@ -295,6 +306,26 @@ async function fetchMarketData() {
                     } else {
                         reject(new Error(`XHR错误: ${xhr.status}`));
                     }
+                };
+                xhr.onerror = () => reject(new Error('XHR网络错误'));
+                xhr.send();
+            });
+            
+            console.log('止观系统: XHR成功');
+            // 缓存XHR获取的数据
+            apiCache.setMarketData(xhrResult);
+            
+            processMarketData(xhrResult);
+
+        } catch (xhrError) {
+            console.log('止观系统: XHR也失败，使用默认状态');
+            // 两个API都失败，使用默认状态
+            currentStateIndex = 0; // 默认禁止交易状态
+            updateUI(currentStateIndex);
+        }
+        
+
+    }
                 };
                 xhr.onerror = () => reject(new Error('XHR网络错误'));
                 xhr.send();
@@ -427,7 +458,7 @@ function updateDateInfo() {
 
 // 页面初始化 - 在DOM加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
-
+    console.log('止观系统: DOM已加载，开始初始化');
     
     // 显示随机交易哲学格言
     showRandomPhilosophyQuote();
@@ -528,9 +559,11 @@ function processMarketData(result) {
         
         updateUI(currentStateIndex);
 
-    } else {
-
-    }
+        } else {
+            // API响应格式错误
+            currentStateIndex = 0;
+            updateUI(currentStateIndex);
+        }
 }
 
 // Debug Tue Mar 24 14:55:42 CST 2026
