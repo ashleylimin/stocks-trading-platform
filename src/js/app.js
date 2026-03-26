@@ -16,47 +16,41 @@ const tradingPhilosophyQuotes = [
 const tradingStates = [
     {
         position: "0%",
-        buttonText: "禁止交易（WAIT）",
+        buttonText: "状态：无交易优势",
         buttonClass: "action-red",
         pageTitle: "JUST WAIT",
         executionReason: {
-            title: "为什么今天不交易？",
+            title: "说明：",
             bulletPoints: [
-                "市场没有形成一致方向",
-                "没有确认的强势突破",
-                "条件尚未满足"
+                "当前未出现可执行结构，波动不具备确定性"
             ],
-            command: "今天的任务：<br>不交易，保持耐心"
+            command: "建议：<br>保持空仓，等待信号<br><br>底层逻辑：<br>价格尚未完成自我证明"
         }
     },
     {
         position: "≤30%",
-        buttonText: "准备阶段（READY）",
+        buttonText: "状态：观察中",
         buttonClass: "action-yellow",
         pageTitle: "ACT",
         executionReason: {
-            title: "为什么暂时不交易？",
+            title: "说明：",
             bulletPoints: [
-                "市场开始分化",
-                "有潜在强势股票出现",
-                "但尚未确认突破"
+                "部分标的接近关键位置，但未形成确认"
             ],
-            command: "今天的任务：<br>只观察，不出手"
+            command: "建议：<br>记录候选，不提前行动<br><br>底层逻辑：<br>接近机会 ≠ 机会"
         }
     },
     {
         position: "≤100%",
-        buttonText: "允许交易（CONFIRMED）",
+        buttonText: "状态：可尝试",
         buttonClass: "action-green",
         pageTitle: "ACT",
         executionReason: {
-            title: "为什么今天允许交易？",
+            title: "说明：",
             bulletPoints: [
-                "市场方向开始明确",
-                "出现确认突破的强势股票",
-                "系统条件已满足"
+                "出现确认结构，具备试错条件"
             ],
-            command: "今天的任务：<br>只做确认后的最强股票"
+            command: "建议：<br>1/9仓位试仓，严格执行止损<br><br>底层逻辑：<br>只有被验证的走势才值得参与"
         }
     }
 ];
