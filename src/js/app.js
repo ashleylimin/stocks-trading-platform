@@ -326,26 +326,6 @@ async function fetchMarketData() {
         
 
     }
-                };
-                xhr.onerror = () => reject(new Error('XHR网络错误'));
-                xhr.send();
-            });
-            
-
-            
-            // 缓存XHR获取的数据
-            apiCache.setMarketData(xhrResult);
-            
-            processMarketData(xhrResult);
-
-        } catch (xhrError) {
-            // 两个API都失败，使用默认状态
-            currentStateIndex = 0; // 默认禁止交易状态
-            updateUI(currentStateIndex);
-        }
-        
-
-    }
 }
 
 // 更新决策依据函数
