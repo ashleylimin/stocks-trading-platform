@@ -283,7 +283,6 @@ async function fetchMarketData() {
         
         processMarketData(result);
     } catch (error) {
-        console.error('获取数据失败:', error);
 
         
         // 尝试使用XMLHttpRequest作为fallback
@@ -311,7 +310,9 @@ async function fetchMarketData() {
             processMarketData(xhrResult);
 
         } catch (xhrError) {
-            console.error('XHR也失败:', xhrError);
+            // 两个API都失败，使用默认状态
+            currentStateIndex = 0; // 默认禁止交易状态
+            updateUI(currentStateIndex);
         }
         
 
