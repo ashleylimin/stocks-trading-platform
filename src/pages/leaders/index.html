@@ -241,18 +241,6 @@
                     }).join('');
                 }
                 
-                // 计算当天涨跌幅显示
-                const dailyChange = stock.daily_change || 0;
-                let changeClass = 'neutral';
-                let changeSymbol = '';
-                
-                if (dailyChange > 0) {
-                    changeClass = 'positive';
-                    changeSymbol = '+';
-                } else if (dailyChange < 0) {
-                    changeClass = 'negative';
-                }
-                
                 // 提取股票代码（去掉后缀）
                 const stockCode = stock.code ? stock.code.replace(/\.[A-Z]+$/, '') : '';
                 
@@ -260,9 +248,6 @@
                     <div class="stock-info">
                         <div class="stock-name">${stock.name}</div>
                         <div class="stock-code">${stockCode}</div>
-                    </div>
-                    <div class="stock-change ${changeClass}">
-                        ${changeSymbol}${dailyChange.toFixed(1)}%
                     </div>
                     <div class="stock-status">
                         ${statusTagsHTML}

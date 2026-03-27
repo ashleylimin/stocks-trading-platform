@@ -611,7 +611,7 @@ body {
     padding: 20px 0;
     border-bottom: 1px solid #f2f2f7;
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto;
     gap: 20px;
     align-items: center;
 }
@@ -645,25 +645,7 @@ body {
     font-weight: 500;
 }
 
-.stock-change {
-    font-size: 18px;
-    font-weight: 600;
-    text-align: right;
-    min-width: 80px;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-}
 
-.stock-change.positive {
-    color: #34c759;
-}
-
-.stock-change.negative {
-    color: #ff3b30;
-}
-
-.stock-change.neutral {
-    color: #8e8e93;
-}
 
 .stock-status {
     display: flex;
@@ -1016,10 +998,7 @@ body {
         gap: 12px;
     }
     
-    .stock-change {
-        font-size: 16px;
-        min-width: 70px;
-    }
+
     
     .stock-name {
         font-size: 17px;
