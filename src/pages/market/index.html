@@ -145,40 +145,50 @@
     
     <script>
         // 紧急修复：页面加载时立即显示"可尝试"状态
-        document.addEventListener('DOMContentLoaded', function() {
+        // 使用setTimeout确保在app.js之后执行
+        setTimeout(function() {
             console.log('紧急修复：显示可尝试状态');
             
-            // 立即显示状态2（可尝试）
-            const state2 = document.getElementById('state-2');
-            if (state2) {
-                state2.style.display = 'block';
-            }
-            
-            // 隐藏其他状态
-            const state0 = document.getElementById('state-0');
-            const state1 = document.getElementById('state-1');
-            if (state0) state0.style.display = 'none';
-            if (state1) state1.style.display = 'none';
-            
-            // 更新按钮
+            // 检查app.js是否已经更新了UI
             const button = document.getElementById('tradeButton');
-            if (button) {
-                button.textContent = '状态：可尝试';
-                button.className = 'action-button action-green';
+            if (button && button.textContent === '获取市场数据') {
+                // app.js没有成功执行，使用紧急修复
+                
+                // 立即显示状态2（可尝试）
+                const state2 = document.getElementById('state-2');
+                if (state2) {
+                    state2.style.display = 'block';
+                }
+                
+                // 隐藏其他状态
+                const state0 = document.getElementById('state-0');
+                const state1 = document.getElementById('state-1');
+                if (state0) state0.style.display = 'none';
+                if (state1) state1.style.display = 'none';
+                
+                // 更新按钮
+                if (button) {
+                    button.textContent = '状态：可尝试';
+                    button.className = 'action-button action-green';
+                }
+                
+                // 更新仓位信息
+                const positionInfo = document.querySelector('.position-info');
+                if (positionInfo) {
+                    positionInfo.textContent = '建议仓位：≤100%';
+                }
+                
+                // 隐藏加载指示器
+                const loadingIndicator = document.querySelector('.loading-indicator');
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+                
+                console.log('紧急修复完成：显示状态2（可尝试）');
+            } else {
+                console.log('app.js已成功执行，无需紧急修复');
             }
-            
-            // 更新仓位信息
-            const positionInfo = document.querySelector('.position-info');
-            if (positionInfo) {
-                positionInfo.textContent = '建议仓位：≤100%';
-            }
-            
-            // 隐藏加载指示器
-            const loadingIndicator = document.querySelector('.loading-indicator');
-            if (loadingIndicator) {
-                loadingIndicator.style.display = 'none';
-            }
-        });
+        }, 1000); // 1秒后检查
     </script>
 </body>
 </html>
