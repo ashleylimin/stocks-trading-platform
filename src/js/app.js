@@ -80,7 +80,15 @@ function updateUI(stateIndex) {
         actionButton.className = `action-button ${state.buttonClass}`;
     }
     
-    console.log('UI更新完成:', state.buttonText);
+    // 隐藏所有状态说明，然后显示对应的状态
+    for (let i = 0; i < 3; i++) {
+        const stateElement = document.getElementById(`state-${i}`);
+        if (stateElement) {
+            stateElement.style.display = i === stateIndex ? 'block' : 'none';
+        }
+    }
+    
+    console.log('UI更新完成:', state.buttonText, '显示状态:', stateIndex);
 }
 
 // 处理市场数据

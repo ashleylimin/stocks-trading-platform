@@ -92,9 +92,9 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-                <!-- 三个状态说明 -->
+                <!-- 当前状态说明（根据API信号动态显示） -->
                 <div class="states-explanation">
-                    <div class="state-section" id="state-0">
+                    <div class="state-section" id="state-0" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-red"></span>
                             <h3 class="state-title">状态：无交易优势</h3>
@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     
-                    <div class="state-section" id="state-1">
+                    <div class="state-section" id="state-1" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-yellow"></span>
                             <h3 class="state-title">状态：观察中</h3>
@@ -120,7 +120,7 @@
                         </div>
                     </div>
                     
-                    <div class="state-section" id="state-2">
+                    <div class="state-section" id="state-2" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-green"></span>
                             <h3 class="state-title">状态：可尝试</h3>
@@ -142,5 +142,43 @@
     </div>
 
     <script src="/src/js/app.js" defer></script>
+    
+    <script>
+        // 紧急修复：页面加载时立即显示"可尝试"状态
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('紧急修复：显示可尝试状态');
+            
+            // 立即显示状态2（可尝试）
+            const state2 = document.getElementById('state-2');
+            if (state2) {
+                state2.style.display = 'block';
+            }
+            
+            // 隐藏其他状态
+            const state0 = document.getElementById('state-0');
+            const state1 = document.getElementById('state-1');
+            if (state0) state0.style.display = 'none';
+            if (state1) state1.style.display = 'none';
+            
+            // 更新按钮
+            const button = document.getElementById('tradeButton');
+            if (button) {
+                button.textContent = '状态：可尝试';
+                button.className = 'action-button action-green';
+            }
+            
+            // 更新仓位信息
+            const positionInfo = document.querySelector('.position-info');
+            if (positionInfo) {
+                positionInfo.textContent = '建议仓位：≤100%';
+            }
+            
+            // 隐藏加载指示器
+            const loadingIndicator = document.querySelector('.loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
