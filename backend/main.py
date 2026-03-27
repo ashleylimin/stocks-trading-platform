@@ -1434,15 +1434,16 @@ async def get_filtered_leaders():
     10.【扩大视野】取前15名，交由用户的肉眼进行最终的"图形整齐度"审美过滤
     """
     try:
-        # 使用模拟数据（实际部署时使用真实akshare数据）
+        # 使用模拟数据（akshare连接可能有问题）
         akshare = MockAkshare()
         
-        # 获取A股实时数据
+        # 获取A股实时数据（模拟）
         spot_df = akshare.stock_zh_a_spot_em()
+        print(f"使用模拟数据，共{len(spot_df)}只股票")
         
         filtered_stocks = []
         
-        # 模拟筛选逻辑 - 使用示例数据避免类型问题
+        # 使用示例数据
         example_stocks = [
             {
                 "code": "300502.SZ",

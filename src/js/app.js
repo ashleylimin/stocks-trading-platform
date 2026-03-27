@@ -58,90 +58,10 @@ const tradingStates = [
 let currentStateIndex = 0;
 
 // 显示随机交易哲学格言
-function showRandomPhilosophyQuote() {
-    const decisionBasis = document.querySelector('.decision-basis');
-    if (!decisionBasis) return;
-    
-    // 随机选择一条格言
-    const randomIndex = Math.floor(Math.random() * tradingPhilosophyQuotes.length);
-    const quote = tradingPhilosophyQuotes[randomIndex];
-    
-    // 更新显示
-    const basisItem = decisionBasis.querySelector('.basis-item');
-    if (basisItem) {
-        const divs = basisItem.querySelectorAll('div');
-        if (divs.length > 0) {
-            // 第一个div显示交易哲学格言
-            divs[0].innerHTML = quote;
-            divs[0].style.fontSize = '16px';
-            divs[0].style.color = '#666';
-            divs[0].style.lineHeight = '1.6';
-            divs[0].style.marginBottom = '16px';
-            divs[0].style.fontStyle = 'italic';
-            divs[0].style.textAlign = 'center';
-            divs[0].style.width = '100%';
-        }
-    }
-}
+
 
 // 更新执行理由函数
-function updateExecutionReason(state) {
-    const decisionBasis = document.querySelector('.decision-basis');
-    if (!decisionBasis) return;
-    
-    const basisTitle = decisionBasis.querySelector('.basis-title');
-    const basisItem = decisionBasis.querySelector('.basis-item');
-    
-    if (basisTitle) basisTitle.textContent = '执行理由';
-    
-    if (basisItem) {
-        // 清空现有内容
-        basisItem.innerHTML = '';
-        
-        // 添加标题
-        const titleDiv = document.createElement('div');
-        titleDiv.textContent = state.executionReason.title;
-        titleDiv.style.fontSize = '18px';
-        titleDiv.style.fontWeight = '600';
-        titleDiv.style.color = '#333';
-        titleDiv.style.marginBottom = '12px';
-        basisItem.appendChild(titleDiv);
-        
-        // 添加要点
-        const pointsDiv = document.createElement('div');
-        pointsDiv.innerHTML = state.executionReason.bulletPoints.map(point => `• ${point}`).join('<br>');
-        pointsDiv.style.fontSize = '16px';
-        pointsDiv.style.color = '#666';
-        pointsDiv.style.lineHeight = '1.6';
-        pointsDiv.style.marginBottom = '16px';
-        basisItem.appendChild(pointsDiv);
-        
-        // 添加命令
-        const commandDiv = document.createElement('div');
-        commandDiv.innerHTML = state.executionReason.command;
-        commandDiv.style.fontWeight = '700';
-        commandDiv.style.color = '#8e8e93';
-        commandDiv.style.fontSize = '16px';
-        commandDiv.style.borderTop = '2px solid #f0f0f0';
-        commandDiv.style.paddingTop = '12px';
-        commandDiv.style.width = '100%';
-        commandDiv.style.textAlign = 'center';
-        
-        // 根据状态设置颜色
-        if (state.buttonClass === 'action-red') {
-            commandDiv.style.color = '#dc2626';
-            commandDiv.style.borderTopColor = '#dc2626';
-        } else if (state.buttonClass === 'action-yellow') {
-            commandDiv.style.color = '#d97706';
-            commandDiv.style.borderTopColor = '#d97706';
-        } else if (state.buttonClass === 'action-green') {
-            commandDiv.style.color = '#059669';
-            commandDiv.style.borderTopColor = '#059669';
-        }
-        
-        basisItem.appendChild(commandDiv);
-    }
-}
+
 
 // 更新UI函数
 function updateUI(stateIndex) {
@@ -160,29 +80,34 @@ function updateUI(stateIndex) {
         actionButton.className = `action-button ${state.buttonClass}`;
     }
     
-    // 更新执行理由
-    updateExecutionReason(state);
-    
     console.log('UI更新完成:', state.buttonText);
 }
 
 // 处理市场数据
 function processMarketData(result) {
+    console.log('processMarketData: 开始处理，result:', result);
+    
     if (result.success && result.signal) {
         const signal = result.signal.trade_signal;
+        console.log('processMarketData: 信号值:', signal);
         
         if (signal === "禁止交易") {
             currentStateIndex = 0;
+            console.log('processMarketData: 设置为状态 0 (禁止交易)');
         } else if (signal === "允许交易" || signal === "可以交易") {
             currentStateIndex = 1;
+            console.log('processMarketData: 设置为状态 1 (允许交易)');
         } else if (signal === "积极交易" || signal === "积极做多") {
             currentStateIndex = 2;
+            console.log('processMarketData: 设置为状态 2 (积极交易)');
         } else {
             currentStateIndex = 0;
+            console.log('processMarketData: 未知信号，设置为状态 0');
         }
         
         updateUI(currentStateIndex);
     } else {
+        console.log('processMarketData: 数据无效，result.success:', result.success, 'result.signal:', result.signal);
         currentStateIndex = 0;
         updateUI(currentStateIndex);
     }
@@ -250,33 +175,66 @@ function updateDateInfo() {
 // 获取市场数据
 async function fetchMarketData() {
     try {
+        console.log('fetchMarketData: 开始');
         // 先更新日期信息
         updateDateInfo();
         
         const apiUrl = '/api/market/overview?t=' + Date.now();
+        console.log('fetchMarketData: 请求URL:', apiUrl);
         const response = await fetch(apiUrl);
+        console.log('fetchMarketData: 响应状态:', response.status, response.statusText);
         
         if (!response.ok) {
             throw new Error(`HTTP错误: ${response.status}`);
         }
         
         const result = await response.json();
+        console.log('fetchMarketData: 收到数据，signal:', result.signal);
         processMarketData(result);
         
     } catch (error) {
-        console.log('API请求失败，使用默认状态');
-        currentStateIndex = 0;
+        console.log('API请求失败，使用默认状态，错误:', error.message);
+        // 紧急修复：如果API失败，默认显示"可尝试"状态（全力做多）
+        currentStateIndex = 2; // 改为状态2（可尝试）
         updateUI(currentStateIndex);
     }
+}
+
+// 复制状态文本函数
+function copyStateText(stateIndex) {
+    const stateSection = document.getElementById(`state-${stateIndex}`);
+    if (!stateSection) return;
+    
+    const title = stateSection.querySelector('.state-title').textContent;
+    const content = stateSection.querySelector('.state-content').textContent;
+    const textToCopy = `${title}\n\n${content}`;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const copyBtn = stateSection.querySelector('.copy-btn');
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = '已复制';
+        copyBtn.style.background = '#34c759';
+        
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.background = '';
+        }, 2000);
+        
+        console.log(`状态 ${stateIndex} 已复制到剪贴板`);
+    }).catch(err => {
+        console.error('复制失败:', err);
+        alert('复制失败，请手动选择文本复制');
+    });
 }
 
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
     console.log('页面初始化开始');
     
-    // 先显示随机交易哲学格言
-    showRandomPhilosophyQuote();
-    
-    // 然后获取市场数据
+    // 获取市场数据
+    console.log('开始获取市场数据...');
     fetchMarketData();
+    
+    // 初始化复制按钮
+    console.log('初始化状态说明复制功能');
 });

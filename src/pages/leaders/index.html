@@ -87,56 +87,18 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-                <!-- 免责声明 -->
-                <div class="disclaimer-section">
-                    <p class="disclaimer-text">策略还在优化中、仅供参考</p>
-                </div>
-                
-            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leader-item">
-                        <div class="stock-info">
-                            <div class="stock-name">贵州茅台</div>
-                            <div class="stock-status">
-                                <span class="status-tag status-strong">强势</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leader-item">
-                        <div class="stock-info">
-                            <div class="stock-name">中际旭创</div>
-                            <div class="stock-status">
-                                <span class="status-tag status-watch">观察</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leader-item">
-                        <div class="stock-info">
-                            <div class="stock-name">药明康德</div>
-                            <div class="stock-status">
-                                <span class="status-tag status-watch">观察</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="leader-item">
-                        <div class="stock-info">
-                            <div class="stock-name">中国中免</div>
-                            <div class="stock-status">
-                                <span class="status-tag status-watch">观察</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- 股票列表容器 -->
+                <div class="leaders-list">
+                    <!-- 股票列表将通过JavaScript动态生成 -->
                 </div>
                 
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-
+                <!-- 免责声明 -->
+                <div class="disclaimer-section">
+                    <p class="disclaimer-text">策略还在优化中、仅供参考</p>
+                </div>
                 
             </div>
             
@@ -173,7 +135,7 @@
                 if (result.success && result.data) {
                     updateLeadersUI(result.data);
                 } else {
-                    useExampleData();
+                    usePositiveExampleData();
                 }
             } catch (error) {
                 // 更新状态显示错误
@@ -186,7 +148,9 @@
                     }
                 }
                 
-                useExampleData();
+                console.log('API请求失败，使用积极的示例数据:', error.message);
+                // 使用积极的示例数据（反映当前做多市场）
+                usePositiveExampleData();
             }
         }
         
@@ -414,6 +378,94 @@
             }
         }
         
+        // 使用积极的示例数据（反映当前做多市场）
+        function usePositiveExampleData() {
+            const positiveStocks = [
+                {
+                    name: "新易盛",
+                    code: "300502.SZ",
+                    current_price: 48.50,
+                    gain_20d: 28.5,
+                    daily_change: 5.2,
+                    status_tags: ["强势", "年度突破"],
+                    ma5: 46.8,
+                    ma10: 45.24,
+                    ma20: 43.6,
+                    near_high: true,
+                    price_to_high_ratio: 0.98,
+                    price_to_250d_high_ratio: 0.96,
+                    is_60d_new_high: true,
+                    bias20: 11.24
+                },
+                {
+                    name: "立讯精密",
+                    code: "002475.SZ",
+                    current_price: 34.25,
+                    gain_20d: 22.8,
+                    daily_change: 3.8,
+                    status_tags: ["强势", "年度突破"],
+                    ma5: 33.2,
+                    ma10: 32.45,
+                    ma20: 31.8,
+                    near_high: true,
+                    price_to_high_ratio: 0.97,
+                    price_to_250d_high_ratio: 0.94,
+                    is_60d_new_high: true,
+                    bias20: 7.70
+                },
+                {
+                    name: "科大讯飞",
+                    code: "002230.SZ",
+                    current_price: 62.80,
+                    gain_20d: 25.6,
+                    daily_change: 4.5,
+                    status_tags: ["强势", "蓄势待发"],
+                    ma5: 60.2,
+                    ma10: 59.34,
+                    ma20: 57.8,
+                    near_high: true,
+                    price_to_high_ratio: 0.96,
+                    price_to_250d_high_ratio: 0.92,
+                    is_60d_new_high: true,
+                    bias20: 8.65
+                },
+                {
+                    name: "亿纬锂能",
+                    code: "300014.SZ",
+                    current_price: 56.90,
+                    gain_20d: 24.3,
+                    daily_change: 4.2,
+                    status_tags: ["强势", "接近 Pivot"],
+                    ma5: 55.2,
+                    ma10: 54.18,
+                    ma20: 52.6,
+                    near_high: true,
+                    price_to_high_ratio: 0.95,
+                    price_to_250d_high_ratio: 0.91,
+                    is_60d_new_high: true,
+                    bias20: 8.17
+                },
+                {
+                    name: "汇川技术",
+                    code: "300124.SZ",
+                    current_price: 80.50,
+                    gain_20d: 23.8,
+                    daily_change: 3.9,
+                    status_tags: ["强势", "年度突破"],
+                    ma5: 78.2,
+                    ma10: 77.15,
+                    ma20: 75.4,
+                    near_high: true,
+                    price_to_high_ratio: 0.97,
+                    price_to_250d_high_ratio: 0.93,
+                    is_60d_new_high: true,
+                    bias20: 6.76
+                }
+            ];
+            
+            updateLeadersUI(positiveStocks);
+        }
+        
         // 使用示例数据（fallback）
         function useExampleData() {
             const exampleStocks = [
@@ -501,9 +553,6 @@
             
             updateLeadersUI(exampleStocks);
         }
-        
-        // 页面加载时获取数据
-        fetchFilteredLeaders();
         
         // 移动端菜单切换功能
         initMobileMenu();

@@ -87,17 +87,49 @@
             </div>
                 
                 <!-- 行动按钮 -->
-                <button class="action-button action-loading">获取市场数据</button>
+                <button class="action-button action-loading" id="tradeButton">获取市场数据</button>
                 
-                <!-- 执行理由 -->
-                <div class="decision-basis">
-                    <div class="basis-title">交易哲学</div>
-                    <div class="basis-item" style="flex-direction: column; align-items: flex-start; padding: 12px 0;">
-                        <div style="font-size: 16px; color: #666; line-height: 1.6; margin-bottom: 16px; font-style: italic; text-align: center; width: 100%;">
-                            价格包含一切
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
+                <!-- 三个状态说明 -->
+                <div class="states-explanation">
+                    <div class="state-section" id="state-0">
+                        <div class="state-header">
+                            <span class="state-indicator state-red"></span>
+                            <h3 class="state-title">状态：无交易优势</h3>
+                            <button class="copy-btn" onclick="copyStateText(0)">复制</button>
                         </div>
-                        <div style="font-weight: 700; color: #8e8e93; font-size: 16px; border-top: 2px solid #f0f0f0; padding-top: 12px; width: 100%; text-align: center;">
-                            止观 · 交易系统
+                        <div class="state-content">
+                            <p><strong>说明：</strong><br>当前未出现可执行结构，价格仍处于随机波动</p>
+                            <p><strong>建议：</strong><br>不出手，保持空仓</p>
+                            <p><strong>底层逻辑：</strong><br>价格尚未完成自我证明</p>
+                        </div>
+                    </div>
+                    
+                    <div class="state-section" id="state-1">
+                        <div class="state-header">
+                            <span class="state-indicator state-yellow"></span>
+                            <h3 class="state-title">状态：观察中</h3>
+                            <button class="copy-btn" onclick="copyStateText(1)">复制</button>
+                        </div>
+                        <div class="state-content">
+                            <p><strong>说明：</strong><br>部分标的接近关键位置，但尚未形成确认</p>
+                            <p><strong>建议：</strong><br>记录候选，等待突破或回踩确认</p>
+                            <p><strong>底层逻辑：</strong><br>接近机会 ≠ 机会</p>
+                        </div>
+                    </div>
+                    
+                    <div class="state-section" id="state-2">
+                        <div class="state-header">
+                            <span class="state-indicator state-green"></span>
+                            <h3 class="state-title">状态：可尝试</h3>
+                            <button class="copy-btn" onclick="copyStateText(2)">复制</button>
+                        </div>
+                        <div class="state-content">
+                            <p><strong>说明：</strong><br>结构已被市场确认，具备试错条件</p>
+                            <p><strong>建议：</strong><br>1/9仓位试仓，严格执行止损</p>
+                            <p><strong>底层逻辑：</strong><br>只有被验证的走势才值得参与</p>
                         </div>
                     </div>
                 </div>

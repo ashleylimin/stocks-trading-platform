@@ -1047,6 +1047,127 @@ body {
     .suggested-value {
         font-size: 26px;
     }
+}
+
+/* 三个状态说明样式 */
+.states-explanation {
+    width: 100%;
+    max-width: 480px;
+    margin: 32px 0;
+}
+
+.state-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.state-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.state-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f2f2f7;
+}
+
+.state-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.state-red {
+    background: linear-gradient(135deg, #ff3b30, #ff453a);
+}
+
+.state-yellow {
+    background: linear-gradient(135deg, #ff9500, #ff9f0a);
+}
+
+.state-green {
+    background: linear-gradient(135deg, #34c759, #30d158);
+}
+
+.state-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1d1d1f;
+    flex: 1;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    letter-spacing: -0.3px;
+}
+
+.copy-btn {
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.copy-btn:hover {
+    background: #0056cc;
+    transform: translateY(-1px);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+.state-content {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1d1d1f;
+}
+
+.state-content p {
+    margin-bottom: 12px;
+}
+
+.state-content strong {
+    color: #1d1d1f;
+    font-weight: 600;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .states-explanation {
+        padding: 0 16px;
+    }
+    
+    .state-section {
+        padding: 20px;
+    }
+    
+    .state-title {
+        font-size: 18px;
+    }
+    
+    .state-content {
+        font-size: 14px;
+    }
+    
+    .copy-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
     
     .comparison-label {
         font-size: 17px;
