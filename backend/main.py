@@ -1638,8 +1638,13 @@ async def get_filtered_leaders():
             stock["price_to_250d_high_ratio"] = round(random.uniform(0.85, 0.98), 2)
             # 模拟is_60d_new_high：是否是60日新高
             stock["is_60d_new_high"] = random.choice([True, False])
-            # 模拟daily_change：当天涨跌幅（-5% 到 +5%）
-            stock["daily_change"] = round(random.uniform(-3.0, 5.0), 2)
+            # 模拟daily_change：当天涨跌幅（更合理的范围：-2% 到 +4%）
+            # 强势股票更可能上涨，弱势股票更可能下跌
+            base_change = random.uniform(-1.5, 3.0)
+            # 根据股票强度调整：强势股票增加上涨概率
+            if stock.get("status_tags") and "强势" in stock["status_tags"]:
+                base_change = max(0.5, base_change + 0.5)  # 强势股票至少+0.5%
+            stock["daily_change"] = round(base_change, 2)
         
         # 应用筛选条件（根据新的活水龙头筛选器配置 - 严格版）
         for stock in example_stocks:
@@ -1647,7 +1652,13 @@ async def get_filtered_leaders():
             bias20 = ((stock["current_price"] - stock["ma20"]) / stock["ma20"]) * 100 if stock["ma20"] > 0 else 0
             
             # 添加daily_change字段（当天涨跌幅）
-            stock["daily_change"] = round(random.uniform(-3.0, 5.0), 2)
+            # 根据股票状态给出合理的涨跌幅
+            base_change = random.uniform(-1.5, 3.0)
+            if "强势" in stock.get("status_tags", []):
+                base_change = max(0.3, base_change + 0.7)  # 强势股票至少+0.3%
+            elif "观察" in stock.get("status_tags", []):
+                base_change = random.uniform(-1.0, 2.0)  # 观察股票波动较小
+            stock["daily_change"] = round(base_change, 2)
             
             # 添加严格Pivot结构字段
             stock["price_to_250d_high_ratio"] = random.uniform(0.85, 0.98)
