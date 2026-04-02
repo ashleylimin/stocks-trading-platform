@@ -76,15 +76,44 @@
                 
 
                 
-                <!-- 状态区 -->
-            <div class="status-section">
-                <p class="position-info">建议仓位：0%</p>
-                <div class="loading-indicator">
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
-                    <div class="loading-dot"></div>
+                <!-- 仓位管理区 -->
+                <div class="position-management">
+                    <!-- 底仓 (Stone) - 带血筹码 -->
+                    <div class="position-section stone-section">
+                        <div class="position-header">
+                            <span class="position-icon">🪨</span>
+                            <h3 class="position-title">底仓 (Stone)</h3>
+                        </div>
+                        <div class="position-content">
+                            <div class="position-value">建议：0%</div>
+                            <div class="position-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 20%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
+                                </div>
+                                <div class="progress-label">熬冬进度：20%</div>
+                            </div>
+                            <div class="position-desc">基于行业拐点数据的支撑强度</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 刺刀 (Bayonet) - 杠杆部分 -->
+                    <div class="position-section bayonet-section">
+                        <div class="position-header">
+                            <span class="position-icon">⚔️</span>
+                            <h3 class="position-title">刺刀 (Bayonet)</h3>
+                        </div>
+                        <div class="position-content">
+                            <div class="position-value">建议：0%</div>
+                            <div class="position-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 95%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                                </div>
+                                <div class="progress-label">离死亡线：5%</div>
+                            </div>
+                            <div class="position-desc">基于市场波动率和杠杆安全边际</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
                 
                 <!-- 行动按钮 -->
                 <button class="action-button action-loading" id="tradeButton">获取市场数据</button>

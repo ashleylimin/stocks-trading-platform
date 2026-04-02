@@ -19,6 +19,10 @@ const tradingStates = [
         buttonText: "状态：无交易优势",
         buttonClass: "action-red",
         pageTitle: "JUST WAIT",
+        stonePosition: "0%",
+        stoneProgress: 20,
+        bayonetPosition: "0%",
+        bayonetProgress: 95,
         executionReason: {
             title: "说明：",
             bulletPoints: [
@@ -32,6 +36,10 @@ const tradingStates = [
         buttonText: "状态：观察中",
         buttonClass: "action-yellow",
         pageTitle: "ACT",
+        stonePosition: "15%",
+        stoneProgress: 40,
+        bayonetPosition: "5%",
+        bayonetProgress: 90,
         executionReason: {
             title: "说明：",
             bulletPoints: [
@@ -45,10 +53,14 @@ const tradingStates = [
         buttonText: "状态：可尝试",
         buttonClass: "action-green",
         pageTitle: "ACT",
+        stonePosition: "30%",
+        stoneProgress: 60,
+        bayonetPosition: "15%",
+        bayonetProgress: 85,
         executionReason: {
             title: "说明：",
             bulletPoints: [
-                "出现确认结构，具备试错条件"
+                "结构已被市场确认，具备试错条件"
             ],
             command: "建议：<br>1/9仓位试仓，严格执行止损<br><br>底层逻辑：<br>只有被验证的走势才值得参与"
         }
@@ -68,17 +80,18 @@ function updateUI(stateIndex) {
     const state = tradingStates[stateIndex];
     
     const pageTitle = document.querySelector('.page-title');
-    const positionInfo = document.querySelector('.position-info');
     const actionButton = document.querySelector('.action-button');
     const loadingIndicator = document.querySelector('.loading-indicator');
     
     if (pageTitle) pageTitle.textContent = state.pageTitle;
-    if (positionInfo) positionInfo.textContent = `建议仓位：${state.position}`;
     if (loadingIndicator) loadingIndicator.style.display = 'none';
     if (actionButton) {
         actionButton.textContent = state.buttonText;
         actionButton.className = `action-button ${state.buttonClass}`;
     }
+    
+    // 更新仓位管理
+    updatePositionManagement(state);
     
     // 隐藏所有状态说明，然后显示对应的状态
     for (let i = 0; i < 3; i++) {
@@ -89,6 +102,28 @@ function updateUI(stateIndex) {
     }
     
     console.log('UI更新完成:', state.buttonText, '显示状态:', stateIndex);
+}
+
+// 更新仓位管理
+function updatePositionManagement(state) {
+    // 更新底仓
+    const stoneValue = document.querySelector('.stone-section .position-value');
+    const stoneProgress = document.querySelector('.stone-section .progress-fill');
+    const stoneLabel = document.querySelector('.stone-section .progress-label');
+    
+    if (stoneValue) stoneValue.textContent = `建议：${state.stonePosition}`;
+    if (stoneProgress) stoneProgress.style.width = `${state.stoneProgress}%`;
+    if (stoneLabel) stoneLabel.textContent = `熬冬进度：${state.stoneProgress}%`;
+    
+    // 更新刺刀
+    const bayonetValue = document.querySelector('.bayonet-section .position-value');
+    const bayonetProgress = document.querySelector('.bayonet-section .progress-fill');
+    const bayonetLabel = document.querySelector('.bayonet-section .progress-label');
+    
+    if (bayonetValue) bayonetValue.textContent = `建议：${state.bayonetPosition}`;
+    if (bayonetProgress) bayonetProgress.style.width = `${state.bayonetProgress}%`;
+    const distanceToDeath = 100 - state.bayonetProgress;
+    if (bayonetLabel) bayonetLabel.textContent = `离死亡线：${distanceToDeath}%`;
 }
 
 // 处理市场数据

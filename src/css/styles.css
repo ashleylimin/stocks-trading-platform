@@ -1124,6 +1124,114 @@ body {
     font-weight: 600;
 }
 
+/* 仓位管理样式 */
+.position-management {
+    width: 100%;
+    max-width: 480px;
+    margin: 24px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.position-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.position-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.position-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f2f2f7;
+}
+
+.position-icon {
+    font-size: 24px;
+    margin-right: 12px;
+}
+
+.position-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    letter-spacing: -0.2px;
+}
+
+.position-content {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.position-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.position-progress {
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #f2f2f7;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.position-desc {
+    font-size: 12px;
+    color: #8e8e93;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* 底仓特殊样式 */
+.stone-section .position-value {
+    color: #8b5cf6;
+}
+
+.stone-section .progress-fill {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+/* 刺刀特殊样式 */
+.bayonet-section .position-value {
+    color: #10b981;
+}
+
+.bayonet-section .progress-fill {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
 /* 移动端适配 */
 @media (max-width: 768px) {
     .states-explanation {
@@ -1145,6 +1253,24 @@ body {
     .copy-btn {
         padding: 6px 12px;
         font-size: 13px;
+    }
+    
+    .position-management {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 0 16px;
+    }
+    
+    .position-section {
+        padding: 18px;
+    }
+    
+    .position-value {
+        font-size: 22px;
+    }
+    
+    .position-title {
+        font-size: 17px;
     }
 }
     
