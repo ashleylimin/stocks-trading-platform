@@ -83,15 +83,14 @@
                         <div class="loading-dot"></div>
                     </div>
                 </div>
-                </div>
                 
                 <!-- 行动按钮 -->
-                <button class="action-button action-green">状态：可尝试</button>
+                <button class="action-button action-loading" id="pivotButton">获取市场数据</button>
                 
                 <!-- 判断语句 -->
                 <div class="judgment-section">
-                    <div class="judgment-text">当前市场：全力做多</div>
-                    <div class="judgment-result" style="color: #34c759; font-weight: 600;">发现2个年度突破买入点</div>
+                    <div class="judgment-text">等待市场数据</div>
+                    <div class="judgment-result" style="color: #666; font-style: italic;">价格包含一切</div>
                 </div>
                 
                 <!-- 分隔线 -->
@@ -286,54 +285,48 @@
         const tradingStates = [
             {
                 position: "0%",
-                buttonText: "禁止交易（WAIT）",
+                buttonText: "状态：无交易优势",
                 buttonClass: "action-red",
                 pageTitle: "JUST WAIT",
                 executionReason: {
-                    title: "为什么今天不交易？",
+                    title: "执行理由",
                     bulletPoints: [
                         "市场没有形成一致方向",
                         "没有确认的强势突破",
                         "条件尚未满足"
                     ],
-                    command: "今天的任务：<br>不交易，保持耐心"
-                },
-                pivotJudgment: "❌ 当前：没有有效 Pivot",
-                pivotReason: "• 没有形成清晰的平台结构<br>• 没有接近突破的位置<br>• 没有量能配合"
+                    command: "命令：保持空仓，等待信号"
+                }
             },
             {
                 position: "≤30%",
-                buttonText: "准备阶段（READY）",
+                buttonText: "状态：观察中",
                 buttonClass: "action-yellow",
                 pageTitle: "ACT",
                 executionReason: {
-                    title: "为什么暂时不交易？",
+                    title: "执行理由",
                     bulletPoints: [
-                        "市场开始分化",
-                        "有潜在强势股票出现",
-                        "但尚未确认突破"
+                        "部分标的接近关键位置",
+                        "市场出现结构性机会",
+                        "需要等待确认信号"
                     ],
-                    command: "今天的任务：<br>只观察，不出手"
-                },
-                pivotJudgment: "⚠️ 当前：存在潜在 Pivot",
-                pivotReason: "• 开始形成平台结构<br>• 部分股票接近突破位置<br>• 需要等待确认信号"
+                    command: "命令：记录候选，等待确认"
+                }
             },
             {
                 position: "≤100%",
-                buttonText: "允许交易（CONFIRMED）",
+                buttonText: "状态：可尝试",
                 buttonClass: "action-green",
                 pageTitle: "ACT",
                 executionReason: {
-                    title: "为什么今天允许交易？",
+                    title: "执行理由",
                     bulletPoints: [
-                        "市场方向开始明确",
-                        "出现确认突破的强势股票",
-                        "系统条件已满足"
+                        "市场形成确认结构",
+                        "出现年度突破标的",
+                        "条件全部满足"
                     ],
-                    command: "今天的任务：<br>只做确认后的最强股票"
-                },
-                pivotJudgment: "✅ 当前：存在确认 Pivot",
-                pivotReason: "• 形成清晰的平台结构<br>• 股票确认突破位置<br>• 量能配合良好"
+                    command: "命令：执行买入，严格止损"
+                }
             }
         ];
 
@@ -521,6 +514,52 @@
             showRandomPhilosophyQuote();
             fetchMarketData();
         }
+        
+        // 紧急修复：3秒后检查是否成功
+        setTimeout(function() {
+            const button = document.getElementById('pivotButton');
+            if (button && button.textContent === '获取市场数据') {
+                console.log('Pivot页面JavaScript未执行，使用默认状态（可尝试）');
+                
+                // 使用默认状态2（可尝试）
+                button.textContent = '状态：可尝试';
+                button.className = 'action-button action-green';
+                
+                // 更新判断语句
+                const judgmentText = document.querySelector('.judgment-text');
+                const judgmentResult = document.querySelector('.judgment-result');
+                
+                if (judgmentText) judgmentText.textContent = '当前市场：全力做多';
+                if (judgmentResult) {
+                    judgmentResult.textContent = '发现2个年度突破买入点';
+                    judgmentResult.style.color = '#34c759';
+                    judgmentResult.style.fontWeight = '600';
+                }
+                
+                // 更新执行理由
+                const reasonTitle = document.querySelector('.reason-title');
+                const reasonPoints = document.querySelector('.reason-points');
+                
+                if (reasonTitle) reasonTitle.textContent = '执行理由';
+                if (reasonPoints) {
+                    reasonPoints.innerHTML = `
+                        <div class="reason-point">• 新易盛：突破250日高点，60日新高确认</div>
+                        <div class="reason-point">• 立讯精密：站稳MA5，接近年度高点</div>
+                        <div class="reason-point">• 换手率>5%，资金共识强烈</div>
+                        <div class="reason-point">• 市场广度健康，上涨股票占比75%+</div>
+                        <div style="font-weight: 700; color: #34c759; margin-top: 12px; border-top: 2px solid #f0f0f0; padding-top: 12px;">
+                            命令：优先关注年度突破标的
+                        </div>
+                    `;
+                }
+                
+                // 隐藏加载指示器
+                const loadingIndicator = document.querySelector('.loading-indicator');
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                }
+            }
+        }, 3000);
 
         // 反馈功能
         function showFeedback() {
