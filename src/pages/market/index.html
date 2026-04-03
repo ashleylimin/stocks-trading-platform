@@ -173,51 +173,67 @@
     <script src="/src/js/app.js" defer></script>
     
     <script>
-        // 紧急修复：页面加载时立即显示"可尝试"状态
-        // 使用setTimeout确保在app.js之后执行
-        setTimeout(function() {
-            console.log('紧急修复：显示可尝试状态');
+        // 页面加载后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Market页面初始化');
             
-            // 检查app.js是否已经更新了UI
-            const button = document.getElementById('tradeButton');
-            if (button && button.textContent === '获取市场数据') {
-                // app.js没有成功执行，使用紧急修复
-                
-                // 立即显示状态2（可尝试）
-                const state2 = document.getElementById('state-2');
-                if (state2) {
-                    state2.style.display = 'block';
+            // 设置一个超时检查，如果app.js在3秒内没有执行，使用默认状态
+            setTimeout(function() {
+                const button = document.getElementById('tradeButton');
+                if (button && button.textContent === '获取市场数据') {
+                    console.log('app.js未在3秒内执行，使用默认状态（可尝试）');
+                    
+                    // 使用默认状态2（可尝试）
+                    const state = {
+                        buttonText: '状态：可尝试',
+                        buttonClass: 'action-green',
+                        stonePosition: '30%',
+                        stoneProgress: 60,
+                        bayonetPosition: '15%',
+                        bayonetProgress: 85
+                    };
+                    
+                    // 更新按钮
+                    button.textContent = state.buttonText;
+                    button.className = `action-button ${state.buttonClass}`;
+                    
+                    // 显示状态2（可尝试）
+                    const state2 = document.getElementById('state-2');
+                    const state0 = document.getElementById('state-0');
+                    const state1 = document.getElementById('state-1');
+                    
+                    if (state2) state2.style.display = 'block';
+                    if (state0) state0.style.display = 'none';
+                    if (state1) state1.style.display = 'none';
+                    
+                    // 更新仓位管理
+                    const stoneValue = document.querySelector('.stone-section .position-value');
+                    const stoneProgress = document.querySelector('.stone-section .progress-fill');
+                    const stoneLabel = document.querySelector('.stone-section .progress-label');
+                    
+                    if (stoneValue) stoneValue.textContent = `建议：${state.stonePosition}`;
+                    if (stoneProgress) stoneProgress.style.width = `${state.stoneProgress}%`;
+                    if (stoneLabel) stoneLabel.textContent = `熬冬进度：${state.stoneProgress}%`;
+                    
+                    const bayonetValue = document.querySelector('.bayonet-section .position-value');
+                    const bayonetProgress = document.querySelector('.bayonet-section .progress-fill');
+                    const bayonetLabel = document.querySelector('.bayonet-section .progress-label');
+                    
+                    if (bayonetValue) bayonetValue.textContent = `建议：${state.bayonetPosition}`;
+                    if (bayonetProgress) bayonetProgress.style.width = `${state.bayonetProgress}%`;
+                    const distanceToDeath = 100 - state.bayonetProgress;
+                    if (bayonetLabel) bayonetLabel.textContent = `离死亡线：${distanceToDeath}%`;
+                    
+                    // 隐藏加载指示器
+                    const loadingIndicator = document.querySelector('.loading-indicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                    
+                    console.log('默认状态设置完成');
                 }
-                
-                // 隐藏其他状态
-                const state0 = document.getElementById('state-0');
-                const state1 = document.getElementById('state-1');
-                if (state0) state0.style.display = 'none';
-                if (state1) state1.style.display = 'none';
-                
-                // 更新按钮
-                if (button) {
-                    button.textContent = '状态：可尝试';
-                    button.className = 'action-button action-green';
-                }
-                
-                // 更新仓位信息
-                const positionInfo = document.querySelector('.position-info');
-                if (positionInfo) {
-                    positionInfo.textContent = '建议仓位：≤100%';
-                }
-                
-                // 隐藏加载指示器
-                const loadingIndicator = document.querySelector('.loading-indicator');
-                if (loadingIndicator) {
-                    loadingIndicator.style.display = 'none';
-                }
-                
-                console.log('紧急修复完成：显示状态2（可尝试）');
-            } else {
-                console.log('app.js已成功执行，无需紧急修复');
-            }
-        }, 1000); // 1秒后检查
+            }, 3000); // 3秒后检查
+        });
     </script>
 </body>
 </html>

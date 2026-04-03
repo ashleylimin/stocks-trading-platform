@@ -82,23 +82,42 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
-                <!-- 当前仓位输入 -->
-                <div class="input-section">
-                    <div class="input-title">当前仓位</div>
+                <!-- 仓位管理概览 -->
+                <div class="position-overview">
+                    <div class="overview-title">仓位管理概览</div>
                     
-                    <!-- 输入框 -->
-                    <div class="input-container">
-                        <input type="number" id="currentPosition" class="position-input" 
-                               placeholder="请输入当前仓位（%）" min="0" max="100" step="1">
-                        <span class="input-suffix">%</span>
+                    <!-- 底仓概览 -->
+                    <div class="overview-item stone-overview">
+                        <div class="overview-header">
+                            <span class="overview-icon">🪨</span>
+                            <div class="overview-info">
+                                <div class="overview-name">底仓 (Stone)</div>
+                                <div class="overview-value">当前：--%</div>
+                            </div>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 20%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
+                            </div>
+                            <div class="progress-label">熬冬进度：20%</div>
+                        </div>
                     </div>
                     
-                    <!-- 快捷按钮 -->
-                    <div class="quick-buttons">
-                        <button class="quick-btn" data-value="0">0%</button>
-                        <button class="quick-btn" data-value="30">30%</button>
-                        <button class="quick-btn" data-value="60">60%</button>
-                        <button class="quick-btn" data-value="100">100%</button>
+                    <!-- 刺刀概览 -->
+                    <div class="overview-item bayonet-overview">
+                        <div class="overview-header">
+                            <span class="overview-icon">⚔️</span>
+                            <div class="overview-info">
+                                <div class="overview-name">刺刀 (Bayonet)</div>
+                                <div class="overview-value">当前：--%</div>
+                            </div>
+                        </div>
+                        <div class="overview-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 95%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                            </div>
+                            <div class="progress-label">离死亡线：5%</div>
+                        </div>
                     </div>
                 </div>
                 

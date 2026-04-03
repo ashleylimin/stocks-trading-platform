@@ -1273,6 +1273,87 @@ body {
         font-size: 17px;
     }
 }
+
+/* Account页面仓位概览样式 */
+.position-overview {
+    width: 100%;
+    max-width: 480px;
+    margin: 24px 0;
+}
+
+.overview-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    text-align: center;
+}
+
+.overview-item {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.overview-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.overview-icon {
+    font-size: 28px;
+    margin-right: 16px;
+}
+
+.overview-info {
+    flex: 1;
+}
+
+.overview-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 4px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.overview-value {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+}
+
+.overview-progress {
+    margin-top: 12px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .position-overview {
+        padding: 0 16px;
+    }
+    
+    .overview-item {
+        padding: 18px;
+    }
+    
+    .overview-title {
+        font-size: 18px;
+    }
+    
+    .overview-name {
+        font-size: 17px;
+    }
+    
+    .overview-value {
+        font-size: 15px;
+    }
+}
     
     .comparison-label {
         font-size: 17px;
