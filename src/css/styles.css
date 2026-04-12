@@ -1232,8 +1232,131 @@ body {
     background: linear-gradient(90deg, #10b981, #34d399);
 }
 
+/* 风险指标 */
+.risk-indicators {
+    margin: 24px 0;
+}
+
+.risk-section {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e5e5ea;
+}
+
+.risk-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.risk-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.risk-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin: 0;
+}
+
+.risk-content {
+    margin-bottom: 12px;
+}
+
+.risk-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.risk-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.risk-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.risk-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin-right: 8px;
+}
+
+.risk-rating {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.risk-rating[data-rating="低"] {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.risk-rating[data-rating="中等"] {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.risk-rating[data-rating="高"] {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.risk-rating[data-rating="改善"] {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.risk-rating[data-rating="中性"] {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.risk-rating[data-rating="恶化"] {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.risk-desc {
+    font-size: 12px;
+    color: #8e8e93;
+    font-style: italic;
+    line-height: 1.4;
+}
+
 /* 移动端适配 */
 @media (max-width: 768px) {
+    .risk-section {
+        padding: 16px;
+        margin: 0 16px;
+    }
+    
+    .risk-title {
+        font-size: 16px;
+    }
+    
+    .risk-label {
+        min-width: 100px;
+        font-size: 13px;
+    }
+    
+    .risk-value {
+        font-size: 14px;
+    }
+    
     .states-explanation {
         padding: 0 16px;
     }

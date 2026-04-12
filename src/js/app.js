@@ -16,7 +16,7 @@ const tradingPhilosophyQuotes = [
 const tradingStates = [
     {
         position: "0%",
-        buttonText: "状态：无交易优势",
+        buttonText: "状态：不属于我的行情",
         buttonClass: "action-red",
         pageTitle: "JUST WAIT",
         stonePosition: "0%",
@@ -26,31 +26,31 @@ const tradingStates = [
         executionReason: {
             title: "说明：",
             bulletPoints: [
-                "当前未出现可执行结构，波动不具备确定性"
+                "市场条件不满足我的交易框架"
             ],
-            command: "建议：<br>保持空仓，等待信号<br><br>底层逻辑：<br>价格尚未完成自我证明"
+            command: "建议：<br>保持空仓，只看不动<br><br>底层逻辑：<br>不符合我的交易条件 ≠ 没有机会"
         }
     },
     {
-        position: "≤30%",
-        buttonText: "状态：观察中",
+        position: "0%",
+        buttonText: "状态：行情可以，但不属于我，等待",
         buttonClass: "action-yellow",
-        pageTitle: "ACT",
-        stonePosition: "15%",
+        pageTitle: "WAIT",
+        stonePosition: "0%",
         stoneProgress: 40,
-        bayonetPosition: "5%",
+        bayonetPosition: "0%",
         bayonetProgress: 90,
         executionReason: {
             title: "说明：",
             bulletPoints: [
-                "部分标的接近关键位置，但未形成确认"
+                "市场整体条件满足，但波动率过高或趋势在恶化"
             ],
-            command: "建议：<br>记录候选，不提前行动<br><br>底层逻辑：<br>接近机会 ≠ 机会"
+            command: "建议：<br>仓位全部归零，只看不动<br><br>底层逻辑：<br>知道什么行情不适合自己更重要"
         }
     },
     {
         position: "≤100%",
-        buttonText: "状态：可尝试",
+        buttonText: "状态：属于我的行情",
         buttonClass: "action-green",
         pageTitle: "ACT",
         stonePosition: "30%",
@@ -134,19 +134,22 @@ function processMarketData(result) {
         const signal = result.signal.trade_signal;
         console.log('processMarketData: 信号值:', signal);
         
-        if (signal === "禁止交易") {
+        if (signal === "不属于我的行情") {
             currentStateIndex = 0;
-            console.log('processMarketData: 设置为状态 0 (禁止交易)');
-        } else if (signal === "允许交易" || signal === "可以交易") {
+            console.log('processMarketData: 设置为状态 0 (不属于我的行情)');
+        } else if (signal === "行情可以，但不属于我，等待") {
             currentStateIndex = 1;
-            console.log('processMarketData: 设置为状态 1 (允许交易)');
-        } else if (signal === "积极交易" || signal === "积极做多") {
+            console.log('processMarketData: 设置为状态 1 (行情可以，但不属于我)');
+        } else if (signal === "属于我的行情") {
             currentStateIndex = 2;
-            console.log('processMarketData: 设置为状态 2 (积极交易)');
+            console.log('processMarketData: 设置为状态 2 (属于我的行情)');
         } else {
             currentStateIndex = 0;
             console.log('processMarketData: 未知信号，设置为状态 0');
         }
+        
+        // 更新风险指标
+        updateRiskIndicators(result);
         
         updateUI(currentStateIndex);
     } else {
@@ -268,6 +271,49 @@ function copyStateText(stateIndex) {
         console.error('复制失败:', err);
         alert('复制失败，请手动选择文本复制');
     });
+}
+
+// 更新风险指标
+function updateRiskIndicators(result) {
+    console.log('updateRiskIndicators: 开始更新风险指标');
+    
+    const signal = result.signal;
+    const breadth = result.breadth;
+    
+    // 更新波动率
+    const volatilityValue = document.getElementById('volatilityValue');
+    const volatilityRating = document.getElementById('volatilityRating');
+    if (volatilityValue && volatilityRating) {
+        const volatility = signal.volatility || 2.0;
+        const rating = signal.volatility_rating || '中等';
+        const condition = signal.volatility_condition || false;
+        volatilityValue.textContent = `${volatility}%`;
+        volatilityRating.textContent = rating + (condition ? ' ✓' : ' ✗');
+        volatilityRating.setAttribute('data-rating', rating);
+    }
+    
+    // 更新趋势稳定性
+    const trendValue = document.getElementById('trendValue');
+    const trendRating = document.getElementById('trendRating');
+    if (trendValue && trendRating) {
+        const trend = signal.trend_rating || '中性';
+        const condition = signal.trend_condition || false;
+        trendValue.textContent = trend;
+        trendRating.textContent = trend + (condition ? ' ✓' : ' ✗');
+        trendRating.setAttribute('data-rating', trend);
+    }
+    
+    // 更新市场宽度(H/L Ratio)
+    const hlRatioValue = document.getElementById('hlRatioValue');
+    if (hlRatioValue) {
+        const hlRatio = signal.hl_ratio || 1.0;
+        const yesterdayHlRatio = signal.yesterday_hl_ratio || 1.0;
+        const trendCondition = signal.condition5_hl_trend || false;
+        const trendSymbol = trendCondition ? '↗' : '↘';
+        hlRatioValue.textContent = `${hlRatio.toFixed(2)} ${trendSymbol} (昨:${yesterdayHlRatio.toFixed(2)})`;
+    }
+    
+    console.log('updateRiskIndicators: 风险指标更新完成');
 }
 
 // 页面初始化

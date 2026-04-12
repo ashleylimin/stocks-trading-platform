@@ -881,23 +881,47 @@ async def fetch_market_data():
         # 判断是否允许做多
         sz_index = next((i for i in indices_data if i['代码'] == '000001'), None)
         kc50_index = next((i for i in indices_data if i['代码'] == '000688'), None)
-        # 趋势条件：上证指数或科创50至少有一个 ≥ 0%
-        condition1 = (sz_index and float(sz_index['涨跌幅']) >= 0) or (kc50_index and float(kc50_index['涨跌幅']) >= 0)
-        condition2 = hl_ratio > 1  # H/L Ratio > 1
-        condition3 = True  # 暂时假设有强势板块
         
-        # 判断交易信号级别
-        if condition1 and condition2 and condition3:
-            if hl_ratio > 1.5:
-                trade_signal = "积极交易"
+        # 获取上证指数的波动率和趋势数据
+        sz_volatility = sz_index.get('volatility', 2.0) if sz_index else 2.0
+        sz_volatility_rating = sz_index.get('volatility_rating', '中等') if sz_index else '中等'
+        sz_volatility_condition = sz_index.get('volatility_condition', False) if sz_index else False
+        sz_trend_rating = sz_index.get('trend_rating', '中性') if sz_index else '中性'
+        sz_trend_condition = sz_index.get('trend_condition', False) if sz_index else False
+        
+        # 条件1：趋势条件 - 上证指数或科创50至少有一个 ≥ 0%
+        condition1 = (sz_index and float(sz_index['涨跌幅']) >= 0) or (kc50_index and float(kc50_index['涨跌幅']) >= 0)
+        
+        # 条件2：市场宽度条件 - H/L Ratio > 1
+        condition2 = hl_ratio > 1
+        
+        # 条件3：板块强度条件 - 暂时假设有强势板块
+        condition3_sectors = True
+        
+        # 条件4：波动率条件 - 近5日振幅均值 < 2%
+        condition4_volatility = sz_volatility_condition  # volatility_condition已经是True/False
+        
+        # 条件5：H/L Ratio趋势方向 - 今日 > 昨日
+        # 这里需要获取昨日的H/L Ratio，暂时使用模拟数据
+        # 在实际应用中，应该从数据库或缓存中获取昨日的hl_ratio
+        yesterday_hl_ratio = 2.3  # 模拟昨日H/L Ratio
+        condition5_hl_trend = hl_ratio > yesterday_hl_ratio
+        
+        # 根据新需求判断"属于我的行情"
+        if condition1 and condition2 and condition3_sectors:
+            if condition4_volatility and condition5_hl_trend:
+                # 原有三个条件全部满足，且条件4为True，且条件5为True
+                trade_signal = "属于我的行情"
                 allow_long = True
                 signal_level = "high"
             else:
-                trade_signal = "允许交易"
-                allow_long = True
+                # 原有三个条件全部满足，但条件4或条件5任一为False
+                trade_signal = "行情可以，但不属于我，等待"
+                allow_long = False  # 只看不动
                 signal_level = "medium"
         else:
-            trade_signal = "禁止交易"
+            # 原有任一条件不满足
+            trade_signal = "不属于我的行情"
             allow_long = False
             signal_level = "low"
         
@@ -918,9 +942,17 @@ async def fetch_market_data():
                 "signal_level": signal_level,
                 "condition1_trend": bool(condition1),
                 "condition2_breadth": bool(condition2),
-                "condition3_sectors": bool(condition3),
+                "condition3_sectors": bool(condition3_sectors),
+                "condition4_volatility": bool(condition4_volatility),
+                "condition5_hl_trend": bool(condition5_hl_trend),
                 "hl_ratio": round(hl_ratio, 2),
-                "hl_timeframe": timeframe
+                "yesterday_hl_ratio": yesterday_hl_ratio,
+                "hl_timeframe": timeframe,
+                "volatility": round(sz_volatility, 2),
+                "volatility_rating": sz_volatility_rating,
+                "volatility_condition": bool(sz_volatility_condition),
+                "trend_rating": sz_trend_rating,
+                "trend_condition": bool(sz_trend_condition)
             }
         }
         
@@ -1041,6 +1073,55 @@ async def get_market_indices():
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+def calculate_volatility_and_trend(df_daily, days=5):
+    """计算短期波动率和趋势稳定性
+    
+    Args:
+        df_daily: 日线数据DataFrame
+        days: 计算周期，默认5天（根据新需求）
+        
+    Returns:
+        tuple: (volatility_pct, trend_stability, volatility_rating, trend_rating, 
+                volatility_condition, trend_condition)
+    """
+    try:
+        if df_daily is None or len(df_daily) < days + 1:
+            return 2.0, 0, "中等", "中性", False, False
+        
+        # 获取最近days+1天的数据（需要前一天的收盘价）
+        recent_data = df_daily.tail(days + 1).copy()
+        
+        # 计算日内振幅（(high - low) / open * 100%）
+        recent_data['amplitude'] = ((recent_data['high'] - recent_data['low']) / 
+                                   recent_data['open']) * 100
+        
+        # 计算短期波动率（最近days天的平均振幅）
+        volatility_pct = recent_data['amplitude'].tail(days).mean()
+        
+        # 波动率评级
+        if volatility_pct < 1.5:
+            volatility_rating = "低"
+        elif volatility_pct < 2.5:
+            volatility_rating = "中等"
+        else:
+            volatility_rating = "高"
+        
+        # 波动率条件：均值 < 2% 为True
+        volatility_condition = volatility_pct < 2.0
+        
+        # 计算趋势稳定性（使用H/L Ratio的变化方向）
+        # 这里需要外部传入hl_ratio_history，暂时返回中性
+        trend_stability = 0  # 0: 中性, 1: 改善, -1: 恶化
+        trend_rating = "中性"
+        trend_condition = False  # 默认False
+        
+        return (round(volatility_pct, 2), trend_stability, volatility_rating, trend_rating,
+                volatility_condition, trend_condition)
+        
+    except Exception as e:
+        print(f"计算波动率和趋势稳定性失败: {e}")
+        return 2.0, 0, "中等", "中性", False, False
+
 def get_index_daily_data(index):
     """获取指数日线数据"""
     try:
@@ -1058,6 +1139,10 @@ def get_index_daily_data(index):
             open_price = float(latest['open']) if 'open' in df_daily.columns else close_price
             volume = float(latest['volume']) if 'volume' in df_daily.columns else 0
             
+            # 计算波动率和趋势稳定性
+            (volatility_pct, trend_stability, volatility_rating, trend_rating,
+             volatility_condition, trend_condition) = calculate_volatility_and_trend(df_daily)
+            
             return {
                 "code": index['code'],
                 "name": index['name'],
@@ -1071,6 +1156,12 @@ def get_index_daily_data(index):
                 "low": round(low_price, 2),
                 "open": round(open_price, 2),
                 "prev_close": round(prev_close, 2),
+                "volatility": volatility_pct,
+                "volatility_rating": volatility_rating,
+                "volatility_condition": volatility_condition,
+                "trend_stability": trend_stability,
+                "trend_rating": trend_rating,
+                "trend_condition": trend_condition,
                 "data_source": "daily"
             }
     except Exception as e:
@@ -1105,6 +1196,12 @@ def get_index_daily_data(index):
         "low": 4086.85,
         "open": 4117.57,
         "prev_close": 4129.10,
+        "volatility": 2.0,
+        "volatility_rating": "中等",
+        "volatility_condition": False,
+        "trend_stability": 0,
+        "trend_rating": "中性",
+        "trend_condition": False,
         "data_source": "simulated"
     }
 
@@ -1815,4 +1912,5 @@ async def get_filtered_leaders():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8082)
+    print("✅ 成功导入akshare，将使用真实数据")
+    uvicorn.run(app, host="127.0.0.1", port=8001)

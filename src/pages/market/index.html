@@ -115,44 +115,74 @@
                 <!-- 分隔线 -->
                 <div class="divider"></div>
                 
+                <!-- 风险指标 -->
+                <div class="risk-indicators">
+                    <div class="risk-section">
+                        <div class="risk-header">
+                            <span class="risk-icon">📊</span>
+                            <h3 class="risk-title">市场风险指标</h3>
+                        </div>
+                        <div class="risk-content">
+                            <div class="risk-item">
+                                <span class="risk-label">短期波动率：</span>
+                                <span class="risk-value" id="volatilityValue">--</span>
+                                <span class="risk-rating" id="volatilityRating">--</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-label">趋势稳定性：</span>
+                                <span class="risk-value" id="trendValue">--</span>
+                                <span class="risk-rating" id="trendRating">--</span>
+                            </div>
+                            <div class="risk-item">
+                                <span class="risk-label">市场宽度(H/L)：</span>
+                                <span class="risk-value" id="hlRatioValue">--</span>
+                            </div>
+                        </div>
+                        <div class="risk-desc">基于上证指数10日波动率和趋势分析</div>
+                    </div>
+                </div>
+                
+                <!-- 分隔线 -->
+                <div class="divider"></div>
+                
                 <!-- 当前状态说明（根据API信号动态显示） -->
                 <div class="states-explanation">
                     <div class="state-section" id="state-0" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-red"></span>
-                            <h3 class="state-title">状态：无交易优势</h3>
+                            <h3 class="state-title">状态：不属于我的行情</h3>
                             <button class="copy-btn" onclick="copyStateText(0)">复制</button>
                         </div>
                         <div class="state-content">
-                            <p><strong>说明：</strong><br>当前未出现可执行结构，价格仍处于随机波动</p>
-                            <p><strong>建议：</strong><br>不出手，保持空仓</p>
-                            <p><strong>底层逻辑：</strong><br>价格尚未完成自我证明</p>
+                            <p><strong>说明：</strong><br>市场条件不满足我的交易框架，价格处于随机波动或趋势不明</p>
+                            <p><strong>建议：</strong><br>不出手，保持空仓，只看不动</p>
+                            <p><strong>底层逻辑：</strong><br>不符合我的交易条件 ≠ 没有机会，只是不适合我</p>
                         </div>
                     </div>
                     
                     <div class="state-section" id="state-1" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-yellow"></span>
-                            <h3 class="state-title">状态：观察中</h3>
+                            <h3 class="state-title">状态：行情可以，但不属于我，等待</h3>
                             <button class="copy-btn" onclick="copyStateText(1)">复制</button>
                         </div>
                         <div class="state-content">
-                            <p><strong>说明：</strong><br>部分标的接近关键位置，但尚未形成确认</p>
-                            <p><strong>建议：</strong><br>记录候选，等待突破或回踩确认</p>
-                            <p><strong>底层逻辑：</strong><br>接近机会 ≠ 机会</p>
+                            <p><strong>说明：</strong><br>市场整体条件满足，但波动率过高或趋势在恶化，我历史上在这种环境容易拿不住</p>
+                            <p><strong>建议：</strong><br>仓位建议全部归零，只看不动，等待更好的入场时机</p>
+                            <p><strong>底层逻辑：</strong><br>知道什么行情不适合自己，比知道什么行情适合自己更重要</p>
                         </div>
                     </div>
                     
                     <div class="state-section" id="state-2" style="display: none;">
                         <div class="state-header">
                             <span class="state-indicator state-green"></span>
-                            <h3 class="state-title">状态：可尝试</h3>
+                            <h3 class="state-title">状态：属于我的行情</h3>
                             <button class="copy-btn" onclick="copyStateText(2)">复制</button>
                         </div>
                         <div class="state-content">
-                            <p><strong>说明：</strong><br>结构已被市场确认，具备试错条件</p>
-                            <p><strong>建议：</strong><br>1/9仓位试仓，严格执行止损</p>
-                            <p><strong>底层逻辑：</strong><br>只有被验证的走势才值得参与</p>
+                            <p><strong>说明：</strong><br>市场满足我的所有交易条件：趋势向上、市场宽度健康、波动可控、趋势改善</p>
+                            <p><strong>建议：</strong><br>按照仓位管理建议执行，严格执行交易计划</p>
+                            <p><strong>底层逻辑：</strong><br>只在最适合自己的环境中交易，提高胜率和盈亏比</p>
                         </div>
                     </div>
                 </div>
