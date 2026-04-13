@@ -1337,12 +1337,417 @@ body {
     line-height: 1.4;
 }
 
+/* 核心状态区 */
+.core-status-section {
+    margin: 24px 0;
+}
+
+.status-button {
+    width: 100%;
+    padding: 24px 20px;
+    border: none;
+    border-radius: 16px;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    cursor: default;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.status-button.status-green {
+    background: linear-gradient(135deg, #10b981, #34d399);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.status-button.status-red {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.status-text {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.status-explanation {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    font-style: italic;
+    margin-top: 4px;
+    min-height: 20px;
+}
+
+/* 波段追踪区 */
+.wave-tracking-section {
+    margin: 24px 0;
+}
+
+.wave-entry-button {
+    width: 100%;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.wave-entry-button:hover {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+.wave-entry-button:active {
+    transform: translateY(0);
+}
+
+.wave-card {
+    background: #f8f9fa;
+    border: 1px solid #e5e5ea;
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 16px;
+}
+
+.wave-card.wave-card-alert {
+    background: #fef2f2;
+    border-color: #fecaca;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.wave-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.wave-card-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.wave-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin: 0;
+}
+
+.wave-info {
+    margin-bottom: 16px;
+}
+
+.wave-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.wave-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.wave-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.wave-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+.wave-alert {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.wave-alert-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #991b1b;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.wave-action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.wave-action-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wave-exit-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.wave-exit-btn:hover {
+    background: #dc2626;
+}
+
+.wave-hold-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.wave-hold-btn:hover {
+    background: #2563eb;
+}
+
+/* 波段选择模态框 */
+.wave-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+.wave-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.wave-modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 24px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.wave-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e5ea;
+}
+
+.wave-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1c1c1e;
+    margin: 0;
+}
+
+.wave-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.wave-modal-close:hover {
+    background: #f5f5f5;
+}
+
+.wave-modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.wave-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border: 1px solid #e5e5ea;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: 100%;
+}
+
+.wave-option:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.wave-option-icon {
+    font-size: 24px;
+    margin-right: 16px;
+    width: 40px;
+    text-align: center;
+}
+
+.wave-option-content {
+    flex: 1;
+}
+
+.wave-option-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1c1c1e;
+    margin-bottom: 4px;
+}
+
+.wave-option-desc {
+    font-size: 14px;
+    color: #666;
+}
+
 /* 移动端适配 */
 @media (max-width: 768px) {
+    .status-button {
+        padding: 20px 16px;
+        margin: 0 16px 8px 16px;
+        width: calc(100% - 32px);
+    }
+    
+    .status-text {
+        font-size: 24px;
+    }
+    
+    .status-explanation {
+        margin: 0 16px;
+    }
+    
+    .wave-tracking-section {
+        margin: 24px 16px;
+    }
+    
+    .wave-entry-button {
+        margin: 0 0 16px 0;
+    }
+    
+    .wave-card {
+        margin: 0;
+    }
+    
     .risk-section {
         padding: 16px;
         margin: 0 16px;
     }
+    
+    .risk-title {
+        font-size: 16px;
+    }
+    
+    .risk-label {
+        min-width: 100px;
+        font-size: 13px;
+    }
+    
+    .risk-value {
+        font-size: 14px;
+    }
+    
+    .states-explanation {
+        padding: 0 16px;
+    }
+    
+    .state-section {
+        padding: 20px;
+    }
+    
+    .state-title {
+        font-size: 18px;
+    }
+    
+    .state-content {
+        font-size: 14px;
+    }
+    
+    .state-indicator {
+        width: 12px;
+        height: 12px;
+    }
+    
+    .copy-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    .wave-modal-content {
+        padding: 20px;
+    }
+    
+    .wave-option {
+        padding: 16px;
+    }
+    
+    .wave-option-icon {
+        font-size: 20px;
+        margin-right: 12px;
+        width: 32px;
+    }
+    
+    .wave-option-title {
+        font-size: 16px;
+    }
+    
+    .wave-option-desc {
+        font-size: 13px;
+    }
+}
     
     .risk-title {
         font-size: 16px;

@@ -70,47 +70,56 @@
                 
 
                 
-                <!-- 仓位管理区 -->
-                <div class="position-management">
-                    <!-- 底仓 (Stone) - 带血筹码 -->
-                    <div class="position-section stone-section">
-                        <div class="position-header">
-                            <span class="position-icon">🪨</span>
-                            <h3 class="position-title">底仓 (Stone)</h3>
-                        </div>
-                        <div class="position-content">
-                            <div class="position-value">建议：0%</div>
-                            <div class="position-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 20%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div>
-                                </div>
-                                <div class="progress-label">熬冬进度：20%</div>
-                            </div>
-                            <div class="position-desc">基于行业拐点数据的支撑强度</div>
-                        </div>
-                    </div>
-                    
-                    <!-- 刺刀 (Bayonet) - 杠杆部分 -->
-                    <div class="position-section bayonet-section">
-                        <div class="position-header">
-                            <span class="position-icon">⚔️</span>
-                            <h3 class="position-title">刺刀 (Bayonet)</h3>
-                        </div>
-                        <div class="position-content">
-                            <div class="position-value">建议：0%</div>
-                            <div class="position-progress">
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 95%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
-                                </div>
-                                <div class="progress-label">离死亡线：5%</div>
-                            </div>
-                            <div class="position-desc">基于市场波动率和杠杆安全边际</div>
-                        </div>
+                <!-- 核心状态区 -->
+                <div class="core-status-section">
+                    <!-- 全宽状态按钮 -->
+                    <button class="status-button status-red" id="statusButton">
+                        <div class="status-text">空仓</div>
+                    </button>
+                    <!-- 状态说明 -->
+                    <div class="status-explanation" id="statusExplanation">
+                        等待市场数据...
                     </div>
                 </div>
                 
-                <!-- 行动按钮 -->
-                <button class="action-button action-loading" id="tradeButton">获取市场数据</button>
+                <!-- 波段追踪区 -->
+                <div class="wave-tracking-section" id="waveTrackingSection" style="display: none;">
+                    <!-- 入场按钮 -->
+                    <button class="wave-entry-button" id="waveEntryButton">
+                        <span>我要入场</span>
+                    </button>
+                    
+                    <!-- 波段记录卡片 -->
+                    <div class="wave-card" id="waveCard" style="display: none;">
+                        <div class="wave-card-header">
+                            <span class="wave-card-icon">📈</span>
+                            <h3 class="wave-card-title">活跃波段</h3>
+                        </div>
+                        <div class="wave-card-content">
+                            <div class="wave-info">
+                                <div class="wave-item">
+                                    <span class="wave-label">入场日期：</span>
+                                    <span class="wave-value" id="waveEntryDate">--</span>
+                                </div>
+                                <div class="wave-item">
+                                    <span class="wave-label">波段类型：</span>
+                                    <span class="wave-value" id="waveType">--</span>
+                                </div>
+                                <div class="wave-item">
+                                    <span class="wave-label">持续天数：</span>
+                                    <span class="wave-value" id="waveDuration">--</span>
+                                </div>
+                            </div>
+                            <div class="wave-alert" id="waveAlert" style="display: none;">
+                                <div class="wave-alert-text">出场条件已触发，考虑离场</div>
+                                <div class="wave-action-buttons">
+                                    <button class="wave-action-btn wave-exit-btn" id="waveExitBtn">已出场</button>
+                                    <button class="wave-action-btn wave-hold-btn" id="waveHoldBtn">继续持有</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- 分隔线 -->
                 <div class="divider"></div>
@@ -142,50 +151,7 @@
                     </div>
                 </div>
                 
-                <!-- 分隔线 -->
-                <div class="divider"></div>
-                
-                <!-- 当前状态说明（根据API信号动态显示） -->
-                <div class="states-explanation">
-                    <div class="state-section" id="state-0" style="display: none;">
-                        <div class="state-header">
-                            <span class="state-indicator state-red"></span>
-                            <h3 class="state-title">状态：不属于我的行情</h3>
-                            <button class="copy-btn" onclick="copyStateText(0)">复制</button>
-                        </div>
-                        <div class="state-content">
-                            <p><strong>说明：</strong><br>市场条件不满足我的交易框架，价格处于随机波动或趋势不明</p>
-                            <p><strong>建议：</strong><br>不出手，保持空仓，只看不动</p>
-                            <p><strong>底层逻辑：</strong><br>不符合我的交易条件 ≠ 没有机会，只是不适合我</p>
-                        </div>
-                    </div>
-                    
-                    <div class="state-section" id="state-1" style="display: none;">
-                        <div class="state-header">
-                            <span class="state-indicator state-yellow"></span>
-                            <h3 class="state-title">状态：行情可以，但不属于我，等待</h3>
-                            <button class="copy-btn" onclick="copyStateText(1)">复制</button>
-                        </div>
-                        <div class="state-content">
-                            <p><strong>说明：</strong><br>市场整体条件满足，但波动率过高或趋势在恶化，我历史上在这种环境容易拿不住</p>
-                            <p><strong>建议：</strong><br>仓位建议全部归零，只看不动，等待更好的入场时机</p>
-                            <p><strong>底层逻辑：</strong><br>知道什么行情不适合自己，比知道什么行情适合自己更重要</p>
-                        </div>
-                    </div>
-                    
-                    <div class="state-section" id="state-2" style="display: none;">
-                        <div class="state-header">
-                            <span class="state-indicator state-green"></span>
-                            <h3 class="state-title">状态：属于我的行情</h3>
-                            <button class="copy-btn" onclick="copyStateText(2)">复制</button>
-                        </div>
-                        <div class="state-content">
-                            <p><strong>说明：</strong><br>市场满足我的所有交易条件：趋势向上、市场宽度健康、波动可控、趋势改善</p>
-                            <p><strong>建议：</strong><br>按照仓位管理建议执行，严格执行交易计划</p>
-                            <p><strong>底层逻辑：</strong><br>只在最适合自己的环境中交易，提高胜率和盈亏比</p>
-                        </div>
-                    </div>
-                </div>
+
                 
 
             </div>
@@ -194,69 +160,229 @@
         </div>
     </div>
 
+    <!-- 波段选择模态框 -->
+    <div class="wave-modal" id="waveModal" style="display: none;">
+        <div class="wave-modal-overlay" id="waveModalOverlay"></div>
+        <div class="wave-modal-content">
+            <div class="wave-modal-header">
+                <h3 class="wave-modal-title">选择波段类型</h3>
+                <button class="wave-modal-close" id="waveModalClose">&times;</button>
+            </div>
+            <div class="wave-modal-body">
+                <button class="wave-option" data-type="short">
+                    <span class="wave-option-icon">⚡</span>
+                    <div class="wave-option-content">
+                        <div class="wave-option-title">短波段</div>
+                        <div class="wave-option-desc">3-5天，快速进出</div>
+                    </div>
+                </button>
+                <button class="wave-option" data-type="medium">
+                    <span class="wave-option-icon">📅</span>
+                    <div class="wave-option-content">
+                        <div class="wave-option-title">中波段</div>
+                        <div class="wave-option-desc">2-4周，趋势跟随</div>
+                    </div>
+                </button>
+                <button class="wave-option" data-type="long">
+                    <span class="wave-option-icon">🗓️</span>
+                    <div class="wave-option-content">
+                        <div class="wave-option-title">长波段</div>
+                        <div class="wave-option-desc">1-3月，价值投资</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="/src/js/app.js" defer></script>
     
     <script>
-        // 页面加载后初始化
+        // 波段追踪功能
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Market页面初始化');
+            console.log('Market页面初始化 - 波段追踪');
             
-            // 设置一个超时检查，如果app.js在3秒内没有执行，使用默认状态
-            setTimeout(function() {
-                const button = document.getElementById('tradeButton');
-                if (button && button.textContent === '获取市场数据') {
-                    console.log('app.js未在3秒内执行，使用默认状态（可尝试）');
-                    
-                    // 使用默认状态2（可尝试）
-                    const state = {
-                        buttonText: '状态：可尝试',
-                        buttonClass: 'action-green',
-                        stonePosition: '30%',
-                        stoneProgress: 60,
-                        bayonetPosition: '15%',
-                        bayonetProgress: 85
-                    };
-                    
-                    // 更新按钮
-                    button.textContent = state.buttonText;
-                    button.className = `action-button ${state.buttonClass}`;
-                    
-                    // 显示状态2（可尝试）
-                    const state2 = document.getElementById('state-2');
-                    const state0 = document.getElementById('state-0');
-                    const state1 = document.getElementById('state-1');
-                    
-                    if (state2) state2.style.display = 'block';
-                    if (state0) state0.style.display = 'none';
-                    if (state1) state1.style.display = 'none';
-                    
-                    // 更新仓位管理
-                    const stoneValue = document.querySelector('.stone-section .position-value');
-                    const stoneProgress = document.querySelector('.stone-section .progress-fill');
-                    const stoneLabel = document.querySelector('.stone-section .progress-label');
-                    
-                    if (stoneValue) stoneValue.textContent = `建议：${state.stonePosition}`;
-                    if (stoneProgress) stoneProgress.style.width = `${state.stoneProgress}%`;
-                    if (stoneLabel) stoneLabel.textContent = `熬冬进度：${state.stoneProgress}%`;
-                    
-                    const bayonetValue = document.querySelector('.bayonet-section .position-value');
-                    const bayonetProgress = document.querySelector('.bayonet-section .progress-fill');
-                    const bayonetLabel = document.querySelector('.bayonet-section .progress-label');
-                    
-                    if (bayonetValue) bayonetValue.textContent = `建议：${state.bayonetPosition}`;
-                    if (bayonetProgress) bayonetProgress.style.width = `${state.bayonetProgress}%`;
-                    const distanceToDeath = 100 - state.bayonetProgress;
-                    if (bayonetLabel) bayonetLabel.textContent = `离死亡线：${distanceToDeath}%`;
-                    
-                    // 隐藏加载指示器
-                    const loadingIndicator = document.querySelector('.loading-indicator');
-                    if (loadingIndicator) {
-                        loadingIndicator.style.display = 'none';
-                    }
-                    
-                    console.log('默认状态设置完成');
+            // 波段数据存储
+            let activeWave = null;
+            
+            // 入场按钮点击
+            const waveEntryButton = document.getElementById('waveEntryButton');
+            const waveModal = document.getElementById('waveModal');
+            const waveModalOverlay = document.getElementById('waveModalOverlay');
+            const waveModalClose = document.getElementById('waveModalClose');
+            
+            if (waveEntryButton) {
+                waveEntryButton.addEventListener('click', function() {
+                    waveModal.style.display = 'block';
+                });
+            }
+            
+            // 关闭模态框
+            if (waveModalOverlay) {
+                waveModalOverlay.addEventListener('click', closeWaveModal);
+            }
+            
+            if (waveModalClose) {
+                waveModalClose.addEventListener('click', closeWaveModal);
+            }
+            
+            // 波段选项点击
+            const waveOptions = document.querySelectorAll('.wave-option');
+            waveOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const waveType = this.getAttribute('data-type');
+                    startNewWave(waveType);
+                    closeWaveModal();
+                });
+            });
+            
+            // 出场按钮
+            const waveExitBtn = document.getElementById('waveExitBtn');
+            const waveHoldBtn = document.getElementById('waveHoldBtn');
+            
+            if (waveExitBtn) {
+                waveExitBtn.addEventListener('click', function() {
+                    endWave('exited');
+                });
+            }
+            
+            if (waveHoldBtn) {
+                waveHoldBtn.addEventListener('click', function() {
+                    continueWave();
+                });
+            }
+            
+            // 加载保存的波段数据
+            loadWaveData();
+            
+            function closeWaveModal() {
+                waveModal.style.display = 'none';
+            }
+            
+            function startNewWave(type) {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('zh-CN');
+                
+                activeWave = {
+                    type: type,
+                    entryDate: dateStr,
+                    startTime: now.getTime(),
+                    status: 'active'
+                };
+                
+                saveWaveData();
+                updateWaveDisplay();
+            }
+            
+            function endWave(action) {
+                if (activeWave) {
+                    activeWave.status = action === 'exited' ? 'exited' : 'ended';
+                    activeWave.endTime = new Date().getTime();
+                    saveWaveData();
+                    activeWave = null;
+                    updateWaveDisplay();
                 }
-            }, 3000); // 3秒后检查
+            }
+            
+            function continueWave() {
+                if (activeWave) {
+                    const waveCard = document.getElementById('waveCard');
+                    const waveAlert = document.getElementById('waveAlert');
+                    
+                    if (waveCard) waveCard.classList.remove('wave-card-alert');
+                    if (waveAlert) waveAlert.style.display = 'none';
+                    
+                    // 重置出场条件触发状态
+                    activeWave.alertTriggered = false;
+                    saveWaveData();
+                }
+            }
+            
+            function saveWaveData() {
+                if (activeWave) {
+                    localStorage.setItem('activeWave', JSON.stringify(activeWave));
+                } else {
+                    localStorage.removeItem('activeWave');
+                }
+            }
+            
+            function loadWaveData() {
+                const savedWave = localStorage.getItem('activeWave');
+                if (savedWave) {
+                    try {
+                        activeWave = JSON.parse(savedWave);
+                        
+                        // 检查是否已过期
+                        const now = new Date().getTime();
+                        const startTime = activeWave.startTime;
+                        const daysPassed = Math.floor((now - startTime) / (1000 * 60 * 60 * 24));
+                        
+                        // 根据波段类型设置最大天数
+                        let maxDays = 5; // 短波段默认
+                        if (activeWave.type === 'medium') maxDays = 28; // 4周
+                        if (activeWave.type === 'long') maxDays = 90; // 3个月
+                        
+                        if (daysPassed > maxDays) {
+                            // 触发出场条件
+                            activeWave.alertTriggered = true;
+                        }
+                        
+                        updateWaveDisplay();
+                    } catch (e) {
+                        console.error('加载波段数据失败:', e);
+                        localStorage.removeItem('activeWave');
+                    }
+                }
+            }
+            
+            function updateWaveDisplay() {
+                const waveCard = document.getElementById('waveCard');
+                const waveAlert = document.getElementById('waveAlert');
+                const waveEntryDate = document.getElementById('waveEntryDate');
+                const waveType = document.getElementById('waveType');
+                const waveDuration = document.getElementById('waveDuration');
+                
+                if (activeWave && activeWave.status === 'active') {
+                    // 显示波段卡片
+                    if (waveCard) waveCard.style.display = 'block';
+                    
+                    // 更新波段信息
+                    if (waveEntryDate) waveEntryDate.textContent = activeWave.entryDate;
+                    
+                    let typeText = '短波段 (3-5天)';
+                    if (activeWave.type === 'medium') typeText = '中波段 (2-4周)';
+                    if (activeWave.type === 'long') typeText = '长波段 (1-3月)';
+                    if (waveType) waveType.textContent = typeText;
+                    
+                    // 计算持续天数
+                    const now = new Date().getTime();
+                    const startTime = activeWave.startTime;
+                    const daysPassed = Math.floor((now - startTime) / (1000 * 60 * 60 * 24));
+                    if (waveDuration) waveDuration.textContent = `${daysPassed}天`;
+                    
+                    // 检查是否触发出场条件
+                    let maxDays = 5;
+                    if (activeWave.type === 'medium') maxDays = 28;
+                    if (activeWave.type === 'long') maxDays = 90;
+                    
+                    if (daysPassed > maxDays || activeWave.alertTriggered) {
+                        // 显示出场警告
+                        if (waveCard) waveCard.classList.add('wave-card-alert');
+                        if (waveAlert) waveAlert.style.display = 'block';
+                        activeWave.alertTriggered = true;
+                        saveWaveData();
+                    } else {
+                        if (waveCard) waveCard.classList.remove('wave-card-alert');
+                        if (waveAlert) waveAlert.style.display = 'none';
+                    }
+                } else {
+                    // 隐藏波段卡片
+                    if (waveCard) waveCard.style.display = 'none';
+                    if (waveAlert) waveAlert.style.display = 'none';
+                }
+            }
+            
+            // 每秒更新持续天数
+            setInterval(updateWaveDisplay, 1000);
         });
     </script>
 </body>
