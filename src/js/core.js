@@ -102,32 +102,6 @@ function getPivotStatus(stock) {
   };
 }
 
-function buildLeaders(stocks) {
-  return stocks
-    .map(stock => ({
-      ...stock,
-      leaderStatus: classifyLeader(stock),
-      stage: classifyStage(stock),
-      pivot: getPivotStatus(stock),
-    }))
-    .filter(stock => stock.leaderStatus !== "忽略")
-    .filter(stock => stock.stage !== "Late Stage")
-    .sort((a, b) => {
-      const scoreA =
-        a.change20d * 0.4 +
-        a.volumeRatio * 0.3 +
-        a.relativeStrength * 0.3;
-
-      const scoreB =
-        b.change20d * 0.4 +
-        b.volumeRatio * 0.3 +
-        b.relativeStrength * 0.3;
-
-      return scoreB - scoreA;
-    })
-    .slice(0, 5);
-}
-
 function checkAccount(currentPosition, suggestedPosition) {
   if (currentPosition <= suggestedPosition) {
     return {

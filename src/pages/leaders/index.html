@@ -99,440 +99,201 @@
         </div>
     </div>
     
+    <script src="/src/js/core.js" defer></script>
     <script>
-        // 从后端API获取筛选后的Leaders数据
+        // ===============================
+        // JUST WAIT / 止观 Leaders 筛选逻辑
+        // ===============================
+
+        function pct(a, b) {
+            if (!b || b === 0) return 0;
+            return (a / b - 1) * 100;
+        }
+
+        function ratio(a, b) {
+            if (!b || b === 0) return 0;
+            return a / b;
+        }
+
+        function passWeeklyPool(stock) {
+            const price = stock.close;
+            const aboveMA30W = price > stock.ma30w;
+            const near52wHighRatio = ratio(price, stock.high52w);
+            const near52wHigh = near52wHighRatio >= 0.85 && near52wHighRatio <= 0.98;
+            const rise60dOK = stock.change60d >= 20 && stock.change60d <= 80;
+            const rise20dOK = stock.change20d < 25;
+            const liquidityOK = stock.amount >= 500000000;
+            const marketCapOK = stock.floatMarketCap >= 5000000000;
+            const new60dHigh = price >= stock.high60d;
+            const relativeStrengthOK = stock.relativeStrengthVsSector > 0;
+
+            return aboveMA30W && near52wHigh && rise60dOK && rise20dOK &&
+                liquidityOK && marketCapOK && new60dHigh && relativeStrengthOK;
+        }
+
+        function isOverExtended(stock) {
+            const overRise20d = stock.change20d > 30;
+            const overRise60d = stock.change60d > 100;
+            const alreadyExtendedHigh = ratio(stock.close, stock.high52w) > 1.0;
+            const tooManyLimitUps = stock.limitUpCount20d >= 2;
+            const tooVolatile = stock.range20d > 50;
+            return overRise20d || overRise60d || alreadyExtendedHigh || tooManyLimitUps || tooVolatile;
+        }
+
+        function getPlatformStatus(stock) {
+            const platformOK = stock.platformDays >= 15 && stock.platformRange <= 20;
+            const nearPlatformHigh = ratio(stock.close, stock.platformHigh) >= 0.97 && ratio(stock.close, stock.platformHigh) <= 1.0;
+            const volumeShrink = stock.volume5dAvg < stock.volume20dAvg;
+
+            if (platformOK && nearPlatformHigh && volumeShrink) return "接近突破";
+            if (platformOK && volumeShrink) return "蓄势待发";
+            return null;
+        }
+
+        function getPivotStatus(stock) {
+            const breakout = stock.close > stock.platformHigh && stock.changeToday >= 4 && stock.volume > stock.volume20dAvg * 1.5;
+            if (breakout) return "Pivot确认";
+            const platformStatus = getPlatformStatus(stock);
+            if (platformStatus === "接近突破") return "READY";
+            if (platformStatus === "蓄势待发") return "WATCH";
+            return "WAIT";
+        }
+
+        function getLeaderTags(stock) {
+            const tags = [];
+            if (stock.close > stock.ma30w && stock.relativeStrengthVsSector > 0) tags.push("强势");
+            const platformStatus = getPlatformStatus(stock);
+            if (platformStatus) tags.push(platformStatus);
+            const pivotStatus = getPivotStatus(stock);
+            if (pivotStatus === "Pivot确认") tags.push("Pivot确认");
+            return tags;
+        }
+
+        function scoreStock(stock) {
+            let score = 0;
+            if (stock.close > stock.ma30w) score += 20;
+            const highRatio = ratio(stock.close, stock.high52w);
+            if (highRatio >= 0.85 && highRatio <= 0.98) {
+                score += (highRatio - 0.85) / 0.13 * 25;
+            }
+            if (stock.platformDays >= 15) score += 15;
+            if (stock.platformRange <= 20) score += 15;
+            if (stock.volume5dAvg < stock.volume20dAvg) score += 10;
+            if (stock.relativeStrengthVsSector > 0) score += 15;
+            if (stock.change20d > 25) score -= 20;
+            if (stock.change60d > 80) score -= 20;
+            return Math.round(score);
+        }
+
+        function buildLeaders(stocks) {
+            return stocks
+                .filter(passWeeklyPool)
+                .filter(stock => !isOverExtended(stock))
+                .map(stock => ({
+                    code: stock.code,
+                    name: stock.name,
+                    close: stock.close,
+                    score: scoreStock(stock),
+                    tags: getLeaderTags(stock),
+                    pivotStatus: getPivotStatus(stock),
+                }))
+                .filter(stock => stock.tags.length > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 5);
+        }
+
+        // 获取mock股票数据
+        function getMockStocks() {
+            const mockStocks = [
+                { code: "002371.SZ", name: "北方华创", close: 385.50, ma30w: 320.00, high52w: 420.00, change60d: 35, change20d: 12, amount: 8500000000, floatMarketCap: 120000000000, high60d: 390.00, relativeStrengthVsSector: 2.5, platformDays: 25, platformRange: 15, platformHigh: 388.00, changeToday: 2.8, volume: 45000000, volume20dAvg: 50000000, volume5dAvg: 35000000, limitUpCount20d: 0, range20d: 22 },
+                { code: "300750.SZ", name: "宁德时代", close: 245.80, ma30w: 210.00, high52w: 260.00, change60d: 28, change20d: 8, amount: 12000000000, floatMarketCap: 800000000000, high60d: 248.00, relativeStrengthVsSector: 1.8, platformDays: 20, platformRange: 18, platformHigh: 248.00, changeToday: 3.2, volume: 80000000, volume20dAvg: 90000000, volume5dAvg: 60000000, limitUpCount20d: 0, range20d: 20 },
+                { code: "002594.SZ", name: "比亚迪", close: 298.50, ma30w: 265.00, high52w: 310.00, change60d: 22, change20d: 6, amount: 9500000000, floatMarketCap: 650000000000, high60d: 300.00, relativeStrengthVsSector: 1.2, platformDays: 30, platformRange: 12, platformHigh: 300.00, changeToday: 1.5, volume: 35000000, volume20dAvg: 40000000, volume5dAvg: 28000000, limitUpCount20d: 0, range20d: 15 },
+                { code: "000858.SZ", name: "五粮液", close: 182.00, ma30w: 165.00, high52w: 195.00, change60d: 25, change20d: 5, amount: 5500000000, floatMarketCap: 700000000000, high60d: 185.00, relativeStrengthVsSector: 0.8, platformDays: 18, platformRange: 20, platformHigh: 184.00, changeToday: 1.2, volume: 25000000, volume20dAvg: 30000000, volume5dAvg: 20000000, limitUpCount20d: 0, range20d: 18 },
+                { code: "300124.SZ", name: "汇川技术", close: 88.50, ma30w: 75.00, high52w: 95.00, change60d: 30, change20d: 10, amount: 3800000000, floatMarketCap: 150000000000, high60d: 90.00, relativeStrengthVsSector: 1.5, platformDays: 22, platformRange: 14, platformHigh: 90.00, changeToday: 2.0, volume: 18000000, volume20dAvg: 20000000, volume5dAvg: 14000000, limitUpCount20d: 0, range20d: 16 },
+            ];
+            return mockStocks;
+        }
+
+        // 从后端API或mock数据获取Leaders
         async function fetchFilteredLeaders() {
             try {
-                const apiUrl = '/api/leaders/filtered?t=' + Date.now();
-                
-                // 设置超时
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
-                
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP错误: ${response.status} ${response.statusText}`);
-                }
-                
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    updateLeadersUI(result.data);
-                } else {
-                    usePositiveExampleData();
-                }
-            } catch (error) {
-                // 更新状态显示错误
-                const positionInfo = document.querySelector('.position-info');
-                if (positionInfo) {
-                    if (error.name === 'AbortError') {
-                        positionInfo.textContent = '活水龙头筛选 · 请求超时，使用示例数据';
-                    } else {
-                        positionInfo.textContent = '活水龙头筛选 · 连接失败，使用示例数据';
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                let stocks = [];
+
+                if (isLocal) {
+                    const apiUrl = '/api/leaders/filtered?t=' + Date.now();
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+                    const response = await fetch(apiUrl, {
+                        method: 'GET', mode: 'cors',
+                        headers: { 'Accept': 'application/json' },
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success && result.data) {
+                            stocks = result.data;
+                        }
                     }
                 }
-                
-                console.log('API请求失败，使用积极的示例数据:', error.message);
-                // 使用积极的示例数据（反映当前做多市场）
-                usePositiveExampleData();
+
+                if (stocks.length === 0) {
+                    stocks = getMockStocks();
+                }
+
+                const leaders = buildLeaders(stocks);
+                updateLeadersUI(leaders);
+            } catch (error) {
+                console.log('API请求失败，使用mock数据:', error.message);
+                const stocks = getMockStocks();
+                const leaders = buildLeaders(stocks);
+                updateLeadersUI(leaders);
             }
         }
         
         // 更新UI显示筛选后的Leaders
-        function updateLeadersUI(stocks) {
+        function updateLeadersUI(leaders) {
             const leadersList = document.querySelector('.leaders-list');
             if (!leadersList) return;
-            
-            // 清空现有列表
+
             leadersList.innerHTML = '';
-            
-            // 统计乖离过大的股票数量
-            let biasExceedCount = 0;
-            
-            // 添加筛选后的股票（集成乖离防御塔逻辑）
-            stocks.forEach(stock => {
+
+            const positionInfo = document.querySelector('.position-info');
+            if (positionInfo) {
+                positionInfo.textContent = `活水龙头筛选 · 符合条件: ${leaders.length}只`;
+            }
+
+            leaders.forEach(leader => {
                 const leaderItem = document.createElement('div');
                 leaderItem.className = 'leader-item';
-                
-                // 使用后端API返回的真实数据
-                const currentPrice = stock.current_price || 100;
-                const ma20 = stock.ma20 || currentPrice * 0.95; // 使用API返回的ma20或默认值
-                const bias20 = stock.bias20 || ((currentPrice - ma20) / ma20) * 100; // 优先使用API返回的bias20
-                
-                // 判断是否乖离过大（>= 15%）
-                const isBiasExceed = bias20 >= 15;
-                if (isBiasExceed) {
-                    biasExceedCount++;
-                }
-                
-                // 使用后端API返回的真实MA5和Pivot结构数据
-                const ma5 = stock.ma5 || currentPrice * 0.98; // 使用API返回的ma5或默认值
-                const priceTo250dHighRatio = stock.price_to_250d_high_ratio || 0.85; // 距离250日高点的比例
-                const is60dNewHigh = stock.is_60d_new_high || false; // 是否是60日新高
-                
-                // 判断Pivot状态（使用新的严格条件）
-                let pivotStatus = '';
-                if (currentPrice >= ma5 && priceTo250dHighRatio >= 0.85 && is60dNewHigh) {
-                    pivotStatus = '年度突破';
-                } else if (currentPrice >= ma5 && priceTo250dHighRatio >= 0.85) {
-                    pivotStatus = '蓄势待发';
-                } else if (currentPrice < ma5) {
-                    pivotStatus = 'Pivot Failure';
-                }
-                
-                // 生成状态标签HTML（应用乖离防御塔和Pivot判断逻辑）
-                let statusTagsHTML = '';
-                if (isBiasExceed) {
-                    // 乖离过大：强制替换为深灰色背景的[乖离过大]标签
-                    statusTagsHTML = '<span class="status-tag status-bias-exceed">乖离过大</span>';
-                    
-                    // 添加悬浮提示
-                    leaderItem.title = "当前偏离均线重心太高（橡皮筋崩紧），禁止追高，守护 1/9 试错机会。";
-                    
-                    // 应用交互拦截样式
-                    leaderItem.style.pointerEvents = 'none';
-                    leaderItem.style.opacity = '0.6';
-                    leaderItem.style.cursor = 'not-allowed';
-                } else {
-                    // 正常状态：根据Pivot判断和原有标签生成状态
-                    const originalTags = stock.status_tags || [];
-                    let finalTags = [...originalTags];
-                    
-                    // 添加Pivot状态标签（使用新的严格条件）
-                    if (pivotStatus === '年度突破') {
-                        // 添加年度突破标签
-                        if (!originalTags.includes('年度突破')) {
-                            finalTags.push('年度突破');
-                        }
-                    } else if (pivotStatus === '蓄势待发') {
-                        // 添加蓄势待发标签
-                        if (!originalTags.includes('蓄势待发')) {
-                            finalTags.push('蓄势待发');
-                        }
-                    } else if (pivotStatus === 'Pivot Failure') {
-                        // 添加Pivot Failure标签
-                        finalTags.push('Pivot Failure');
-                    }
-                    
-                    // 生成HTML
-                    statusTagsHTML = finalTags.map(tag => {
-                        let statusClass = 'status-watch';
-                        if (tag === '强势') statusClass = 'status-strong';
-                        if (tag === '年度突破') statusClass = 'status-pivot';
-                        if (tag === '蓄势待发') statusClass = 'status-watch';
-                        if (tag === 'Pivot Failure') statusClass = 'status-failure';
-                        return `<span class="status-tag ${statusClass}">${tag}</span>`;
-                    }).join('');
-                }
-                
-                // 提取股票代码（去掉后缀）
-                const stockCode = stock.code ? stock.code.replace(/\.[A-Z]+$/, '') : '';
-                
+
+                const stockCode = leader.code ? leader.code.replace(/\.[A-Z]+$/, '') : '';
+
+                const tagsHTML = leader.tags.map(tag => {
+                    let statusClass = 'status-watch';
+                    if (tag === '强势') statusClass = 'status-strong';
+                    if (tag === '接近突破' || tag === 'READY') statusClass = 'status-pivot';
+                    if (tag === '蓄势待发') statusClass = 'status-watch';
+                    if (tag === 'Pivot确认') statusClass = 'status-pivot';
+                    return `<span class="status-tag ${statusClass}">${tag}</span>`;
+                }).join('');
+
                 leaderItem.innerHTML = `
                     <div class="stock-info">
-                        <div class="stock-name">${stock.name}</div>
+                        <div class="stock-name">${leader.name}</div>
                         <div class="stock-code">${stockCode}</div>
                     </div>
-                    <div class="stock-status">
-                        ${statusTagsHTML}
-                    </div>
+                    <div class="stock-score">${leader.score}分</div>
+                    <div class="stock-status">${tagsHTML}</div>
                 `;
-                
-                // 添加数据属性以便后续更新
-                leaderItem.dataset.bias20 = bias20.toFixed(1);
-                leaderItem.dataset.currentPrice = currentPrice;
-                leaderItem.dataset.ma20 = ma20.toFixed(2);
-                
+
                 leadersList.appendChild(leaderItem);
             });
-            
-            // 更新状态信息
+
             document.querySelector('.loading-indicator').style.display = 'none';
-            document.querySelector('.position-info').textContent = `活水龙头筛选 · 符合条件: ${stocks.length}只 · 乖离过大: ${biasExceedCount}只`;
-            
-            console.log('筛选逻辑（活水龙头筛选器 - 严格版）：');
-            console.log('1. 【底线】今日成交额 > 5亿，拒绝无流动性的微盘股');
-            console.log('2. 【灵魂】换手率 > 3.0%，彻底废弃市值天花板，用换手率筛选出全市场最具弹性的"活水龙头"');
-            console.log('3. 【短期防线】必须站稳10日线，一票否决流血破位股');
-            console.log('4. 【中期防线】大趋势必须向上（价格 > 50日均线）');
-            console.log('5. 【蓄势防线】当前价距离近250日最高点的回撤不得超过15%，寻找真正的年度高点突破');
-            console.log('6. 【突破要求】当前价格必须是近60日的最高点，确保处于突破状态');
-            console.log('7. 【防妖股】近20日涨幅如果超过30%，说明已经飞天透支，不作为首选');
-            console.log('8. 【允许潜伏】下限放宽到-10%，允许筛选出正在"缩量横盘装死"的绝佳枢纽点标的');
-            console.log('9. 【核心引擎】换手率降序排列，把最躁动、资金共识最强的猎物顶到最前面');
-            console.log('10.【扩大视野】取前15名，交由用户的肉眼进行最终的"图形整齐度"审美过滤');
-            console.log('11.【乖离防御塔】bias20 >= 15% 时标记为[乖离过大]并禁用交互');
-            
-            // 启动定期检查bias20变化（模拟实时更新）
-            startBiasMonitoring();
         }
-        
-        // 启动bias20监控（模拟实时更新）
-        function startBiasMonitoring() {
-            console.log('启动乖离防御塔监控...');
-            
-            // 每30秒检查一次bias20变化（模拟实时更新）
-            setInterval(() => {
-                const leaderItems = document.querySelectorAll('.leader-item');
-                leaderItems.forEach(item => {
-                    const bias20 = parseFloat(item.dataset.bias20);
-                    const currentPrice = parseFloat(item.dataset.currentPrice);
-                    
-                    // 模拟价格波动（实际应从后端获取实时数据）
-                    const priceChange = (Math.random() - 0.5) * 0.02; // ±1%波动
-                    const newPrice = currentPrice * (1 + priceChange);
-                    
-                    // 模拟ma20变化（比价格变化慢）
-                    const ma20 = parseFloat(item.dataset.ma20);
-                    const ma20Change = priceChange * 0.5; // ma20变化是价格变化的一半
-                    const newMa20 = ma20 * (1 + ma20Change);
-                    
-                    // 计算新的bias20
-                    const newBias20 = ((newPrice - newMa20) / newMa20) * 100;
-                    
-                    // 更新数据属性
-                    item.dataset.bias20 = newBias20.toFixed(1);
-                    item.dataset.currentPrice = newPrice.toFixed(2);
-                    item.dataset.ma20 = newMa20.toFixed(2);
-                    
-                    // 检查是否需要更新状态
-                    const wasBiasExceed = bias20 >= 15;
-                    const isBiasExceed = newBias20 >= 15;
-                    
-                    if (wasBiasExceed !== isBiasExceed) {
-                        console.log(`检测到bias20变化: ${bias20.toFixed(1)}% -> ${newBias20.toFixed(1)}%，更新状态...`);
-                        updateBiasStatus(item, newBias20, newPrice, newMa20);
-                    }
-                });
-            }, 30000); // 30秒检查一次
-            
-            console.log('乖离防御塔监控已启动，每30秒检查一次bias20变化');
-        }
-        
-        // 更新bias20状态
-        function updateBiasStatus(item, bias20, currentPrice, ma20) {
-            const isBiasExceed = bias20 >= 15;
-            const stockName = item.querySelector('.stock-name').textContent;
-            
-            // 更新状态标签
-            const stockStatus = item.querySelector('.stock-status');
-            if (isBiasExceed) {
-                // 乖离过大：强制替换为深灰色背景的[乖离过大]标签
-                stockStatus.innerHTML = '<span class="status-tag status-bias-exceed">乖离过大</span>';
-                
-                // 添加悬浮提示
-                item.title = "当前偏离均线重心太高（橡皮筋崩紧），禁止追高，守护 1/9 试错机会。";
-                
-                // 应用交互拦截样式
-                item.style.pointerEvents = 'none';
-                item.style.opacity = '0.6';
-                item.style.cursor = 'not-allowed';
-                item.style.backgroundColor = '#2f2f2f';
-                
-                console.log(`🚨 ${stockName}: bias20=${bias20.toFixed(1)}% >= 15%，标记为[乖离过大]`);
-            } else {
-                // 恢复正常状态（这里需要从原始数据获取原有标签，暂时显示"正常"）
-                stockStatus.innerHTML = '<span class="status-tag status-strong">强势</span>';
-                
-                // 移除悬浮提示
-                item.title = '';
-                
-                // 恢复交互权限
-                item.style.pointerEvents = '';
-                item.style.opacity = '';
-                item.style.cursor = '';
-                item.style.backgroundColor = '';
-                
-                console.log(`✅ ${stockName}: bias20=${bias20.toFixed(1)}% < 15%，恢复正常状态`);
-            }
-        }
-        
-        // 使用积极的示例数据（反映当前做多市场）
-        function usePositiveExampleData() {
-            const positiveStocks = [
-                {
-                    name: "新易盛",
-                    code: "300502.SZ",
-                    current_price: 48.50,
-                    gain_20d: 28.5,
-                    daily_change: 2.8,
-                    status_tags: ["强势", "年度突破"],
-                    ma5: 46.8,
-                    ma10: 45.24,
-                    ma20: 43.6,
-                    near_high: true,
-                    price_to_high_ratio: 0.98,
-                    price_to_250d_high_ratio: 0.96,
-                    is_60d_new_high: true,
-                    bias20: 11.24
-                },
-                {
-                    name: "立讯精密",
-                    code: "002475.SZ",
-                    current_price: 34.25,
-                    gain_20d: 22.8,
-                    daily_change: 1.5,
-                    status_tags: ["强势", "年度突破"],
-                    ma5: 33.2,
-                    ma10: 32.45,
-                    ma20: 31.8,
-                    near_high: true,
-                    price_to_high_ratio: 0.97,
-                    price_to_250d_high_ratio: 0.94,
-                    is_60d_new_high: true,
-                    bias20: 7.70
-                },
-                {
-                    name: "科大讯飞",
-                    code: "002230.SZ",
-                    current_price: 62.80,
-                    gain_20d: 25.6,
-                    daily_change: -0.8,
-                    status_tags: ["强势", "蓄势待发"],
-                    ma5: 60.2,
-                    ma10: 59.34,
-                    ma20: 57.8,
-                    near_high: true,
-                    price_to_high_ratio: 0.96,
-                    price_to_250d_high_ratio: 0.92,
-                    is_60d_new_high: true,
-                    bias20: 8.65
-                },
-                {
-                    name: "亿纬锂能",
-                    code: "300014.SZ",
-                    current_price: 56.90,
-                    gain_20d: 24.3,
-                    daily_change: 3.2,
-                    status_tags: ["强势", "接近 Pivot"],
-                    ma5: 55.2,
-                    ma10: 54.18,
-                    ma20: 52.6,
-                    near_high: true,
-                    price_to_high_ratio: 0.95,
-                    price_to_250d_high_ratio: 0.91,
-                    is_60d_new_high: true,
-                    bias20: 8.17
-                },
-                {
-                    name: "汇川技术",
-                    code: "300124.SZ",
-                    current_price: 80.50,
-                    gain_20d: 23.8,
-                    daily_change: 0.5,
-                    status_tags: ["强势", "年度突破"],
-                    ma5: 78.2,
-                    ma10: 77.15,
-                    ma20: 75.4,
-                    near_high: true,
-                    price_to_high_ratio: 0.97,
-                    price_to_250d_high_ratio: 0.93,
-                    is_60d_new_high: true,
-                    bias20: 6.76
-                }
-            ];
-            
-            updateLeadersUI(positiveStocks);
-        }
-        
-        // 使用示例数据（fallback）
-        function useExampleData() {
-            const exampleStocks = [
-                {
-                    name: "新易盛",
-                    code: "300502.SZ",
-                    current_price: 45.80,
-                    gain_20d: 25.3,
-                    daily_change: 3.2,
-                    status_tags: ["强势", "接近 Pivot"],
-                    ma5: 44.5,
-                    ma10: 43.84,
-                    ma20: 42.3,
-                    near_high: true,
-                    price_to_high_ratio: 0.96,
-                    price_to_250d_high_ratio: 0.92,
-                    is_60d_new_high: true,
-                    bias20: 8.27
-                },
-                {
-                    name: "立讯精密",
-                    code: "002475.SZ",
-                    current_price: 32.15,
-                    gain_20d: 19.5,
-                    daily_change: -1.5,
-                    status_tags: ["强势", "接近 Pivot"],
-                    ma5: 31.6,
-                    ma10: 31.18,
-                    ma20: 30.2,
-                    near_high: true,
-                    price_to_high_ratio: 0.95,
-                    price_to_250d_high_ratio: 0.88,
-                    is_60d_new_high: true,
-                    bias20: 6.46
-                },
-                {
-                    name: "歌尔股份",
-                    code: "002241.SZ",
-                    current_price: 24.85,
-                    gain_20d: 17.6,
-                    daily_change: 0.8,
-                    status_tags: ["观察"],
-                    ma5: 24.4,
-                    ma10: 24.13,
-                    ma20: 23.5,
-                    near_high: false,
-                    price_to_high_ratio: 0.91,
-                    price_to_250d_high_ratio: 0.86,
-                    is_60d_new_high: false,
-                    bias20: 5.74
-                },
-                {
-                    name: "亿纬锂能",
-                    code: "300014.SZ",
-                    current_price: 52.45,
-                    gain_20d: 19.8,
-                    daily_change: 2.1,
-                    status_tags: ["观察"],
-                    ma5: 51.8,
-                    ma10: 51.14,
-                    ma20: 49.6,
-                    near_high: false,
-                    price_to_high_ratio: 0.93,
-                    price_to_250d_high_ratio: 0.89,
-                    is_60d_new_high: true,
-                    bias20: 5.75
-                },
-                {
-                    name: "恩捷股份",
-                    code: "002812.SZ",
-                    current_price: 68.20,
-                    gain_20d: 16.5,
-                    daily_change: -0.3,
-                    status_tags: ["观察"],
-                    ma5: 67.5,
-                    ma10: 66.99,
-                    ma20: 65.8,
-                    near_high: true,
-                    price_to_high_ratio: 0.92,
-                    price_to_250d_high_ratio: 0.91,
-                    is_60d_new_high: true,
-                    bias20: 3.65
-                }
-            ];
-            
-            updateLeadersUI(exampleStocks);
-        }
-        
+
         // 移动端菜单切换功能
         initMobileMenu();
         
