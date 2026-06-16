@@ -115,20 +115,36 @@
             return a / b;
         }
 
-        function passWeeklyPool(stock) {
+        function passLeadersPool(stock) {
             const price = stock.close;
-            const aboveMA30W = price > stock.ma30w;
-            const near52wHighRatio = ratio(price, stock.high52w);
-            const near52wHigh = near52wHighRatio >= 0.85 && near52wHighRatio <= 0.98;
-            const rise60dOK = stock.change60d >= 20 && stock.change60d <= 80;
-            const rise20dOK = stock.change20d < 25;
-            const liquidityOK = stock.amount >= 500000000;
-            const marketCapOK = stock.floatMarketCap >= 5000000000;
-            const new60dHigh = price >= stock.high60d;
-            const relativeStrengthOK = stock.relativeStrengthVsSector > 0;
 
-            return aboveMA30W && near52wHigh && rise60dOK && rise20dOK &&
-                liquidityOK && marketCapOK && new60dHigh && relativeStrengthOK;
+            const aboveMA30W = price > stock.ma30w;
+
+            const nearMediumHigh =
+                price / stock.high60d >= 0.9 ||
+                price / stock.high120d >= 0.85;
+
+            const rise20dOK =
+                stock.change20d >= 3 &&
+                stock.change20d <= 25;
+
+            const rise60dOK =
+                stock.change60d >= 10 &&
+                stock.change60d <= 100;
+
+            const liquidityOK = stock.amount >= 300000000;
+
+            const relativeStrengthOK =
+                stock.relativeStrengthVsSector > 0;
+
+            return (
+                aboveMA30W &&
+                nearMediumHigh &&
+                rise20dOK &&
+                rise60dOK &&
+                liquidityOK &&
+                relativeStrengthOK
+            );
         }
 
         function isOverExtended(stock) {
@@ -187,7 +203,7 @@
 
         function buildLeaders(stocks) {
             return stocks
-                .filter(passWeeklyPool)
+                .filter(passLeadersPool)
                 .filter(stock => !isOverExtended(stock))
                 .map(stock => ({
                     code: stock.code,
@@ -205,11 +221,11 @@
         // 获取mock股票数据
         function getMockStocks() {
             const mockStocks = [
-                { code: "002371.SZ", name: "北方华创", close: 385.50, ma30w: 320.00, high52w: 420.00, change60d: 35, change20d: 12, amount: 8500000000, floatMarketCap: 120000000000, high60d: 390.00, relativeStrengthVsSector: 2.5, platformDays: 25, platformRange: 15, platformHigh: 388.00, changeToday: 2.8, volume: 45000000, volume20dAvg: 50000000, volume5dAvg: 35000000, limitUpCount20d: 0, range20d: 22 },
-                { code: "300750.SZ", name: "宁德时代", close: 245.80, ma30w: 210.00, high52w: 260.00, change60d: 28, change20d: 8, amount: 12000000000, floatMarketCap: 800000000000, high60d: 248.00, relativeStrengthVsSector: 1.8, platformDays: 20, platformRange: 18, platformHigh: 248.00, changeToday: 3.2, volume: 80000000, volume20dAvg: 90000000, volume5dAvg: 60000000, limitUpCount20d: 0, range20d: 20 },
-                { code: "002594.SZ", name: "比亚迪", close: 298.50, ma30w: 265.00, high52w: 310.00, change60d: 22, change20d: 6, amount: 9500000000, floatMarketCap: 650000000000, high60d: 300.00, relativeStrengthVsSector: 1.2, platformDays: 30, platformRange: 12, platformHigh: 300.00, changeToday: 1.5, volume: 35000000, volume20dAvg: 40000000, volume5dAvg: 28000000, limitUpCount20d: 0, range20d: 15 },
-                { code: "000858.SZ", name: "五粮液", close: 182.00, ma30w: 165.00, high52w: 195.00, change60d: 25, change20d: 5, amount: 5500000000, floatMarketCap: 700000000000, high60d: 185.00, relativeStrengthVsSector: 0.8, platformDays: 18, platformRange: 20, platformHigh: 184.00, changeToday: 1.2, volume: 25000000, volume20dAvg: 30000000, volume5dAvg: 20000000, limitUpCount20d: 0, range20d: 18 },
-                { code: "300124.SZ", name: "汇川技术", close: 88.50, ma30w: 75.00, high52w: 95.00, change60d: 30, change20d: 10, amount: 3800000000, floatMarketCap: 150000000000, high60d: 90.00, relativeStrengthVsSector: 1.5, platformDays: 22, platformRange: 14, platformHigh: 90.00, changeToday: 2.0, volume: 18000000, volume20dAvg: 20000000, volume5dAvg: 14000000, limitUpCount20d: 0, range20d: 16 },
+                { code: "002371.SZ", name: "北方华创", close: 385.50, ma30w: 320.00, high52w: 420.00, high60d: 390.00, high120d: 395.00, change60d: 35, change20d: 12, amount: 8500000000, floatMarketCap: 120000000000, relativeStrengthVsSector: 2.5, platformDays: 25, platformRange: 15, platformHigh: 388.00, changeToday: 2.8, volume: 45000000, volume20dAvg: 50000000, volume5dAvg: 35000000, limitUpCount20d: 0, range20d: 22 },
+                { code: "300750.SZ", name: "宁德时代", close: 245.80, ma30w: 210.00, high52w: 260.00, high60d: 248.00, high120d: 250.00, change60d: 28, change20d: 8, amount: 12000000000, floatMarketCap: 800000000000, relativeStrengthVsSector: 1.8, platformDays: 20, platformRange: 18, platformHigh: 248.00, changeToday: 3.2, volume: 80000000, volume20dAvg: 90000000, volume5dAvg: 60000000, limitUpCount20d: 0, range20d: 20 },
+                { code: "002594.SZ", name: "比亚迪", close: 298.50, ma30w: 265.00, high52w: 310.00, high60d: 300.00, high120d: 305.00, change60d: 22, change20d: 6, amount: 9500000000, floatMarketCap: 650000000000, relativeStrengthVsSector: 1.2, platformDays: 30, platformRange: 12, platformHigh: 300.00, changeToday: 1.5, volume: 35000000, volume20dAvg: 40000000, volume5dAvg: 28000000, limitUpCount20d: 0, range20d: 15 },
+                { code: "000858.SZ", name: "五粮液", close: 182.00, ma30w: 165.00, high52w: 195.00, high60d: 185.00, high120d: 190.00, change60d: 25, change20d: 5, amount: 5500000000, floatMarketCap: 700000000000, relativeStrengthVsSector: 0.8, platformDays: 18, platformRange: 20, platformHigh: 184.00, changeToday: 1.2, volume: 25000000, volume20dAvg: 30000000, volume5dAvg: 20000000, limitUpCount20d: 0, range20d: 18 },
+                { code: "300124.SZ", name: "汇川技术", close: 88.50, ma30w: 75.00, high52w: 95.00, high60d: 90.00, high120d: 92.00, change60d: 30, change20d: 10, amount: 3800000000, floatMarketCap: 150000000000, relativeStrengthVsSector: 1.5, platformDays: 22, platformRange: 14, platformHigh: 90.00, changeToday: 2.0, volume: 18000000, volume20dAvg: 20000000, volume5dAvg: 14000000, limitUpCount20d: 0, range20d: 16 },
             ];
             return mockStocks;
         }
