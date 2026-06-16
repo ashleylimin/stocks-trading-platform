@@ -16,17 +16,24 @@ async function fetchMarketData() {
     try {
         updateDateInfo();
 
-        const apiUrl = 'http://localhost:8001/api/market/overview?t=' + Date.now();
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const apiUrl = isLocal
+            ? 'http://localhost:8001/api/market/overview?t=' + Date.now()
+            : null;
 
         let result;
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP错误: ${response.status}`);
+        if (isLocal && apiUrl) {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP错误: ${response.status}`);
+                }
+                result = await response.json();
+            } catch (apiError) {
+                console.log('本地API失败，使用mock数据:', apiError.message);
+                result = getMockMarketData();
             }
-            result = await response.json();
-        } catch (apiError) {
-            console.log('API调用失败，使用mock数据:', apiError.message);
+        } else {
             result = getMockMarketData();
         }
 
