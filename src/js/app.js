@@ -17,22 +17,22 @@ async function fetchMarketData() {
         updateDateInfo();
 
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const apiUrl = isLocal
-            ? 'http://localhost:8001/api/market/overview?t=' + Date.now()
-            : null;
+        const BACKEND_URL = isLocal
+            ? 'http://localhost:8001'
+            : 'https://justwait-stocks-backend.up.railway.app';
+        const apiUrl = BACKEND_URL + '/api/market/overview?t=' + Date.now();
 
         let result;
-        if (isLocal && apiUrl) {
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP错误: ${response.status}`);
-                }
-                result = await response.json();
-            } catch (apiError) {
-                console.log('本地API失败，使用mock数据:', apiError.message);
-                result = getMockMarketData();
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP错误: ${response.status}`);
             }
+            result = await response.json();
+        } catch (apiError) {
+            console.log('API失败，使用mock数据:', apiError.message);
+            result = getMockMarketData();
+        }
         } else {
             result = getMockMarketData();
         }

@@ -235,10 +235,14 @@
         async function fetchFilteredLeaders() {
             try {
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const BACKEND_URL = isLocal
+                    ? 'http://localhost:8001'
+                    : 'https://justwait-stocks-backend.up.railway.app';
+
                 let stocks = [];
 
-                if (isLocal) {
-                    const apiUrl = '/api/leaders/filtered?t=' + Date.now();
+                try {
+                    const apiUrl = BACKEND_URL + '/api/leaders/filtered?t=' + Date.now();
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 10000);
                     const response = await fetch(apiUrl, {
@@ -253,7 +257,6 @@
                             stocks = result.data;
                         }
                     }
-                }
 
                 if (stocks.length === 0) {
                     stocks = getMockStocks();
