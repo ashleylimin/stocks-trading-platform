@@ -124,6 +124,9 @@
                 price / stock.high60d >= 0.9 ||
                 price / stock.high120d >= 0.85;
 
+            // 必须向上趋势：20日涨幅为正
+            const uptrend = stock.change20d > 0;
+
             const rise20dOK =
                 stock.change20d >= 3 &&
                 stock.change20d <= 25;
@@ -140,6 +143,7 @@
             return (
                 aboveMA30W &&
                 nearMediumHigh &&
+                uptrend &&
                 rise20dOK &&
                 rise60dOK &&
                 liquidityOK &&
